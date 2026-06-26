@@ -1,0 +1,26 @@
+# Environment variables
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env
+
+# Agent rules (ignored to prevent local configurations from polluting the repository)
+AGENTS.md
+
+# Package manager files & dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Next.js / Vite build outputs
+.next/
+out/
+dist/
+build/
+tsconfig.tsbuildinfo
+
+# Operating system files
+.DS_Store
+Thumbs.db
