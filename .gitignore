@@ -20,6 +20,11 @@ out/
 dist/
 build/
 tsconfig.tsbuildinfo
+output/
+tmp-ds-shots/
+
+# Local design-system archives
+*.zip
 
 # Operating system files
 .DS_Store

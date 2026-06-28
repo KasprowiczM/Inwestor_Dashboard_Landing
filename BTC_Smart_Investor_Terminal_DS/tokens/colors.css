@@ -1,0 +1,129 @@
+/* ============================================================
+   NADIR — Color tokens
+   Concept: "cold is the opportunity."
+   Abyssal near-black canvas. Ice-cyan = the analytical signal (primary).
+   Bitcoin gold = the asset & premium heat (reserved, never default).
+   Contrarian thermometer (verdict): gray > amber > green > ice
+   — the coldest read is the deepest bottom.
+   ============================================================ */
+
+:root {
+  /* ---- Canvas / surfaces (abyssal) ---- */
+  --abyss:          #04060A;   /* deepest void — page base */
+  --bg-deep:        #06080C;
+  --bg-base:        #090C12;
+  --bg-surface:     #0D121A;
+  --bg-card:        #101722;
+  --bg-elevated:    #151E2C;
+  --bg-inset:       #080B10;
+  --bg-glass:       rgba(16, 23, 34, 0.78);
+  --bg-glass-strong:rgba(8, 11, 16, 0.86);
+
+  /* ---- Hairlines / borders ---- */
+  --line-faint:     rgba(218, 231, 255, 0.06);
+  --line:           rgba(218, 231, 255, 0.10);
+  --line-strong:    rgba(218, 231, 255, 0.18);
+  --line-ice:       rgba(103, 232, 249, 0.28);
+  --line-gold:      rgba(247, 199, 107, 0.30);
+
+  /* ---- Text ---- */
+  --text-primary:   #F4F7FB;
+  --text-secondary: #9AA8BA;
+  --text-muted:     #647287;
+  --text-faint:     #3D4859;
+  --text-on-ice:    #04181C;   /* dark ink on ice CTAs */
+  --text-on-gold:   #1C1203;   /* dark ink on gold CTAs */
+
+  /* ---- Ice / Signal Cyan  (PRIMARY ACCENT) ---- */
+  --ice-100:  #DFF8FE;
+  --ice-200:  #A8EEFB;
+  --ice-300:  #7DE6F8;
+  --ice-400:  #67E8F9;   /* core signal */
+  --ice-500:  #22C3DE;
+  --ice-600:  #06B6D4;   /* deepest bottom verdict */
+  --ice-700:  #0A7C96;
+  --ice-glow: rgba(103, 232, 249, 0.40);
+
+  /* ---- Bitcoin Gold (heat / asset / premium) ---- */
+  --gold-200: #FFE3A8;
+  --gold-300: #F7C76B;   /* logo light */
+  --gold-400: #F4B43C;
+  --gold-500: #FF9900;   /* logo deep */
+  --gold-600: #E07B00;
+  --gold-glow: rgba(247, 199, 107, 0.34);
+
+  /* ---- Abyssal blue (depth / sonar motif) ---- */
+  --depth-700: #0B3A57;
+  --depth-800: #0A2A40;
+  --depth-900: #08192a;
+
+  /* ---- Verdict thermometer (contrarian) ---- */
+  --signal-too-early:   #6B7280;   /* gray  — za wcześnie */
+  --signal-observe:     #F59E0B;   /* amber — obserwuj */
+  --signal-accumulate:  #10B981;   /* green — DCA */
+  --signal-aggressive:  #06B6D4;   /* ice   — agresywna akumulacja (najchłodniejszy) */
+
+  --signal-too-early-glow:  rgba(107, 114, 128, 0.30);
+  --signal-observe-glow:    rgba(245, 158, 11, 0.30);
+  --signal-accumulate-glow: rgba(16, 185, 129, 0.30);
+  --signal-aggressive-glow: rgba(6, 182, 212, 0.40);
+
+  /* ---- Indicator categories (from the strategy engine) ---- */
+  --category-fundament:    #93C5FD;
+  --category-core:         #67E8F9;
+  --category-auxiliary:    #34D399;
+  --category-confirmation: #A3E635;
+  --category-macro:        #FBBF24;
+
+  /* ---- Semantic / status ---- */
+  --success: #34D399;
+  --warning: #F59E0B;
+  --danger:  #EF4444;
+  --info:    #67E8F9;
+  --live:    #34D399;
+  --stale:   #F59E0B;
+  --missing: #EF4444;
+
+  /* ---- Semantic aliases (use these in product) ---- */
+  --surface-page:      var(--abyss);
+  --surface-card:      var(--bg-glass);
+  --surface-raised:    var(--bg-elevated);
+  --surface-inset:     var(--bg-inset);
+  --border-card:       var(--line);
+  --border-card-hover: var(--line-strong);
+  --accent:            var(--ice-400);
+  --accent-deep:       var(--ice-600);
+  --accent-premium:    var(--gold-300);
+  --text-body:         var(--text-secondary);
+  --text-heading:      var(--text-primary);
+  --text-eyebrow:      var(--ice-400);
+
+  /* ---- Plans (invite-only tiers) ---- */
+  /* Smart = the cold signal tier (BTC-bottom tracking only).
+     Investor = the premium full terminal — gold, the asset heat. */
+  --plan-smart:         var(--ice-400);
+  --plan-smart-line:    var(--line-ice);
+  --plan-smart-glow:    var(--ice-glow);
+  --plan-investor:      var(--gold-300);
+  --plan-investor-line: var(--line-gold);
+  --plan-investor-glow: var(--gold-glow);
+
+  /* ---- Dashboard metric semantics (derived from the existing ramp) ---- */
+  --metric-probability: var(--ice-400);        /* bottom probability — cold = closer */
+  --metric-risk:        var(--signal-observe);  /* elevated risk */
+  --metric-risk-low:    var(--signal-accumulate);
+  --price-up:           var(--success);
+  --price-down:         var(--danger);
+  --flow-in:            var(--success);          /* ETF / whale accumulation */
+  --flow-out:           var(--danger);           /* distribution / outflow */
+
+  /* ---- Sentiment ramp (Fear↔Greed; contrarian — fear is the opportunity) ---- */
+  --sentiment-fear:     var(--signal-accumulate);
+  --sentiment-neutral:  var(--signal-observe);
+  --sentiment-greed:    var(--danger);
+
+  /* ---- Gating (Smart-plan locked panels → upgrade to Investor) ---- */
+  --lock-veil:    rgba(8, 11, 16, 0.60);
+  --lock-veil-2:  rgba(8, 11, 16, 0.86);
+  --lock-border:  rgba(247, 199, 107, 0.30);   /* gold edge = upgrade path */
+}

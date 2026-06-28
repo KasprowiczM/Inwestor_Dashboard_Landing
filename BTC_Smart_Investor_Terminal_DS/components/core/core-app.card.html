@@ -1,0 +1,72 @@
+<!-- @dsCard group="Components" viewport="760x460" name="App / Dashboard" subtitle="BrandLockup · SegmentedControl · Tooltip · LockOverlay · Modal" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../styles.css" />
+<style>
+  body { background: var(--abyss); padding: 26px; font-family: var(--font-sans); }
+  .grp { margin-bottom: 24px; }
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+  .cap { font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 12px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel">
+  const { BrandLockup, SegmentedControl, Tooltip, InfoDot, LockOverlay, Modal, Button, KpiStat } = window.NADIRDesignSystem_54e725;
+  const { useState } = React;
+  function Demo() {
+    const [open, setOpen] = useState(false);
+    const [range, setRange] = useState('30D');
+    return (
+      <div>
+        <div className="grp">
+          <div className="cap">BrandLockup</div>
+          <div className="row">
+            <BrandLockup size="md" />
+            <BrandLockup size="sm" layout="inline" />
+            <BrandLockup size="md" layout="mark" />
+          </div>
+        </div>
+        <div className="grp">
+          <div className="cap">SegmentedControl · Tooltip</div>
+          <div className="row">
+            <SegmentedControl options={['24H','7D','30D','1Y']} value={range} onChange={setRange} />
+            <SegmentedControl options={['Smart','Investor']} accent="gold" size="sm" />
+            <span style={{ display:'inline-flex', alignItems:'center', gap:7, color:'var(--text-secondary)', fontSize:13 }}>
+              Confidence
+              <Tooltip content="Share of indicators with fresh, complete data behind this read."><InfoDot /></Tooltip>
+            </span>
+          </div>
+        </div>
+        <div className="grp" style={{ maxWidth: 360 }}>
+          <div className="cap">LockOverlay · Modal</div>
+          <LockOverlay title="Investor only" note="The full 21-indicator confluence grid unlocks here." cta="Upgrade to Investor" minHeight={150}
+            onUpgrade={() => setOpen(true)}>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, padding:6 }}>
+              <KpiStat label="MVRV Z" value="-0.12" accent="var(--ice-400)" />
+              <KpiStat label="NUPL" value="-0.08" accent="var(--ice-400)" />
+            </div>
+          </LockOverlay>
+          <div style={{ marginTop: 14 }}>
+            <Button variant="gold" onClick={() => setOpen(true)}>Open invite drawer</Button>
+          </div>
+          <Modal open={open} onClose={() => setOpen(false)} eyebrow="Invite-only access" title="Request your invite"
+            footer={<Button variant="primary" fullWidth onClick={() => setOpen(false)}>Send request</Button>}>
+            <p style={{ color:'var(--text-secondary)', fontSize:14, lineHeight:1.6, margin:0 }}>
+              BTC Smart Investor Terminal is invite-only. Leave your email and we'll reach out when a seat opens.
+            </p>
+          </Modal>
+        </div>
+      </div>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+</script>
+</body>
+</html>

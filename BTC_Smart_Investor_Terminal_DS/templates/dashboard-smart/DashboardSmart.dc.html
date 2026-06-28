@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Dashboard — Smart" description="Gated Smart-plan view: BTC bottom status + strategy meta-info open; 21-indicator table, whale/ETF detail & DCA plan locked behind Investor upgrade" -->
+<helmet>
+  <script src="./ds-base.js"></script>
+</helmet>
+<div style="display:flex; min-height:100vh; background:var(--grad-abyss); background-image:linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px); background-size:56px 56px, 56px 56px; color:var(--text-primary); font-family:var(--font-sans);">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside style="width:250px; flex-shrink:0; position:sticky; top:0; align-self:flex-start; height:100vh; display:flex; flex-direction:column; gap:6px; padding:22px 16px; border-right:1px solid var(--line); background:var(--bg-glass-strong); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); overflow-y:auto;">
+    <div style="padding:4px 8px 18px;">
+      <x-import component-from-global-scope="NADIRDesignSystem_54e725.BrandLockup" layout="stack" size="sm" hint-size="180px,40px"></x-import>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px; padding:11px 13px; border-radius:var(--radius-md); background:rgba(103,232,249,0.10); border:1px solid var(--line-ice); color:var(--text-primary); font-size:13.5px; font-weight:600;">
+      <span style="width:7px; height:7px; border-radius:50%; background:var(--ice-400); box-shadow:0 0 8px var(--ice-glow);"></span>{{ navOverview }}
+    </div>
+    <div style="display:flex; align-items:center; gap:10px; padding:11px 13px; border-radius:var(--radius-md); color:var(--text-secondary); font-size:13.5px; font-weight:600; cursor:pointer;">{{ navStrategy }}</div>
+    <sc-for list="{{ lockedNav }}" as="item" hint-placeholder-count="3">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 13px; border-radius:var(--radius-md); color:var(--text-faint); font-size:13.5px; font-weight:600; cursor:not-allowed;">
+        <span>{{ item.label }}</span>{{ item.lockIcon }}
+      </div>
+    </sc-for>
+    <div style="display:flex; align-items:center; gap:10px; padding:11px 13px; border-radius:var(--radius-md); color:var(--text-secondary); font-size:13.5px; font-weight:600; cursor:pointer;">{{ navAlerts }}</div>
+    <div style="flex:1;"></div>
+    <div style="display:flex; align-items:center; gap:10px; padding:11px 13px; border-radius:var(--radius-md); color:var(--text-muted); font-size:13.5px; font-weight:600; cursor:pointer;">{{ navSettings }}</div>
+    <div style="margin-top:8px; padding:15px; border-radius:var(--radius-lg); background:var(--grad-glass), var(--bg-glass); border:1px solid var(--line-ice);">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+        <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-muted); letter-spacing:0.06em;">{{ planLabel }}</span>
+        <x-import component-from-global-scope="NADIRDesignSystem_54e725.StatusChip" tone="ice" size="sm" hint-size="64px,22px">Smart</x-import>
+      </div>
+      <div style="margin:9px 0 13px; font-size:12.5px; color:var(--text-secondary); line-height:1.45;">{{ planNote }}</div>
+      <x-import component-from-global-scope="NADIRDesignSystem_54e725.Button" variant="gold" size="sm" full-width="{{ true }}" on-click="{{ openInvite }}" hint-size="100%,40px">{{ upgradeBtn }}</x-import>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <main style="flex:1; min-width:0; display:flex; flex-direction:column;">
+    <header style="position:sticky; top:0; z-index:20; display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap; padding:16px 26px; border-bottom:1px solid var(--line); background:var(--bg-glass-strong); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);">
+      <div>
+        <div style="display:inline-flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:0.72rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--ice-400);">
+          <span style="width:6px; height:6px; border-radius:50%; background:var(--ice-400); box-shadow:0 0 10px var(--ice-glow);"></span>{{ pageEyebrow }}
+        </div>
+        <h1 style="margin-top:6px; font-family:var(--font-display); font-size:24px; font-weight:800; letter-spacing:-0.03em; color:var(--text-primary);">{{ pageTitle }}</h1>
+      </div>
+      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+        <x-import component-from-global-scope="NADIRDesignSystem_54e725.Badge" tone="live" hint-size="120px,24px">{{ freshLabel }}</x-import>
+        <x-import component-from-global-scope="NADIRDesignSystem_54e725.Button" variant="gold" size="sm" on-click="{{ openInvite }}" hint-size="180px,38px">{{ upgradeBtn }}</x-import>
+      </div>
+    </header>
+
+    <div style="padding:24px 26px 56px; display:flex; flex-direction:column; gap:18px;">
+
+      <!-- HERO VERDICT (OPEN — the one thing Smart fully sees) -->
+      <section style="position:relative; padding:26px; border-radius:var(--radius-xl); background:var(--grad-depth), var(--grad-glass), var(--bg-glass); border:1px solid var(--line); box-shadow:var(--shadow-card);">
+        <div style="display:flex; align-items:center; gap:34px; flex-wrap:wrap;">
+          <x-import component-from-global-scope="NADIRDesignSystem_54e725.ScoreRing" score="{{ score }}" size="168" label="{{ scoreLabel }}" hint-size="168px,210px"></x-import>
+          <div style="flex:1; min-width:280px;">
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+              <span style="font-family:var(--font-display); font-size:clamp(1.7rem,2.6vw,2.3rem); font-weight:800; letter-spacing:-0.03em; color:var(--text-primary);">{{ verdictLabel }}</span>
+              <x-import component-from-global-scope="NADIRDesignSystem_54e725.StatusChip" tone="{{ verdictTone }}" hint-size="120px,28px">{{ windowState }}</x-import>
+            </div>
+            <p style="margin:10px 0 16px; font-size:14px; color:var(--text-secondary); line-height:1.55; max-width:560px;">{{ verdictNote }}</p>
+            <x-import component-from-global-scope="NADIRDesignSystem_54e725.VerdictScale" score="{{ score }}" hint-size="100%,60px"></x-import>
+            <div style="margin-top:18px; display:grid; grid-template-columns:repeat(auto-fit, minmax(130px,1fr)); gap:10px;">
+              <x-import component-from-global-scope="NADIRDesignSystem_54e725.KpiStat" label="BTC spot" value="{{ btcSpot }}" hint-size="130px,72px"></x-import>
+              <x-import component-from-global-scope="NADIRDesignSystem_54e725.KpiStat" label="{{ drawdownLabel }}" value="{{ drawdown }}" accent="var(--signal-aggressive)" hint-size="130px,72px"></x-import>
+              <x-import component-from-global-scope="NADIRDesignSystem_54e725.KpiStat" label="{{ aggLabel }}" value="{{ aggSignal }}" accent="var(--ice-400)" hint-size="130px,72px"></x-import>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- META-INFO: what powers the strategy (OPEN — counts & families only, NO methodology) -->
+      <section style="padding:24px; border-radius:var(--radius-lg); background:var(--grad-glass), var(--bg-glass); border:1px solid var(--line); box-shadow:var(--shadow-card);">
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:6px;">
+          <div>
+            <div style="font-family:var(--font-display); font-size:19px; font-weight:700; letter-spacing:-0.02em; color:var(--text-primary);">{{ metaTitle }}</div>
+            <p style="margin:6px 0 0; font-size:13px; color:var(--text-muted); line-height:1.5; max-width:560px;">{{ metaSub }}</p>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <x-import component-from-global-scope="NADIRDesignSystem_54e725.KpiStat" label="{{ indCountLabel }}" value="21" accent="var(--ice-400)" hint-size="110px,72px"></x-import>
+            <x-import component-from-global-scope="NADIRDesignSystem_54e725.KpiStat" label="{{ srcCountLabel }}" value="34" accent="var(--gold-300)" hint-size="110px,72px"></x-import>
+          </div>
+        </div>
+        <div style="margin-top:18px; display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:12px;">
+          <sc-for list="{{ families }}" as="fam" hint-placeholder-count="7">
+            <div style="display:flex; flex-direction:column; gap:8px; padding:15px; border-radius:var(--radius-md); border:1px solid var(--line-faint); background:rgba(255,255,255,0.014);">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                <div style="display:flex; align-items:center; gap:9px; min-width:0;">
+                  {{ fam.dot }}
+                  <span style="font-size:13.5px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ fam.name }}</span>
+                </div>
+                <span style="font-family:var(--font-mono); font-size:13px; font-weight:700; color:var(--text-secondary);">{{ fam.count }}</span>
+              </div>
+              <p style="margin:0; font-size:12px; color:var(--text-muted); line-height:1.45;">{{ fam.note }}</p>
+            </div>
+          </sc-for>
+        </div>
+        <div style="margin-top:14px; display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:var(--radius-md); background:rgba(103,232,249,0.06); border:1px solid var(--line-ice);">
+          <span style="width:7px; height:7px; border-radius:50%; background:var(--ice-400); box-shadow:0 0 8px var(--ice-glow); flex-shrink:0;"></span>
+          <span style="font-size:12.5px; color:var(--text-secondary); line-height:1.5;">{{ methodNote }}</span>
+        </div>
+      </section>
+
+      <!-- AGGREGATED SENTIMENT + NET FLOW DIRECTION (OPEN — aggregate only) -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(290px,1fr)); gap:18px;">
+        <section style="padding:22px; border-radius:var(--radius-lg); background:var(--grad-glass), var(--bg-glass); border:1px solid var(--line); box-shadow:var(--shadow-card); display:flex; flex-direction:column; gap:12px;">
+          <div style="font-family:var(--font-mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted);">{{ sentimentTitle }}</div>
+          <div style="display:flex; align-items:center; justify-content:center;">
+            <x-import component-from-global-scope="NADIRDesignSystem_54e725.Gauge" value="{{ fearGreed }}" size="190" label="{{ fgLabel }}" segments="{{ fgSegments }}" hint-size="190px,120px"></x-import>
+          </div>
+          <p style="margin:0; font-size:12.5px; color:var(--text-muted); text-align:center; line-height:1.5;">{{ sentimentNote }}</p>
+        </section>
+
+        <section style="padding:22px; border-radius:var(--radius-lg); background:var(--grad-glass), var(--bg-glass); border:1px solid var(--line); box-shadow:var(--shadow-card); display:flex; flex-direction:column; gap:14px;">
+          <div style="font-family:var(--font-mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted);">{{ flowTitle }}</div>
+          <div style="display:flex; flex-direction:column; gap:11px;">
+            <sc-for list="{{ flows }}" as="fl" hint-placeholder-count="2">
+              <div style="display:flex; align-items:center; gap:13px; padding:14px; border-radius:var(--radius-md); border:1px solid var(--line-faint); background:rgba(255,255,255,0.014);">
+                {{ fl.arrow }}
+                <div style="flex:1; min-width:0;">
+                  <div style="font-size:13.5px; font-weight:600; color:var(--text-primary);">{{ fl.name }}</div>
+                  <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">{{ fl.note }}</div>
+                </div>
+                <x-import component-from-global-scope="NADIRDesignSystem_54e725.StatusChip" tone="{{ fl.tone }}" size="sm" hint-size="78px,22px">{{ fl.dir }}</x-import>
+              </div>
+            </sc-for>
+          </div>
+          <p style="margin:0; font-size:11.5px; color:var(--text-faint); line-height:1.5;">{{ flowNote }}</p>
+        </section>
+      </div>
+
+      <!-- GATED: 21-INDICATOR CONFLUENCE (locked teaser) -->
+      <x-import component-from-global-scope="NADIRDesignSystem_54e725.LockOverlay" title="{{ lockTitle }}" note="{{ lockConfluenceNote }}" cta="{{ lockCta }}" on-upgrade="{{ openInvite }}" min-height="{{ 300 }}" hint-size="100%,300px">
+    <div style="padding:22px; border-radius:var(--radius-lg); background:var(--grad-glass), var(--bg-glass); border:1px solid var(--line);">
+      <div style="font-family:var(--font-display); font-size:18px; font-weight:700; color:var(--text-primary); margin-bottom:16px;">{{ confluenceTeaserTitle }}</div>
+      <div style="display:flex; flex-direction:column; gap:7px;">
+        <div style="display:grid; grid-template-columns:1.6fr 80px 1fr; gap:14px; align-items:center; padding:11px 12px; border-radius:8px; border:1px solid var(--line-faint);"><div style="display:flex; align-items:center; gap:10px;"><span style="width:8px;height:8px;border-radius:2px;background:var(--category-core);"></span><span style="font-size:13.5px;color:var(--text-secondary);">MVRV Z-Score</span></div><span style="font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--text-primary);text-align:right;">−0.12</span><div style="height:6px;border-radius:9999px;background:rgba(255,255,255,0.06);"><div style="height:100%;width:88%;border-radius:9999px;background:var(--category-core);"></div></div></div>
+        <div style="display:grid; grid-template-columns:1.6fr 80px 1fr; gap:14px; align-items:center; padding:11px 12px; border-radius:8px; border:1px solid var(--line-faint);"><div style="display:flex; align-items:center; gap:10px;"><span style="width:8px;height:8px;border-radius:2px;background:var(--category-core);"></span><span style="font-size:13.5px;color:var(--text-secondary);">NUPL</span></div><span style="font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--text-primary);text-align:right;">−0.08</span><div style="height:6px;border-radius:9999px;background:rgba(255,255,255,0.06);"><div style="height:100%;width:80%;border-radius:9999px;background:var(--category-core);"></div></div></div>
+        <div style="display:grid; grid-template-columns:1.6fr 80px 1fr; gap:14px; align-items:center; padding:11px 12px; border-radius:8px; border:1px solid var(--line-faint);"><div style="display:flex; align-items:center; gap:10px;"><span style="width:8px;height:8px;border-radius:2px;background:var(--category-confirmation);"></span><span style="font-size:13.5px;color:var(--text-secondary);">LTH SOPR</span></div><span style="font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--text-primary);text-align:right;">0.97</span><div style="height:6px;border-radius:9999px;background:rgba(255,255,255,0.06);"><div style="height:100%;width:62%;border-radius:9999px;background:var(--category-confirmation);"></div></div></div>
+        <div style="display:grid; grid-template-columns:1.6fr 80px 1fr; gap:14px; align-items:center; padding:11px 12px; border-radius:8px; border:1px solid var(--line-faint);"><div style="display:flex; align-items:center; gap:10px;"><span style="width:8px;height:8px;border-radius:2px;background:var(--category-auxiliary);"></span><span style="font-size:13.5px;color:var(--text-secondary);">Fear &amp; Greed</span></div><span style="font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--text-primary);text-align:right;">27</span><div style="height:6px;border-radius:9999px;background:rgba(255,255,255,0.06);"><div style="height:100%;width:60%;border-radius:9999px;background:var(--category-auxiliary);"></div></div></div>
+        <div style="display:grid; grid-template-columns:1.6fr 80px 1fr; gap:14px; align-items:center; padding:11px 12px; border-radius:8px; border:1px solid var(--line-faint);"><div style="display:flex; align-items:center; gap:10px;"><span style="width:8px;height:8px;border-radius:2px;background:var(--category-macro);"></span><span style="font-size:13.5px;color:var(--text-secondary);">USD net liquidity</span></div><span style="font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--text-primary);text-align:right;">+1.2%</span><div style="height:6px;border-radius:9999px;background:rgba(255,255,255,0.06);"><div style="height:100%;width:40%;border-radius:9999px;background:var(--category-macro);"></div></div></div>
+      </div>
+    </div>
+  </x-import>
+
+      <!-- GATED: WHALE/ETF DETAIL + DCA PLAN (locked) -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(290px,1fr)); gap:18px;">
+        <x-import component-from-global-scope="NADIRDesignSystem_54e725.LockOverlay" title="{{ lockTitle }}" note="{{ lockWhaleNote }}" cta="{{ lockCtaShort }}" on-upgrade="{{ openInvite }}" min-height="{{ 250 }}" hint-size="100%,250px">
+      <div style="padding:22px; border-radius:var(--radius-lg); background:var(--grad-glass), var(--bg-glass); border:1px solid var(--line);">
+        <div style="font-family:var(--font-display); font-size:16px; font-weight:700; color:var(--text-primary); margin-bottom:16px;">Whale &amp; ETF event log</div>
+        <div style="display:flex; flex-direction:column; gap:13px;">
+          <div style="display:flex; gap:11px;"><span style="margin-top:4px;width:8px;height:8px;border-radius:50%;background:var(--flow-in);"></span><div style="flex:1;"><div style="font-size:13px;color:var(--text-secondary);">1,250 BTC → cold storage</div><div style="font-family:var(--font-mono);font-size:10.5px;color:var(--text-faint);margin-top:2px;">2h · Whale</div></div><span style="font-family:var(--font-mono);font-size:12.5px;font-weight:700;color:var(--flow-in);">+1,250</span></div>
+          <div style="display:flex; gap:11px;"><span style="margin-top:4px;width:8px;height:8px;border-radius:50%;background:var(--flow-in);"></span><div style="flex:1;"><div style="font-size:13px;color:var(--text-secondary);">IBIT inflow +$210M</div><div style="font-family:var(--font-mono);font-size:10.5px;color:var(--text-faint);margin-top:2px;">5h · ETF</div></div><span style="font-family:var(--font-mono);font-size:12.5px;font-weight:700;color:var(--flow-in);">+$210M</span></div>
+          <div style="display:flex; gap:11px;"><span style="margin-top:4px;width:8px;height:8px;border-radius:50%;background:var(--flow-in);"></span><div style="flex:1;"><div style="font-size:13px;color:var(--text-secondary);">Exchange outflow 3,400 BTC</div><div style="font-family:var(--font-mono);font-size:10.5px;color:var(--text-faint);margin-top:2px;">9h · Whale</div></div><span style="font-family:var(--font-mono);font-size:12.5px;font-weight:700;color:var(--flow-in);">+3,400</span></div>
+        </div>
+      </div>
+    </x-import>
+
+        <x-import component-from-global-scope="NADIRDesignSystem_54e725.LockOverlay" title="{{ lockTitle }}" note="{{ lockDcaNote }}" cta="{{ lockCtaShort }}" on-upgrade="{{ openInvite }}" min-height="{{ 250 }}" hint-size="100%,250px">
+      <div style="padding:22px; border-radius:var(--radius-lg); background:var(--grad-glass), var(--bg-glass); border:1px solid var(--line);">
+        <div style="font-family:var(--font-display); font-size:16px; font-weight:700; color:var(--text-primary); margin-bottom:16px;">DCA tranche plan</div>
+        <div style="display:flex; flex-direction:column; gap:9px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 13px; border-radius:8px; border:1px solid var(--line-faint);"><span style="font-size:13px;color:var(--text-secondary);">Tranche 1 · 55–65</span><span style="font-family:var(--font-mono);font-size:12px;color:var(--signal-accumulate);">Filled</span></div>
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 13px; border-radius:8px; border:1px solid var(--line-faint);"><span style="font-size:13px;color:var(--text-secondary);">Tranche 2 · 66–77</span><span style="font-family:var(--font-mono);font-size:12px;color:var(--ice-400);">Active</span></div>
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 13px; border-radius:8px; border:1px solid var(--line-faint);"><span style="font-size:13px;color:var(--text-secondary);">Tranche 3 · 78+</span><span style="font-family:var(--font-mono);font-size:12px;color:var(--text-muted);">Pending</span></div>
+        </div>
+      </div>
+    </x-import>
+      </div>
+
+      <!-- BIG UPGRADE CTA -->
+      <section style="position:relative; overflow:hidden; padding:34px; border-radius:var(--radius-xl); background:var(--grad-heat), var(--grad-glass), var(--bg-glass); border:1px solid var(--line-gold); box-shadow:var(--shadow-card);">
+        <div style="position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;">
+          <div style="max-width:560px;">
+            <div style="display:inline-flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:0.72rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold-300);">{{ ctaEyebrow }}</div>
+            <h2 style="margin:10px 0 8px; font-family:var(--font-display); font-size:clamp(1.5rem,2.4vw,2rem); font-weight:800; letter-spacing:-0.03em; color:var(--text-primary);">{{ ctaTitle }}</h2>
+            <p style="margin:0; font-size:14px; color:var(--text-secondary); line-height:1.55;">{{ ctaSub }}</p>
+          </div>
+          <x-import component-from-global-scope="NADIRDesignSystem_54e725.Button" variant="gold" size="lg" on-click="{{ openInvite }}" hint-size="200px,56px">{{ ctaBtn }}</x-import>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <x-import component-from-global-scope="NADIRDesignSystem_54e725.Modal" open="{{ inviteOpen }}" on-close="{{ closeInvite }}" eyebrow="{{ inviteEyebrow }}" title="{{ inviteTitle }}" hint-size="0,0">
+    <p style="font-size:14px; color:var(--text-secondary); line-height:1.6; margin:0 0 16px;">{{ inviteBody }}</p>
+    <x-import component-from-global-scope="NADIRDesignSystem_54e725.Input" label="{{ inviteEmailLabel }}" placeholder="member@fund.com" hint-size="100%,72px"></x-import>
+    <div style="margin-top:16px;">
+      <x-import component-from-global-scope="NADIRDesignSystem_54e725.Button" variant="gold" size="lg" full-width="{{ true }}" on-click="{{ closeInvite }}" hint-size="100%,56px">{{ inviteSend }}</x-import>
+    </div>
+  </x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:960},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;pl&quot;,&quot;en&quot;],&quot;default&quot;:&quot;pl&quot;,&quot;tsType&quot;:&quot;'pl'|'en'&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;score&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:72,&quot;min&quot;:0,&quot;max&quot;:100,&quot;step&quot;:1,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Bottom Score&quot;}}">
+class Component extends DCLogic {
+  state = { invite: false };
+  L(pl, en) { return (this.props.lang === 'en') ? en : pl; }
+  verdict(s) {
+    if (s >= 78) return { tone: 'ice',     pl: 'Agresywna akumulacja', en: 'Aggressive accumulation' };
+    if (s >= 55) return { tone: 'emerald', pl: 'Strefa akumulacji',     en: 'Accumulation zone' };
+    if (s >= 30) return { tone: 'amber',   pl: 'Obserwuj',              en: 'Observe' };
+    return            { tone: 'slate',   pl: 'Za wcześnie',           en: 'Too early' };
+  }
+  renderVals() {
+    const L = (pl, en) => this.L(pl, en);
+    const h = React.createElement;
+    const score = Math.round(this.props.score ?? 72);
+    const v = this.verdict(score);
+
+    const lockIcon = h('span', { style: { fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--gold-400)', border: '1px solid var(--line-gold)', borderRadius: 5, padding: '1px 6px', letterSpacing: '0.04em' } }, 'PRO');
+    const lockedNavRaw = [
+      { pl: 'Wskaźniki i sygnały', en: 'Indicators & Signals' },
+      { pl: 'Wieloryby i ETF', en: 'Whales & ETF Flows' },
+      { pl: 'Historia i cykle', en: 'History & Cycles' },
+    ];
+    const lockedNav = lockedNavRaw.map((n) => ({ label: L(n.pl, n.en), lockIcon }));
+
+    const famRaw = [
+      { c: 'var(--category-core)',         count: '6', pl: 'Historia i cykle',      en: 'Historical & cycles',    npl: 'Dane od 2011, halvingi, struktura cykli.',           nen: 'Data since 2011, halvings, cycle structure.' },
+      { c: 'var(--category-confirmation)', count: '3', pl: 'Okna czasowe',          en: 'Time windows',           npl: 'Sezonowość i okna czasowe akumulacji.',              nen: 'Seasonality and accumulation time windows.' },
+      { c: 'var(--metric-probability)',    count: '4', pl: 'Procenty składane',     en: 'Compounded %',           npl: 'Logika procentów prostych i składanych.',            nen: 'Simple and compounded percentage logic.' },
+      { c: 'var(--metric-risk)',           count: '3', pl: 'Prawdopod. i ryzyko',   en: 'Probability & risk',     npl: 'Rozkłady prawdopodobieństwa i metryki ryzyka.',      nen: 'Probability distributions and risk metrics.' },
+      { c: 'var(--category-macro)',        count: '5', pl: 'Wskaźniki rynkowe',     en: 'Market indicators',      npl: 'Bieżące wskaźniki on-chain i rynkowe.',              nen: 'Live on-chain and market indicators.' },
+      { c: 'var(--sentiment-greed)',       count: '4', pl: 'Sentyment rynku',       en: 'Market sentiment',       npl: 'Strach i chciwość, pozycjonowanie, nastroje.',       nen: 'Fear & greed, positioning, mood.' },
+      { c: 'var(--flow-in)',               count: '5', pl: 'Wieloryby i ETF',       en: 'Whales & ETF',           npl: 'Ruchy dużego kapitału i przepływy ETF.',             nen: 'Large-capital moves and ETF flows.' },
+    ];
+    const families = famRaw.map((f) => ({
+      name: L(f.pl, f.en), count: f.count, note: L(f.npl, f.nen),
+      dot: h('span', { style: { width: 9, height: 9, borderRadius: 3, flexShrink: 0, background: f.c } }),
+    }));
+
+    const arrowUp = h('span', { style: { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: '50%', flexShrink: 0, background: 'rgba(52,211,153,0.12)', color: 'var(--flow-in)', fontSize: 16, fontWeight: 800 } }, '↑');
+    const flowRaw = [
+      { pl: 'Przepływy wielorybów', en: 'Whale flows', npl: 'Akumulacja netto · 7 dni', nen: 'Net accumulation · 7d', tone: 'emerald', dpl: 'Napływ', den: 'Inflow' },
+      { pl: 'Przepływy ETF spot',   en: 'Spot ETF flows', npl: 'Dodatnie netto · 7 dni', nen: 'Net positive · 7d',  tone: 'emerald', dpl: 'Napływ', den: 'Inflow' },
+    ];
+    const flows = flowRaw.map((f) => ({ name: L(f.pl, f.en), note: L(f.npl, f.nen), tone: f.tone, dir: L(f.dpl, f.den), arrow: arrowUp }));
+
+    return {
+      lang: this.props.lang || 'pl', score, scoreLabel: 'Bottom Score',
+      navOverview: L('Przegląd', 'Overview'), navStrategy: L('Strategia dna BTC', 'BTC Bottom Strategy'),
+      navAlerts: L('Alerty · Telegram', 'Alerts · Telegram'), navSettings: L('Ustawienia · Konto', 'Settings · Account'),
+      lockedNav,
+      planLabel: L('Plan', 'Plan'), planNote: L('Śledzisz status dna BTC. Pełny terminal w planie Investor.', 'You track BTC bottom status. Full terminal on Investor.'),
+      upgradeBtn: L('Przejdź na Investor', 'Upgrade to Investor'),
+      pageEyebrow: L('Smart · status dna BTC', 'Smart · BTC bottom status'), pageTitle: L('Przegląd', 'Overview'),
+      freshLabel: L('System świeży', 'System fresh'),
+      verdictLabel: L(v.pl, v.en), verdictTone: v.tone, windowState: L('Okno otwarte', 'Window open'),
+      verdictNote: L('Zagregowany Bottom Score pokazuje, gdzie jesteśmy względem potencjalnego dna. Szczegóły wskaźników dostępne w planie Investor.',
+                     'The aggregated Bottom Score shows where we are relative to a potential bottom. Per-indicator detail is available on Investor.'),
+      btcSpot: '$61,480', drawdownLabel: L('Drawdown ATH', 'Drawdown ATH'), drawdown: '−58.2%',
+      aggLabel: L('Sygnał zagreg.', 'Aggregate signal'), aggSignal: L('Akumuluj', 'Accumulate'),
+      metaTitle: L('Co napędza strategię', 'What powers the strategy'),
+      metaSub: L('Strategia opiera się na danych, cyklach, prawdopodobieństwach i ruchach dużego kapitału. Poniżej rodziny sygnałów i ich liczność — bez ujawniania metodologii.',
+                 'The strategy is built on data, cycles, probabilities and large-capital moves. Below are the signal families and their counts — without revealing the methodology.'),
+      indCountLabel: L('Wskaźniki', 'Indicators'), srcCountLabel: L('Źródła danych', 'Data sources'),
+      families,
+      methodNote: L('Smart pokazuje status i zagregowane sygnały. Formuły, wagi i wkład pojedynczych wskaźników są częścią planu Investor.',
+                    'Smart shows status and aggregated signals. Formulas, weights and per-indicator contributions are part of the Investor plan.'),
+      sentimentTitle: L('Sentyment rynku · zagregowany', 'Market sentiment · aggregated'),
+      fearGreed: 27, fgLabel: L('Strach i chciwość', 'Fear & Greed'),
+      fgSegments: [{ to: 25, color: 'var(--sentiment-fear)' }, { to: 55, color: 'var(--sentiment-neutral)' }, { to: 100, color: 'var(--sentiment-greed)' }],
+      sentimentNote: L('Rynek w strefie strachu — historycznie sprzyja akumulacji.', 'Market in fear — historically favourable for accumulation.'),
+      flowTitle: L('Kierunek przepływów · zagregowany', 'Flow direction · aggregated'),
+      flows, flowNote: L('Smart pokazuje tylko kierunek netto. Dziennik zdarzeń i kwoty — w planie Investor.', 'Smart shows net direction only. The event log and amounts are on Investor.'),
+      lockTitle: L('Tylko Investor', 'Investor only'),
+      lockConfluenceNote: L('Pełna tabela 21 wskaźników z wagami, wkładem i sparklines jest częścią terminala Investor.', 'The full 21-indicator table with weights, contributions and sparklines is part of the Investor terminal.'),
+      lockWhaleNote: L('Dziennik zdarzeń wielorybów i ETF z kwotami — w planie Investor.', 'The whale & ETF event log with amounts is on Investor.'),
+      lockDcaNote: L('Plan transz DCA i automatyczne progi — w planie Investor.', 'The DCA tranche plan and auto-thresholds are on Investor.'),
+      lockCta: L('Przejdź na Investor', 'Upgrade to Investor'), lockCtaShort: L('Odblokuj', 'Unlock'),
+      confluenceTeaserTitle: L('Konfluencja 21 wskaźników', '21-indicator confluence'),
+      ctaEyebrow: L('Dostęp na zaproszenie', 'Invite-only access'),
+      ctaTitle: L('Odblokuj pełny terminal Investor', 'Unlock the full Investor terminal'),
+      ctaSub: L('Wszystkie 21 wskaźników, dziennik wielorybów i ETF, plan DCA, alerty i głębsze narzędzia dla zaangażowanych inwestorów BTC.',
+                'All 21 indicators, the whale & ETF log, the DCA plan, alerts and deeper tools for committed BTC investors.'),
+      ctaBtn: L('Poproś o zaproszenie Investor', 'Request Investor invite'),
+      inviteOpen: this.state.invite, openInvite: () => this.setState({ invite: true }), closeInvite: () => this.setState({ invite: false }),
+      inviteEyebrow: L('Dostęp na zaproszenie', 'Invite-only access'), inviteTitle: L('Przejdź na plan Investor', 'Upgrade to Investor'),
+      inviteBody: L('Plan Investor jest na zaproszenie. Zostaw e-mail — odezwiemy się z dostępem do pełnego terminala.', 'The Investor plan is invite-only. Leave your email and we will reach out with full-terminal access.'),
+      inviteEmailLabel: L('Twój e-mail', 'Your email'), inviteSend: L('Poproś o zaproszenie', 'Request invite'),
+    };
+  }
+}
+</script>
+</body>
+</html>

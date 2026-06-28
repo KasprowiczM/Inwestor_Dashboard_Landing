@@ -1,0 +1,29 @@
+<!-- @dsCard group="Colors" viewport="700x190" name="Accent — Ice & Gold" subtitle="Cold ice-cyan is primary; Bitcoin gold is reserved heat" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  body { background: var(--abyss); padding: 22px; font-family: var(--font-sans); }
+  .row { display: flex; gap: 10px; }
+  .sw { flex: 1; height: 116px; border-radius: var(--radius-md); border: 1px solid var(--line);
+        display: flex; flex-direction: column; justify-content: flex-end; padding: 10px; position: relative; overflow: hidden; }
+  .nm { font-family: var(--font-mono); font-size: 11px; color: #fff; opacity: .92; letter-spacing: .03em; }
+  .hx { font-family: var(--font-mono); font-size: 10px; opacity: .6; margin-top: 2px; }
+  .dark .nm, .dark .hx { color: #fff; }
+  .lite .nm, .lite .hx { color: var(--text-on-ice); }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="sw lite" style="background: var(--grad-ice-cta); box-shadow: var(--glow-ice);">
+      <span class="nm">ice-400 · PRIMARY</span><span class="hx">#67E8F9</span></div>
+    <div class="sw lite" style="background: var(--ice-200);"><span class="nm">ice-200</span><span class="hx">#A8EEFB</span></div>
+    <div class="sw dark" style="background: var(--ice-600);"><span class="nm">ice-600</span><span class="hx">#06B6D4</span></div>
+    <div class="sw lite" style="background: var(--grad-gold-cta); box-shadow: var(--glow-gold);">
+      <span class="nm" style="color:var(--text-on-gold)">gold-300 · PREMIUM</span><span class="hx" style="color:var(--text-on-gold)">#F7C76B</span></div>
+    <div class="sw dark" style="background: var(--gold-500);"><span class="nm">gold-500</span><span class="hx">#FF9900</span></div>
+  </div>
+</body>
+</html>

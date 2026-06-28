@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Dashboard — Investor" description="Full BTC Smart Investor Terminal dashboard — verdict, price, 21-indicator confluence, sentiment, cycle, whales & ETF, DCA" -->
+<helmet>
+  <script src="./ds-base.js"></script>
+</helmet>
+<div style="display:flex; min-height:100vh; background:var(--grad-abyss); background-image:linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px); background-size:56px 56px, 56px 56px; color:var(--text-primary); font-family:var(--font-sans);">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside style="width:250px; flex-shrink:0; position:sticky; top:0; align-self:flex-start; height:100vh; display:flex; flex-direction:column; gap:6px; padding:22px 16px; border-right:1px solid var(--line); background:var(--bg-glass-strong); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); overflow-y:auto;">
+    <div style="padding:4px 8px 18px;">
+      <x-import component-from-global-scope="NADIRDesignSystem_54e725.BrandLockup" layout="stack" size="sm" hint-size="180px,40px"></x-import>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px; padding:11px 13px; border-radius:var(--radius-md); background:rgba(103,232,249,0.10); border:1px solid var(--line-ice); color:var(--text-primary); font-size:13.5px; font-weight:600;">
+      <span style="width:7px; height:7px; border-radius:50%; background:var(--ice-400); box-shadow:0 0 8px var(--ice-glow);"></span>{{ navOverview }}
+    </div>
+    <div style="display:flex; align-items:center; gap:10px; padding:11px 13px; border-radius:var(--radius-md); color:var(--text-secondary); font-size:13.5px; font-weight:600; cursor:pointer;">{{ navStrategy }}</div>
+    <div style="display:flex; align-items:center; gap:10px; padding:11px 13px; border-radius:var(--radius-md); color:var(--text-secondary); font-size:13.5px; font-weight:600; cursor:pointer;">{{ navIndicators }}</div>
+    <div style="display:flex; align-items:center; gap:10px; padding:11px 13px; border-radius:var(--radius-md); color:var(--text-secondary); font-size:13.5px; font-weight:600; cursor:pointer;">{{ navWhales }}</div>
+    <div style="display:flex; align-items:center; gap:10px; padding:11px 13px; border-radius:var(--radius-md); color:var(--text-secondary); font-size:13.5px; font-weight:600; cursor:pointer;">{{ navHistory }}</div>
+    <div style="display:flex; align-items:center; gap:10px; padding:11px 13px; border-radius:var(--radius-md); color:var(--text-secondary); font-size:13.5px; font-weight:600; cursor:pointer;">{{ navAlerts }}</div>
+    <div style="flex:1;"></div>
+    <div style="display:flex; align-items:center; gap:10px; padding:11px 13px; border-radius:var(--radius-md); color:var(--text-muted); font-size:13.5px; font-weight:600; cursor:pointer;">{{ navSettings }}</div>
+    <div style="margin-top:8px; padding:14px; border-radius:var(--radius-lg); background:var(--grad-heat), var(--grad-glass), var(--bg-glass); border:1px solid var(--line-gold);">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+        <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-muted); letter-spacing:0.06em;">{{ planLabel }}</span>
+        <x-import component-from-global-scope="NADIRDesignSystem_54e725.StatusChip" tone="gold" size="sm" hint-size="78px,22px">Investor</x-import>
+      </div>
+      <div style="margin-top:9px; font-size:12.5px; color:var(--text-secondary); line-height:1.45;">{{ planNote }}</div>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <main style="flex:1; min-width:0; display:flex; flex-direction:column;">
+    <header style="position:sticky; top:0; z-index:20; display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap; padding:16px 26px; border-bottom:1px solid var(--line); background:var(--bg-glass-strong); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);">
+      <div>
+        <div style="display:inline-flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:0.72rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--ice-400);">
+          <span style="width:6px; height:6px; border-radius:50%; background:var(--ice-400); box-shadow:0 0 10px var(--ice-glow);"></span>{{ pageEyebrow }}
+        </div>
+        <h1 style="margin-top:6px; font-family:var(--font-display); font-size:24px; font-weight:800; letter-spacing:-0.03em; color:var(--text-primary);">{{ pageTitle }}</h1>
+      </div>
+      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+        <x-import component-from-global-scope="NADIRDesignSystem_54e725.SegmentedControl" options="{{ ranges }}" default-value="30D" size="sm" hint-size="190px,34px"></x-import>
+        <x-import component-from-global-scope="NADIRDesignSystem_54e725.Badge" tone="live" hint-size="120px,24px">{{ freshLabel }}</x-import>
+        <x-import component-from-global-scope="NADIRDesignSystem_54e725.Button" variant="gold" size="sm" on-click="{{ openInvite }}" hint-size="150px,38px">{{ inviteBtn }}</x-import>
+      </div>
+    </header>
+
+    <div style="padding:24px 26px 56px; display:flex; flex-direction:column; gap:18px;">
+
+      <!-- HERO VERDICT -->
+      <section style="position:relative; padding:26px; border-radius:var(--radius-xl); background:var(--grad-depth), var(--grad-glass), var(--bg-glass); border:1px solid var(--line); box-shadow:var(--shadow-card);">
+        <div style="display:flex; align-items:center; gap:34px; flex-wrap:wrap;">
+          <x-import component-from-global-scope="NADIRDesignSystem_54e725.ScoreRing" score="{{ score }}" size="168" label="{{ scoreLabel }}" hint-size="168px,210px"></x-import>
+          <div style="flex:1; min-width:280px;">
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+              <span style="font-family:var(--font-display); font-size:clamp(1.7rem,2.6vw,2.3rem); font-weight:800; letter-spacing:-0.03em; color:var(--text-primary);">{{ verdictLabel }}</span>
+              <x-import component-from-global-scope="NADIRDesignSystem_54e725.StatusChip" tone="{{ verdictTone }}" hint-size="120px,28px">{{ windowState }}</x-import>
+            </div>
+            <p style="margin:10px 0 16px; font-size:14px; color:var(--text-secondary); line-height:1.55; max-width:560px;">{{ verdictNote }}</p>
+            <x-import component-from-global-scope="NADIRDesignSystem_54e725.VerdictScale" score="{{ score }}" hint-size="100%,60px"></x-import>
+            <div style="margin-top:18px; display:grid; grid-template-columns:repeat(auto-fit, minmax(120px,1fr)); gap:10px;">
+              <x-import component-from-global-scope="NADIRDesignSystem_54e725.KpiStat" label="BTC spot" value="{{ btcSpot }}" hint-size="120px,72px"></x-import>
+              <x-import component-from-global-scope="NADIRDesignSystem_54e725.KpiStat" label="{{ drawdownLabel }}" value="{{ drawdown }}" accent="var(--signal-aggressive)" hint-size="120px,72px"></x-import>
+              <x-import component-from-global-scope="NADIRDesignSystem_54e725.KpiStat" label="Confidence" value="{{ confidence }}" accent="var(--ice-400)" hint-size="120px,72px"></x-import>
+              <x-import component-from-global-scope="NADIRDesignSystem_54e725.KpiStat" label="Mnożnik G" value="{{ gmult }}" accent="var(--gold-300)" hint-size="120px,72px"></x-import>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRICE + SENTIMENT -->
+      <div style="display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:18px;">
+        <section style="padding:22px; border-radius:var(--radius-lg); background:var(--grad-glass), var(--bg-glass); border:1px solid var(--line); box-shadow:var(--shadow-card);">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:14px;">
+            <div>
+              <div style="font-family:var(--font-mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted);">{{ priceTitle }}</div>
+              <div style="display:flex; align-items:baseline; gap:10px; margin-top:6px;">
+                <span style="font-family:var(--font-display); font-size:30px; font-weight:800; letter-spacing:-0.03em; color:var(--text-primary);">{{ btcSpot }}</span>
+                <span style="font-family:var(--font-mono); font-size:13px; color:var(--signal-aggressive);">{{ btcChange }}</span>
+              </div>
+            </div>
+            <x-import component-from-global-scope="NADIRDesignSystem_54e725.SegmentedControl" options="{{ ranges }}" default-value="30D" size="sm" hint-size="190px,34px"></x-import>
+          </div>
+          <div style="height:200px;">
+            <x-import component-from-global-scope="NADIRDesignSystem_54e725.Sparkline" data="{{ priceSeries }}" color="var(--ice-400)" height="200" hint-size="100%,200px"></x-import>
+          </div>
+        </section>
+
+        <section style="padding:22px; border-radius:var(--radius-lg); background:var(--grad-glass), var(--bg-glass); border:1px solid var(--line); box-shadow:var(--shadow-card); display:flex; flex-direction:column; gap:14px;">
+          <div style="font-family:var(--font-mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted);">{{ sentimentTitle }}</div>
+          <div style="display:flex; align-items:center; justify-content:space-around; gap:10px; flex-wrap:wrap;">
+            <x-import component-from-global-scope="NADIRDesignSystem_54e725.Gauge" value="{{ fearGreed }}" size="160" label="{{ fgLabel }}" segments="{{ fgSegments }}" hint-size="160px,110px"></x-import>
+            <x-import component-from-global-scope="NADIRDesignSystem_54e725.Gauge" value="{{ score }}" size="160" unit="%" color="var(--metric-probability)" label="{{ probLabel }}" hint-size="160px,110px"></x-import>
+          </div>
+        </section>
+      </div>
+
+      <!-- INDICATOR CONFLUENCE -->
+      <section style="padding:22px; border-radius:var(--radius-lg); background:var(--grad-glass), var(--bg-glass); border:1px solid var(--line); box-shadow:var(--shadow-card);">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:16px;">
+          <div>
+            <div style="font-family:var(--font-display); font-size:18px; font-weight:700; letter-spacing:-0.02em; color:var(--text-primary);">{{ confluenceTitle }}</div>
+            <div style="margin-top:3px; font-size:12.5px; color:var(--text-muted);">{{ confluenceSub }}</div>
+          </div>
+          <div style="display:flex; gap:14px; flex-wrap:wrap;">
+            <span style="display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:11px; color:var(--text-secondary);"><span style="width:8px; height:8px; border-radius:2px; background:var(--category-core);"></span>Core</span>
+            <span style="display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:11px; color:var(--text-secondary);"><span style="width:8px; height:8px; border-radius:2px; background:var(--category-confirmation);"></span>Confirm</span>
+            <span style="display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:11px; color:var(--text-secondary);"><span style="width:8px; height:8px; border-radius:2px; background:var(--category-auxiliary);"></span>Aux</span>
+            <span style="display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:11px; color:var(--text-secondary);"><span style="width:8px; height:8px; border-radius:2px; background:var(--category-macro);"></span>Macro</span>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:3px;">
+          <sc-for list="{{ inds }}" as="ind" hint-placeholder-count="9">
+            <div style="display:grid; grid-template-columns:minmax(0,1.6fr) 86px minmax(90px,1fr) minmax(110px,1.1fr); align-items:center; gap:14px; padding:11px 12px; border-radius:var(--radius-md); border:1px solid var(--line-faint); background:rgba(255,255,255,0.015);">
+              <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+                {{ ind.dot }}
+                <span style="font-size:13.5px; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ ind.name }}</span>
+              </div>
+              <span style="font-family:var(--font-mono); font-size:14px; font-weight:700; color:var(--text-primary); text-align:right;">{{ ind.val }}</span>
+              <div style="height:30px;">
+                <x-import component-from-global-scope="NADIRDesignSystem_54e725.Sparkline" data="{{ ind.spark }}" color="{{ ind.color }}" height="30" hint-size="100%,30px"></x-import>
+              </div>
+              <div style="display:flex; align-items:center; gap:9px;">
+                <div style="flex:1; height:6px; border-radius:var(--radius-pill); background:rgba(255,255,255,0.06); overflow:hidden;">{{ ind.bar }}</div>
+                <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-muted); width:30px; text-align:right;">{{ ind.contrib }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <!-- CYCLE · WHALES/ETF · DCA -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(290px,1fr)); gap:18px;">
+        <section style="padding:22px; border-radius:var(--radius-lg); background:var(--grad-glass), var(--bg-glass); border:1px solid var(--line); box-shadow:var(--shadow-card);">
+          <div style="font-family:var(--font-display); font-size:16px; font-weight:700; letter-spacing:-0.02em; color:var(--text-primary); margin-bottom:18px;">{{ cycleTitle }}</div>
+          <div style="display:flex; flex-direction:column; gap:2px;">
+            <sc-for list="{{ phases }}" as="ph" hint-placeholder-count="5">
+              <div style="display:flex; align-items:center; gap:12px; padding:9px 0;">
+                {{ ph.dot }}
+                <div style="flex:1; height:1px; background:var(--line-faint);"></div>
+                {{ ph.label }}
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <section style="padding:22px; border-radius:var(--radius-lg); background:var(--grad-glass), var(--bg-glass); border:1px solid var(--line); box-shadow:var(--shadow-card);">
+          <div style="font-family:var(--font-display); font-size:16px; font-weight:700; letter-spacing:-0.02em; color:var(--text-primary); margin-bottom:16px;">{{ eventsTitle }}</div>
+          <div style="display:flex; flex-direction:column; gap:11px;">
+            <sc-for list="{{ events }}" as="ev" hint-placeholder-count="4">
+              <div style="display:flex; align-items:flex-start; gap:11px;">
+                {{ ev.dot }}
+                <div style="flex:1; min-width:0;">
+                  <div style="font-size:13px; color:var(--text-secondary); line-height:1.4;">{{ ev.label }}</div>
+                  <div style="font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); margin-top:2px;">{{ ev.time }} · {{ ev.kind }}</div>
+                </div>
+                {{ ev.amountEl }}
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <section style="padding:22px; border-radius:var(--radius-lg); background:var(--grad-glass), var(--bg-glass); border:1px solid var(--line); box-shadow:var(--shadow-card); display:flex; flex-direction:column; gap:16px;">
+          <div>
+            <div style="font-family:var(--font-display); font-size:16px; font-weight:700; letter-spacing:-0.02em; color:var(--text-primary); margin-bottom:14px;">{{ dcaTitle }}</div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <sc-for list="{{ tranches }}" as="tr" hint-placeholder-count="3">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; border-radius:var(--radius-md); border:1px solid var(--line-faint); background:rgba(255,255,255,0.015);">
+                  <span style="font-size:13px; color:var(--text-secondary);">{{ tr.name }}</span>
+                  <x-import component-from-global-scope="NADIRDesignSystem_54e725.StatusChip" tone="{{ tr.tone }}" size="sm" hint-size="70px,22px">{{ tr.state }}</x-import>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:11px; padding:13px; border-radius:var(--radius-md); background:rgba(52,211,153,0.08); border:1px solid rgba(52,211,153,0.24);">
+            <span style="width:8px; height:8px; border-radius:50%; background:var(--live); box-shadow:0 0 8px var(--live);"></span>
+            <span style="font-size:12.5px; color:var(--text-secondary);">{{ alertsNote }}</span>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <x-import component-from-global-scope="NADIRDesignSystem_54e725.Modal" open="{{ inviteOpen }}" on-close="{{ closeInvite }}" eyebrow="{{ inviteEyebrow }}" title="{{ inviteTitle }}" hint-size="0,0">
+    <p style="font-size:14px; color:var(--text-secondary); line-height:1.6; margin:0 0 16px;">{{ inviteBody }}</p>
+    <x-import component-from-global-scope="NADIRDesignSystem_54e725.Input" label="{{ inviteEmailLabel }}" placeholder="member@fund.com" hint-size="100%,72px"></x-import>
+    <div style="margin-top:16px;">
+      <x-import component-from-global-scope="NADIRDesignSystem_54e725.Button" variant="primary" size="lg" full-width="{{ true }}" on-click="{{ closeInvite }}" hint-size="100%,56px">{{ inviteSend }}</x-import>
+    </div>
+  </x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:960},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;pl&quot;,&quot;en&quot;],&quot;default&quot;:&quot;pl&quot;,&quot;tsType&quot;:&quot;'pl'|'en'&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;score&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:72,&quot;min&quot;:0,&quot;max&quot;:100,&quot;step&quot;:1,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Bottom Score&quot;}}">
+class Component extends DCLogic {
+  state = { invite: false };
+  L(pl, en) { return (this.props.lang === 'en') ? en : pl; }
+  verdict(s) {
+    if (s >= 78) return { tone: 'ice',     pl: 'Agresywna akumulacja', en: 'Aggressive accumulation' };
+    if (s >= 55) return { tone: 'emerald', pl: 'Strefa akumulacji',     en: 'Accumulation zone' };
+    if (s >= 30) return { tone: 'amber',   pl: 'Obserwuj',              en: 'Observe' };
+    return            { tone: 'slate',   pl: 'Za wcześnie',           en: 'Too early' };
+  }
+  spark(seed, dir) {
+    const out = []; let v = 48 + ((seed * 13) % 22);
+    for (let i = 0; i < 9; i++) { v += dir * (((i + seed) % 4) + 1) - 1.5 + ((seed * (i + 1)) % 3); out.push(Math.round(Math.max(6, Math.min(94, v)))); }
+    return out;
+  }
+  renderVals() {
+    const L = (pl, en) => this.L(pl, en);
+    const h = React.createElement;
+    const score = Math.round(this.props.score ?? 72);
+    const v = this.verdict(score);
+
+    const raw = [
+      { c: 'var(--category-core)',         pl: 'MVRV Z-Score',        en: 'MVRV Z-Score',        val: '-0.12', contrib: 9, dir: -1 },
+      { c: 'var(--category-core)',         pl: 'NUPL',                en: 'NUPL',                val: '-0.08', contrib: 8, dir: -1 },
+      { c: 'var(--category-core)',         pl: 'Cena do 200WMA',      en: 'Price to 200WMA',     val: '0.94', contrib: 7, dir: -1 },
+      { c: 'var(--category-confirmation)', pl: 'LTH SOPR',            en: 'LTH SOPR',            val: '0.97', contrib: 6, dir: 1 },
+      { c: 'var(--category-confirmation)', pl: 'Pi Cycle Bottom',     en: 'Pi Cycle Bottom',     val: '82d',  contrib: 5, dir: 1 },
+      { c: 'var(--category-auxiliary)',    pl: 'Fear & Greed',        en: 'Fear & Greed',        val: '27',   contrib: 6, dir: -1 },
+      { c: 'var(--category-auxiliary)',    pl: 'Bilans ETF',          en: 'ETF balance',         val: '+412M',contrib: 7, dir: 1 },
+      { c: 'var(--category-macro)',        pl: 'Płynność netto USD',  en: 'USD net liquidity',   val: '+1.2%',contrib: 4, dir: 1 },
+      { c: 'var(--category-fundament)',    pl: 'Drawdown od ATH',     en: 'Drawdown from ATH',   val: '-58%', contrib: 8, dir: -1 },
+    ];
+    const inds = raw.map((x, i) => ({
+      name: L(x.pl, x.en), val: x.val, contrib: x.contrib + '/10', spark: this.spark(i + 2, x.dir), color: x.c,
+      dot: h('span', { style: { width: 8, height: 8, borderRadius: 2, flexShrink: 0, background: x.c } }),
+      bar: h('div', { style: { height: '100%', borderRadius: 9999, width: (x.contrib * 10) + '%', background: x.c } }),
+    }));
+
+    const phaseNames = [
+      { pl: 'Dystrybucja', en: 'Distribution' }, { pl: 'Spadek', en: 'Decline' },
+      { pl: 'Kapitulacja', en: 'Capitulation' }, { pl: 'Akumulacja', en: 'Accumulation' },
+      { pl: 'Wzrost', en: 'Markup' },
+    ];
+    const cur = 3;
+    const phases = phaseNames.map((p, i) => {
+      const on = i === cur;
+      const c = on ? 'var(--signal-accumulate)' : (i < cur ? 'var(--text-muted)' : 'var(--text-faint)');
+      return {
+        dot: h('span', { style: { width: 11, height: 11, borderRadius: '50%', flexShrink: 0, background: c, boxShadow: on ? '0 0 10px var(--signal-accumulate-glow)' : 'none' } }),
+        label: h('span', { style: { fontSize: 13, fontWeight: on ? 700 : 500, color: on ? 'var(--text-primary)' : 'var(--text-muted)', minWidth: 130 } }, L(p.pl, p.en)),
+      };
+    });
+
+    const ev = [
+      { color: 'var(--flow-in)', amount: '+1,250', pl: '1 250 BTC → zimny portfel', en: '1,250 BTC → cold storage', time: '2h', kpl: 'Wieloryb', ken: 'Whale' },
+      { color: 'var(--flow-in)', amount: '+$210M', pl: 'IBIT napływ +210 mln USD',  en: 'IBIT inflow +$210M',       time: '5h', kpl: 'ETF', ken: 'ETF' },
+      { color: 'var(--flow-in)', amount: '+3,400', pl: 'Odpływ z giełd 3 400 BTC',  en: 'Exchange outflow 3,400 BTC',time: '9h', kpl: 'Wieloryb', ken: 'Whale' },
+      { color: 'var(--flow-in)', amount: '+$412M', pl: 'Netto spot ETF +412 mln',   en: 'Net spot ETF +$412M',      time: '1d', kpl: 'ETF', ken: 'ETF' },
+    ];
+    const events = ev.map((e) => ({
+      label: L(e.pl, e.en), time: e.time, kind: L(e.kpl, e.ken),
+      dot: h('span', { style: { marginTop: 4, width: 8, height: 8, borderRadius: '50%', flexShrink: 0, background: e.color, boxShadow: '0 0 8px ' + e.color } }),
+      amountEl: h('span', { style: { fontFamily: 'var(--font-mono)', fontSize: 12.5, fontWeight: 700, color: e.color, whiteSpace: 'nowrap' } }, e.amount),
+    }));
+
+    const tr = [
+      { pl: 'Transza 1 · 55–65', en: 'Tranche 1 · 55–65', tone: 'emerald', spl: 'Wykonana', sen: 'Filled' },
+      { pl: 'Transza 2 · 66–77', en: 'Tranche 2 · 66–77', tone: 'ice',     spl: 'Aktywna', sen: 'Active' },
+      { pl: 'Transza 3 · 78+',   en: 'Tranche 3 · 78+',   tone: 'slate',   spl: 'Oczekuje', sen: 'Pending' },
+    ];
+    const tranches = tr.map((t) => ({ name: L(t.pl, t.en), tone: t.tone, state: L(t.spl, t.sen) }));
+
+    return {
+      lang: this.props.lang || 'pl', score, ranges: ['24H', '7D', '30D', '1Y'],
+      navOverview: L('Przegląd', 'Overview'), navStrategy: L('Strategia dna BTC', 'BTC Bottom Strategy'),
+      navIndicators: L('Wskaźniki i sygnały', 'Indicators & Signals'), navWhales: L('Wieloryby i ETF', 'Whales & ETF Flows'),
+      navHistory: L('Historia i cykle', 'History & Cycles'), navAlerts: L('Alerty · Telegram', 'Alerts · Telegram'),
+      navSettings: L('Ustawienia · Konto', 'Settings · Account'),
+      planLabel: L('Plan', 'Plan'), planNote: L('Pełny terminal odblokowany.', 'Full terminal unlocked.'),
+      pageEyebrow: L('Terminal · konfluencja sygnałów', 'Terminal · signal confluence'), pageTitle: L('Przegląd', 'Overview'),
+      freshLabel: L('System świeży', 'System fresh'), inviteBtn: L('Zaproś członka', 'Invite member'),
+      scoreLabel: 'Bottom Score', verdictLabel: L(v.pl, v.en), verdictTone: v.tone, windowState: L('Okno otwarte', 'Window open'),
+      verdictNote: L('Bottom Score w paśmie DCA. Konfluencja on-chain, cyklu i makro potwierdza strefę akumulacji.',
+                     'Bottom Score within the DCA band. On-chain, cycle and macro confluence confirms the accumulation zone.'),
+      btcSpot: '$61,480', btcChange: '−2.1% · 24h', drawdownLabel: L('Drawdown ATH', 'Drawdown ATH'), drawdown: '−58.2%',
+      confidence: '0.86', gmult: '1.4×',
+      priceTitle: L('Cena BTC', 'BTC price'), sentimentTitle: L('Sentyment i prawdopodobieństwo', 'Sentiment & probability'),
+      fearGreed: 27, fgLabel: L('Strach i chciwość', 'Fear & Greed'),
+      fgSegments: [{ to: 25, color: 'var(--sentiment-fear)' }, { to: 55, color: 'var(--sentiment-neutral)' }, { to: 100, color: 'var(--sentiment-greed)' }],
+      probLabel: L('Prawdopod. dna', 'Bottom prob.'),
+      priceSeries: [69, 67, 66, 64, 62, 63, 60, 59, 57, 58, 56, 55, 57, 56, 58, 61],
+      confluenceTitle: L('Konfluencja 21 wskaźników', '21-indicator confluence'),
+      confluenceSub: L('Wagi, wkłady i sparklines · widok skrócony', 'Weights, contributions & sparklines · condensed view'),
+      inds, cycleTitle: L('Faza cyklu', 'Cycle phase'), phases,
+      eventsTitle: L('Wieloryby i przepływy ETF', 'Whales & ETF flows'), events,
+      dcaTitle: L('Plan transz DCA', 'DCA tranche plan'), tranches,
+      alertsNote: L('Alerty Telegram aktywne · co 60 min', 'Telegram alerts active · every 60 min'),
+      inviteOpen: this.state.invite, openInvite: () => this.setState({ invite: true }), closeInvite: () => this.setState({ invite: false }),
+      inviteEyebrow: L('Dostęp na zaproszenie', 'Invite-only access'), inviteTitle: L('Zaproś nowego członka', 'Invite a new member'),
+      inviteBody: L('Wyślemy jednorazowy link rejestracyjny. Zaproszenia są limitowane.', 'We will send a one-time registration link. Invites are limited.'),
+      inviteEmailLabel: L('E-mail członka', 'Member email'), inviteSend: L('Wyślij zaproszenie', 'Send invite'),
+    };
+  }
+}
+</script>
+</body>
+</html>

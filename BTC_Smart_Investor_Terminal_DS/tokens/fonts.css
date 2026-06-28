@@ -1,0 +1,9 @@
+/* ============================================================
+   NADIR — Webfonts
+   Display  : Bricolage Grotesque  (characterful editorial grotesque)
+   Sans/UI  : Hanken Grotesk       (clean, warm, neutral body)
+   Mono     : JetBrains Mono       (data, labels, eyebrows — kept from the terminal)
+   NOTE: Upgraded from the app's Inter at the brand owner's request.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Hanken+Grotesk:ital,wght@0,400..800;1,400..600&family=JetBrains+Mono:wght@400;500;600;700&display=swap');

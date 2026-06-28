@@ -1,0 +1,56 @@
+<!-- @dsCard group="Components" viewport="760x320" name="Charts" subtitle="Sparkline · Gauge (sentiment + probability)" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../styles.css" />
+<style>
+  body { background: var(--abyss); padding: 26px; font-family: var(--font-sans); }
+  .cap { font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 12px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 16px; align-items: start; }
+  .tile { padding: 16px; border:1px solid var(--line); border-radius: var(--radius-lg); background: var(--grad-glass), var(--bg-glass); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel">
+  const { Sparkline, Gauge } = window.NADIRDesignSystem_54e725;
+  const price = [64,62,60,58,55,53,51,52,49,47,48,46,45,47];
+  const up = [3,4,4.6,5,6.2,7,6.6,7.8,8.4,9];
+  function Demo() {
+    return (
+      <div>
+        <div className="cap">Sparkline · Gauge</div>
+        <div className="grid">
+          <div className="tile">
+            <div style={{ fontFamily:'var(--font-mono)', fontSize:11, color:'var(--text-secondary)', marginBottom:10 }}>BTC · 30D</div>
+            <div style={{ fontFamily:'var(--font-mono)', fontSize:22, fontWeight:700, color:'var(--text-primary)', marginBottom:10 }}>$61,480</div>
+            <Sparkline data={price} color="var(--ice-400)" height={48} />
+          </div>
+          <div className="tile">
+            <div style={{ fontFamily:'var(--font-mono)', fontSize:11, color:'var(--text-secondary)', marginBottom:10 }}>ETF flow</div>
+            <div style={{ fontFamily:'var(--font-mono)', fontSize:22, fontWeight:700, color:'var(--success)', marginBottom:10 }}>+412M</div>
+            <Sparkline data={up} color="var(--success)" height={48} markers />
+          </div>
+          <div className="tile" style={{ display:'grid', placeItems:'center' }}>
+            <Gauge value={27} label="Fear & Greed" segments={[
+              { to: 25, color: 'var(--sentiment-fear)' },
+              { to: 55, color: 'var(--sentiment-neutral)' },
+              { to: 100, color: 'var(--sentiment-greed)' },
+            ]} />
+          </div>
+          <div className="tile" style={{ display:'grid', placeItems:'center' }}>
+            <Gauge value={72} label="Bottom probability" unit="%" color="var(--metric-probability)" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+</script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BTC Smart Investor Terminal — Prototyp</title>
+<link rel="icon" href="../assets/favicon-dark.png" />
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    min-height: 100vh;
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+    background-color: var(--abyss);
+    background-image:
+      linear-gradient(rgba(218,231,255,0.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(218,231,255,0.022) 1px, transparent 1px),
+      radial-gradient(120% 70% at 50% -8%, rgba(103,232,249,0.10), transparent 46%),
+      var(--grad-abyss);
+    background-size: 58px 58px, 58px 58px, 100% 100%, 100% 100%;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 72px 28px 88px; }
+
+  /* sonar arcs behind the masthead */
+  .stage { position: relative; }
+  .arc { position: absolute; left: 50%; top: -40px; transform: translateX(-50%); border-radius: 50%; border: 1px solid var(--line-ice); opacity: 0.16; pointer-events: none; }
+
+  /* ---- Masthead ---- */
+  .mast { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; }
+  .mark-row { display: flex; align-items: center; gap: 14px; }
+  .orb { width: 52px; height: 52px; border-radius: 50%; overflow: hidden; border: 1px solid var(--line-gold); box-shadow: var(--shadow-raise, 0 10px 30px rgba(0,0,0,0.4)), 0 0 26px var(--gold-glow); flex-shrink: 0; }
+  .orb img { width: 100%; height: 100%; object-fit: cover; }
+  .wordmark { text-align: left; line-height: 1; }
+  .wordmark .l1 { font-family: var(--font-display); font-size: 26px; font-weight: 800; letter-spacing: -0.03em; color: var(--text-primary); }
+  .wordmark .l2 { font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: 0.34em; text-transform: uppercase; color: var(--text-muted); margin-top: 5px; }
+
+  .eyebrow { display: inline-flex; align-items: center; gap: 9px; font-family: var(--font-mono); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ice-400); }
+  .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ice-400); box-shadow: 0 0 10px var(--ice-glow); }
+
+  .lede { max-width: 600px; font-size: 1.05rem; line-height: 1.62; color: var(--text-secondary); margin: 0; }
+  .lede b { color: var(--text-primary); font-weight: 600; }
+
+  .meta { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; padding: 7px 13px; border-radius: var(--radius-pill, 999px); border: 1px solid var(--line); background: var(--bg-glass); font-size: 12.5px; color: var(--text-secondary); }
+  .pill .sw { width: 7px; height: 7px; border-radius: 50%; }
+
+  /* ---- Section label ---- */
+  .seclabel { display: flex; align-items: center; gap: 14px; margin: 56px 2px 20px; }
+  .seclabel .t { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted); white-space: nowrap; }
+  .seclabel .ln { flex: 1; height: 1px; background: var(--line); }
+
+  /* ---- Cards ---- */
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .card { position: relative; display: flex; flex-direction: column; min-height: 210px; padding: 24px; border-radius: var(--radius-lg, 16px); border: 1px solid var(--line); background: var(--grad-glass, linear-gradient(180deg, rgba(255,255,255,0.02), transparent)), var(--bg-glass); text-decoration: none; color: inherit; overflow: hidden; transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease; }
+  .card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 2px; background: var(--accent-bar, var(--ice-400)); opacity: 0.8; }
+  .card:hover { transform: translateY(-4px); border-color: var(--line-strong); box-shadow: 0 20px 50px rgba(0,0,0,0.45); }
+  .card .num { font-family: var(--font-mono); font-size: 12px; color: var(--text-faint); letter-spacing: 0.1em; }
+  .card .top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .chip { font-family: var(--font-mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 9px; border-radius: 6px; white-space: nowrap; }
+  .chip.ice { color: var(--ice-200); background: rgba(103,232,249,0.10); border: 1px solid var(--line-ice); }
+  .chip.gold { color: var(--gold-200); background: rgba(247,199,107,0.10); border: 1px solid var(--line-gold); }
+  .chip.neutral { color: var(--text-secondary); background: rgba(218,231,255,0.05); border: 1px solid var(--line); }
+  .card h3 { font-family: var(--font-display); font-size: 22px; font-weight: 800; letter-spacing: -0.025em; margin: 18px 0 0; color: var(--text-primary); }
+  .card .sub { font-size: 13.5px; line-height: 1.5; color: var(--text-secondary); margin: 8px 0 0; }
+  .card .sub .en { color: var(--text-muted); }
+  .card .go { margin-top: auto; padding-top: 18px; display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-bar, var(--ice-400)); }
+  .card .go .ar { transition: transform 160ms ease; }
+  .card:hover .go .ar { transform: translateX(4px); }
+
+  .card.gold { --accent-bar: var(--gold-300); }
+
+  /* ---- System / handoff row ---- */
+  .sysgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .syscard { display: flex; align-items: center; gap: 16px; padding: 20px 22px; border-radius: var(--radius-lg, 16px); border: 1px solid var(--line); background: var(--bg-glass); text-decoration: none; color: inherit; transition: border-color 160ms ease, transform 160ms ease; }
+  .syscard:hover { border-color: var(--line-strong); transform: translateY(-2px); }
+  .syscard .ic { width: 42px; height: 42px; border-radius: 10px; display: grid; place-items: center; background: rgba(218,231,255,0.04); border: 1px solid var(--line); font-family: var(--font-mono); font-size: 17px; color: var(--ice-300); flex-shrink: 0; }
+  .syscard .tt { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--text-primary); }
+  .syscard .ds { font-size: 12.5px; color: var(--text-muted); margin-top: 3px; }
+
+  .foot { margin-top: 56px; padding-top: 22px; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .foot p { margin: 0; font-family: var(--font-mono); font-size: 11px; line-height: 1.6; color: var(--text-faint); max-width: 560px; }
+  .foot .tag { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); letter-spacing: 0.08em; }
+
+  @media (max-width: 720px) {
+    .grid, .sysgrid { grid-template-columns: 1fr; }
+    .wrap { padding: 52px 20px 64px; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .mast, .card, .syscard { animation: rise 620ms cubic-bezier(0.22,0.61,0.36,1) both; }
+    .card:nth-child(2) { animation-delay: 60ms; }
+    .card:nth-child(3) { animation-delay: 120ms; }
+    .card:nth-child(4) { animation-delay: 180ms; }
+    @keyframes rise { from { transform: translateY(16px); } to { transform: none; } }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="stage">
+    <div class="arc" style="width:560px;height:560px;"></div>
+    <div class="arc" style="width:360px;height:360px;top:0;opacity:0.12;"></div>
+
+    <header class="mast">
+      <div class="mark-row">
+        <div class="orb"><img src="../assets/orb.png" alt="" /></div>
+        <div class="wordmark">
+          <div class="l1">BTC Smart Investor</div>
+          <div class="l2">Terminal</div>
+        </div>
+      </div>
+      <div class="eyebrow"><span class="dot"></span>Prototyp projektu · dostęp na zaproszenie</div>
+      <p class="lede">Zamknięty terminal do <b>inteligentnego śledzenia dna BTC</b> oraz pełnej analityki dla zaangażowanych inwestorów. Poniżej wszystkie widoki prototypu i pakiet przekazania.</p>
+      <div class="meta">
+        <span class="pill"><span class="sw" style="background:var(--ice-400);box-shadow:0 0 8px var(--ice-glow);"></span>PL / EN — przełącznik w&nbsp;każdym widoku</span>
+        <span class="pill"><span class="sw" style="background:var(--gold-300);box-shadow:0 0 8px var(--gold-glow);"></span>Tweaks: język + Bottom Score na&nbsp;żywo</span>
+      </div>
+    </header>
+  </div>
+
+  <div class="seclabel"><span class="t">Widoki · Screens</span><span class="ln"></span></div>
+
+  <div class="grid">
+    <a class="card" href="../templates/landing/index.html">
+      <div class="top"><span class="num">01</span><span class="chip neutral">Marketing</span></div>
+      <h3>Landing Page</h3>
+      <p class="sub">Strona produktu: strategia, rodziny sygnałów, plany, zaufanie, FAQ. <span class="en">— Full invite-only marketing site.</span></p>
+      <span class="go">Otwórz <span class="ar">→</span></span>
+    </a>
+
+    <a class="card" href="../templates/dashboard-smart/DashboardSmart.dc.html">
+      <div class="top"><span class="num">02</span><span class="chip ice">Smart · gated</span></div>
+      <h3>Smart Dashboard</h3>
+      <p class="sub">Status dna BTC + meta-informacje. Pełna siatka, wieloryby i DCA zablokowane. <span class="en">— Surface-level, locked panels.</span></p>
+      <span class="go">Otwórz <span class="ar">→</span></span>
+    </a>
+
+    <a class="card gold" href="../templates/dashboard-investor/DashboardInvestor.dc.html">
+      <div class="top"><span class="num">03</span><span class="chip gold">Investor · full</span></div>
+      <h3>Investor Dashboard</h3>
+      <p class="sub">Pełny terminal: konfluencja 21 wskaźników, sentyment, cykl, wieloryby/ETF, DCA. <span class="en">— The complete terminal.</span></p>
+      <span class="go">Otwórz <span class="ar">→</span></span>
+    </a>
+
+    <a class="card" href="../templates/invite-gate/InviteGate.dc.html">
+      <div class="top"><span class="num">04</span><span class="chip neutral">Access wall</span></div>
+      <h3>Invite Gate</h3>
+      <p class="sub">Ekran dostępu na zaproszenie: kod wejścia lub prośba o zaproszenie. <span class="en">— Closed-portal gate.</span></p>
+      <span class="go">Otwórz <span class="ar">→</span></span>
+    </a>
+  </div>
+
+  <div class="seclabel"><span class="t">System · Handoff</span><span class="ln"></span></div>
+
+  <div class="sysgrid">
+    <a class="syscard" href="../DESIGN.md">
+      <div class="ic">§</div>
+      <div>
+        <div class="tt">DESIGN.md — pakiet przekazania</div>
+        <div class="ds">Tokeny, komponenty, wzorce układu, stany, mapa ekranów · dla Claude Code / Codex / Gemini</div>
+      </div>
+    </a>
+    <a class="syscard" href="../readme.md">
+      <div class="ic">◆</div>
+      <div>
+        <div class="tt">Design System — przegląd</div>
+        <div class="ds">17 komponentów · 160 tokenów · marka, typografia, siatka</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="foot">
+    <p>Narzędzie edukacyjne i informacyjne — nie stanowi porady inwestycyjnej. Dostęp wyłącznie na zaproszenie; brak darmowej rejestracji. / Educational tool, not financial advice. Invite-only; no free signup.</p>
+    <span class="tag">BTC SMART INVESTOR TERMINAL · v2</span>
+  </div>
+</div>
+</body>
+</html>

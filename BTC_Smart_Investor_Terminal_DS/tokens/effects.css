@@ -1,0 +1,38 @@
+/* ============================================================
+   NADIR — Effects: shadows, glows, blur, gradients, motion
+   The "depth / sonar" signature lives here.
+   ============================================================ */
+
+:root {
+  /* ---- Elevation shadows (dark UI: soft + inner top light) ---- */
+  --shadow-xs:    0 1px 0 rgba(255,255,255,0.04) inset;
+  --shadow-card:  0 18px 55px rgba(0,0,0,0.34), 0 1px 0 rgba(255,255,255,0.04) inset;
+  --shadow-raise: 0 28px 70px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.05) inset;
+  --shadow-layer: 0 1px 0 rgba(255,255,255,0.05) inset, 0 -1px 0 rgba(0,0,0,0.35) inset;
+
+  /* ---- Glows (signal) ---- */
+  --glow-ice:   0 0 32px rgba(103,232,249,0.18);
+  --glow-ice-strong: 0 0 48px rgba(103,232,249,0.30);
+  --glow-gold:  0 0 30px rgba(247,199,107,0.18);
+
+  /* ---- Blur (glass) ---- */
+  --blur-glass: 20px; /* @kind other */
+
+  /* ---- Signature gradients ---- */
+  --grad-abyss:   linear-gradient(180deg, #080B11 0%, #06080C 45%, #04060A 100%); /* @kind other */
+  --grad-ice-cta: linear-gradient(180deg, #8df0fb 0%, #67E8F9 48%, #22C3DE 100%); /* @kind other */
+  --grad-gold-cta:linear-gradient(180deg, #FFE3A8 0%, #F7C76B 46%, #F4B43C 100%); /* @kind other */
+  --grad-glass:   linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01)); /* @kind other */
+  --grad-depth:   radial-gradient(120% 90% at 50% -10%, rgba(103,232,249,0.10), transparent 46%); /* @kind other */
+  --grad-heat:    radial-gradient(90% 80% at 50% 0%, rgba(247,199,107,0.10), transparent 50%); /* @kind other */
+
+  /* ---- Texture: sonar grid + topographic ---- */
+  --grid-line: rgba(255,255,255,0.026); /* @kind color */
+
+  /* ---- Motion ---- */
+  --ease-out:    cubic-bezier(0.2, 0.8, 0.2, 1); /* @kind other */
+  --ease-emph:   cubic-bezier(0.2, 0.75, 0.25, 1); /* @kind other */
+  --dur-fast:    0.16s; /* @kind other */
+  --dur:         0.24s; /* @kind other */
+  --dur-slow:    0.6s; /* @kind other */
+}

@@ -1,0 +1,35 @@
+<!-- @dsCard group="Colors" viewport="700x210" name="Verdict Thermometer" subtitle="Contrarian: the coldest read is the deepest bottom" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  body { background: var(--abyss); padding: 22px; font-family: var(--font-sans); }
+  .bar { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+  .cell { height: 96px; border-radius: var(--radius-md); padding: 12px; display: flex; flex-direction: column;
+          justify-content: space-between; border: 1px solid var(--line); position: relative; }
+  .lab { font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+  .val { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--text-primary); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .meta { margin-top: 14px; font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); letter-spacing:.04em; }
+</style>
+</head>
+<body>
+  <div class="bar">
+    <div class="cell" style="background: rgba(107,114,128,.1);">
+      <div class="dot" style="background: var(--signal-too-early); box-shadow: 0 0 12px var(--signal-too-early-glow);"></div>
+      <div><div class="val">0–29</div><div class="lab" style="color: var(--signal-too-early);">Za wcześnie</div></div></div>
+    <div class="cell" style="background: rgba(245,158,11,.08);">
+      <div class="dot" style="background: var(--signal-observe); box-shadow: 0 0 12px var(--signal-observe-glow);"></div>
+      <div><div class="val">30–54</div><div class="lab" style="color: var(--signal-observe);">Obserwuj</div></div></div>
+    <div class="cell" style="background: rgba(16,185,129,.08);">
+      <div class="dot" style="background: var(--signal-accumulate); box-shadow: 0 0 12px var(--signal-accumulate-glow);"></div>
+      <div><div class="val">55–77</div><div class="lab" style="color: var(--signal-accumulate);">Akumulacja DCA</div></div></div>
+    <div class="cell" style="background: rgba(6,182,212,.1);">
+      <div class="dot" style="background: var(--signal-aggressive); box-shadow: 0 0 14px var(--signal-aggressive-glow);"></div>
+      <div><div class="val">78–100</div><div class="lab" style="color: var(--signal-aggressive);">Agresywna</div></div></div>
+  </div>
+  <div class="meta">BOTTOM SCORE · zimny sygnał = głębszy dołek = większa okazja</div>
+</body>
+</html>
