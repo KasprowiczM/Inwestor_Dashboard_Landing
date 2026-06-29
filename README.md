@@ -22,17 +22,15 @@ Główny portal **BTC Bottom Dashboard** to zaawansowane narzędzie dla inwestor
 Projekt jest przygotowany pod nowoczesne technologie webowe:
 *   **Framework:** React + Vite.
 *   **Stylizacja:** Vanilla CSS / TailwindCSS (zapewniające płynne animacje, glassmorphism i elegancki Dark Mode).
-*   **Integracja:** Linkowanie do głównego dashboardu, formularza zaproszenia i docelowo bezpieczny odczyt publicznego snapshotu.
+*   **Integracja:** Linkowanie do głównego dashboardu i formularza zaproszenia. Landing nie odpytuje API dashboardu o bieżące dane.
 
 ---
 
 ## 🔌 Integracja z Głównym Dashboardem
 
-Landing page powinien korzystać wyłącznie z bezpiecznego, zredagowanego endpointu publicznego:
+Landing page nie pobiera bieżących danych z głównego dashboardu. Hero pokazuje wyłącznie historyczny, poglądowy przykład z okolic dna cyklu 2022, żeby wyjaśnić skalę Bottom Score bez sugerowania aktualnego sygnału.
 
-*   **Snapshot:** `https://btc-dash.64bit.site/api/snapshot`
-*   **Publiczny zakres danych:** `bottomScore`, `verdictLabel`, `currentPrice`, `drawdownPct`
-*   **Zasada:** nie ujawniać wag, progów, wkładów, listy dostawców danych ani szczegółowej metodologii.
+**Zasada:** nie ujawniać wag, progów, wkładów, listy dostawców danych ani szczegółowej metodologii.
 
 Przejścia do produktu prowadzą do:
 *   **Dashboard:** `https://btc-dash.64bit.site`
@@ -52,12 +50,16 @@ Przełącznik waluty w sekcji planów przygotowuje UI pod późniejsze podłącz
 Ostatni etap zmian landing page:
 
 *   Hero ma mniejszy nagłówek, zbliżony skalą do tytułów sekcji, oraz niższe CTA.
-*   Hasło hero brzmi: „Znajdź dołek. Jak wytrawni inwestorzy.”
+*   Hasło hero brzmi: „Znajdź dołek. Z przewagą analityczną.”
+*   Hero używa danych poglądowych z 2022 roku; nie pokazuje i nie pobiera aktualnych danych rynkowych.
 *   Sekcje mają ciaśniejszy pionowy rytm.
 *   Karta konfluencji nie pokazuje liczby źródeł danych, tylko 21 wskaźników w modelu.
 *   Metodologia mówi o kalibracji na dołkach 2018/2022 i uwzględnieniu ery ETF.
 *   Sekcja zaufania nie zawiera testimoniali, gwiazdek ani nazw dostawców danych.
 *   Stopka ma disclaimer w osobnej, czytelniejszej kolumnie.
+*   Dodano podstrony: `/slownik-wskaznikow`, `/telegram`, `/zastrzezenia`, `/prywatnosc`, `/regulamin`.
+*   Landing ma `robots.txt`, `sitemap.xml`, `llms.txt`, canonical, Open Graph, Twitter tags i JSON-LD.
+*   Vercel ma jawne rewrites dla podstron SPA.
 
 ---
 

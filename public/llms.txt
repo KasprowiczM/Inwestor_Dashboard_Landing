@@ -1,0 +1,23 @@
+# BTC Smart Investor Terminal
+
+BTC Smart Investor Terminal is an invite-only analytical terminal for long-term Bitcoin investors. It converts 21 cycle, market, sentiment and macro indicators into a single Bottom Score that helps users evaluate whether BTC is approaching an accumulation-zone regime.
+
+Primary language: Polish. Secondary language: English.
+
+Official landing page: https://btc-invest.64bit.site
+Product dashboard: https://btc-dash.64bit.site
+Data controller: ITCS sp. z o.o., ul. Karola Libelta 1A/2, 61-706 Poznań, Poland. Contact: itcs@itcs.eu.
+
+Important limitations:
+- The product is educational and informational only.
+- It is not investment advice, financial advice, tax advice or a recommendation to buy, sell or hold Bitcoin or any other asset.
+- Historical cycles, Bottom Score, alerts and indicators do not guarantee future performance.
+- Users remain fully responsible for their own investment decisions and risk management.
+
+Key public pages:
+- / - product overview, plans and invite request
+- /slownik-wskaznikow - public glossary of 21 indicators without weights or thresholds
+- /telegram - Telegram alert setup for Investor users
+- /zastrzezenia - investment disclaimer
+- /prywatnosc - privacy and GDPR information
+- /regulamin - terms of use

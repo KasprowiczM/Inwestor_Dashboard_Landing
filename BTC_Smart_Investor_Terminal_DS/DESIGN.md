@@ -118,7 +118,7 @@ All under `window.NADIRDesignSystem_54e725`. Props show the meaningful variants;
 - **Hero verdict** (both plans): `ScoreRing` + verdict (`StatusChip`) + `VerdictScale` + a row of `KpiStat`.
 
 ### Landing sections (in order)
-Nav → Hero → HowItWorks (strategy) → Families (7 signal families) → ProductPreview (live dashboard mock) → Methodology (21 indicators, Investor-detail) → Pricing (Smart vs Investor, invite-only) → Trust (backtesting/authority, no unrealistic claims) → FAQ (collapse/expand) → RequestInvite → Footer.
+Nav → Hero → HowItWorks (strategy) → Families (7 signal areas) → ProductPreview (dashboard mock) → Methodology (21 indicators, Investor-detail) → Pricing (Smart vs Investor, invite-only) → Trust (backtesting/authority, no unrealistic claims) → FAQ (collapse/expand) → RequestInvite → Footer. Footer links also expose content/legal pages: indicator glossary, Telegram setup, disclaimer, privacy/GDPR and terms.
 
 ### Invite gate
 Centered column on sonar-arc backdrop: orb → `BrandLockup` → eyebrow → headline → `Input` (code) + primary Enter → divider → “no code?” + gold Request invite → tier chips → disclaimer.
@@ -136,7 +136,7 @@ Centered column on sonar-arc backdrop: orb → `BrandLockup` → eyebrow → hea
 - **Empty:** muted icon + one line + a single action (e.g. “No invite yet → Request invite”).
 - **Error:** `--danger` hairline + short mono message + retry; never block the whole shell — degrade per-card.
 - **Gated / invite-only (signature):** `LockOverlay` blurs a real teaser and overlays a lock + “Investor only” + gold upgrade CTA (`onUpgrade`). Locked nav items are muted with a “PRO” tag. Access wall = `templates/invite-gate`.
-- **Live data:** `Badge tone="live"` + pulsing dot; stale → amber; missing → red.
+- **Data state:** authenticated dashboard surfaces may use `Badge tone="live"` + pulsing dot; stale → amber; missing → red. The public landing page does not fetch current dashboard data and should label market numbers as historical/illustrative examples.
 
 ---
 
