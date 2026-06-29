@@ -141,8 +141,8 @@ const STEPS = [
     n: '01',
     plT: 'Konfluencja, nie pojedynczy sygnał',
     enT: 'Confluence, not a single signal',
-    plD: '21 wskaźników on-chain, cyklicznych, sentymentu i makro — odświeżanych trzy razy dziennie z kontrolą jakości danych.',
-    enD: '21 on-chain, cycle, sentiment and macro indicators — refreshed three times a day with data-quality checks.',
+    plD: '24 wskaźniki on-chain, cykliczne, sentymentu i makro — odświeżane trzy razy dziennie z kontrolą jakości danych.',
+    enD: '24 on-chain, cycle, sentiment and macro indicators — refreshed three times a day with data-quality checks.',
   },
   {
     n: '02',
@@ -183,10 +183,10 @@ const PLANS = [
     features: [
       { pl: 'Bottom Score na żywo i 5-pasmowy werdykt', en: 'Live Bottom Score & 5-band verdict', on: true },
       { pl: '„Gdzie jesteśmy" w oknie akumulacji', en: '"Where we are" in the accumulation window', on: true },
-      { pl: 'Meta strategii: 21 wskaźników w 7 rodzinach danych', en: 'Strategy meta: 21 indicators across 7 data families', on: true },
+      { pl: 'Meta strategii: 24 wskaźniki w 7 rodzinach danych', en: 'Strategy meta: 24 indicators across 7 data families', on: true },
       { pl: 'Zagregowany indeks sentymentu i momentum', en: 'Aggregated sentiment & momentum index', on: true },
       { pl: 'Wieloryby i ETF — tylko kierunek', en: 'Whales & ETF — direction only', on: true },
-      { pl: 'Pełna siatka 21 wskaźników, wagi i wkłady', en: 'Full 21-indicator grid, weights & contributions', on: false },
+      { pl: 'Pełna siatka 24 wskaźników, wagi i wkłady', en: 'Full 24-indicator grid, weights & contributions', on: false },
       { pl: 'Planer transz DCA i progi wejścia', en: 'DCA tranche planner & entry thresholds', on: false },
       { pl: 'Replay historii, cykle i alerty Telegram', en: 'History replay, cycles & Telegram alerts', on: false },
     ],
@@ -205,7 +205,7 @@ const PLANS = [
     enDesc: 'The whole terminal: on-chain confluence, weights, contributions, DCA plan and alerts. The serious choice for the committed BTC investor.',
     features: [
       { pl: 'Wszystko z planu Smart', en: 'Everything in Smart', on: true },
-      { pl: 'Pełna siatka 21 wskaźników ze sparklines', en: 'Full 21-indicator grid with sparklines', on: true },
+      { pl: 'Pełna siatka 24 wskaźników ze sparklines', en: 'Full 24-indicator grid with sparklines', on: true },
       { pl: 'Wagi, wkłady, progi normalizacji, mnożnik G', en: 'Weights, contributions, thresholds, G-multiplier', on: true },
       { pl: 'Planer transz DCA i strefy wejścia', en: 'DCA tranche planner & entry zones', on: true },
       { pl: 'Pełna oś zdarzeń wielorybów i ETF', en: 'Full whale & ETF event timeline', on: true },
@@ -268,8 +268,8 @@ const ROUTES: Record<RouteKey, { path: string; pl: string; en: string; titlePl: 
     en: 'Home',
     titlePl: 'BTC Smart Investor Terminal | Analiza dołka cyklu Bitcoina',
     titleEn: 'BTC Smart Investor Terminal | Bitcoin cycle-bottom analytics',
-    descPl: 'Invite-only terminal dla inwestora BTC: Bottom Score, konfluencja 21 wskaźników i dyscyplina akumulacji w jednym produkcie.',
-    descEn: 'Invite-only BTC investor terminal: Bottom Score, 21-indicator confluence and accumulation discipline in one product.',
+    descPl: 'Invite-only terminal dla inwestora BTC: Bottom Score, konfluencja 24 wskaźników i dyscyplina akumulacji w jednym produkcie.',
+    descEn: 'Invite-only BTC investor terminal: Bottom Score, 24-indicator confluence and accumulation discipline in one product.',
   },
   glossary: {
     path: '/slownik-wskaznikow',
@@ -277,8 +277,8 @@ const ROUTES: Record<RouteKey, { path: string; pl: string; en: string; titlePl: 
     en: 'Indicator glossary',
     titlePl: 'Słownik wskaźników BTC Smart Investor Terminal',
     titleEn: 'BTC Smart Investor Terminal indicator glossary',
-    descPl: 'Publiczny opis 21 wskaźników używanych do oceny stref akumulacji BTC, bez wag, progów i chronionej metodologii.',
-    descEn: 'A public explanation of the 21 indicators used to evaluate BTC accumulation zones, without weights, thresholds or protected methodology.',
+    descPl: 'Publiczny opis 24 wskaźników używanych do oceny stref akumulacji BTC, bez wag, progów i chronionej metodologii.',
+    descEn: 'A public explanation of the 24 indicators used to evaluate BTC accumulation zones, without weights, thresholds or protected methodology.',
   },
   telegram: {
     path: '/telegram',
@@ -729,8 +729,8 @@ function Hero({ lang }: { lang: Lang }) {
           <p>
             {L(
               lang,
-              'Terminal, który łączy 21 wskaźników cyklu, rynku, sentymentu i makro w jeden Bottom Score — żeby szybciej rozpoznać, czy BTC zbliża się do strefy akumulacji.',
-              'A terminal that turns 21 cycle, market, sentiment and macro indicators into one Bottom Score — so you can recognize when BTC is moving toward an accumulation zone.',
+              'Terminal, który łączy 24 wskaźniki cyklu, rynku, sentymentu i makro w jeden Bottom Score — żeby szybciej rozpoznać, czy BTC zbliża się do strefy akumulacji.',
+              'A terminal that turns 24 cycle, market, sentiment and macro indicators into one Bottom Score — so you can recognize when BTC is moving toward an accumulation zone.',
             )}
           </p>
           <div className="hero-actions">
@@ -743,7 +743,7 @@ function Hero({ lang }: { lang: Lang }) {
           </div>
           <div className="hero-stats">
             {[
-              { v: '21', pl: 'wskaźników w konfluencji', en: 'indicators in confluence' },
+              { v: '24', pl: 'wskaźników w konfluencji', en: 'indicators in confluence' },
               { v: '2018 · 2022', pl: 'cykle backtestowane', en: 'cycles backtested' },
               { v: '3×', pl: 'aktualizacja / dobę', en: 'updates / day' },
             ].map((stat, index) => (
@@ -869,7 +869,7 @@ function Families({ lang }: { lang: Lang }) {
           <div className="family-summary">
             <StatusChip tone="ice" size="sm">{L(lang, 'Konfluencja', 'Confluence')}</StatusChip>
             <div>
-              <strong>21</strong>
+              <strong>24</strong>
               <span>{L(lang, 'wskaźników w modelu', 'model indicators')}</span>
             </div>
             <p>{L(lang, 'Ważone, znormalizowane i sprowadzone do jednego Bottom Score. Bez wzorów po stronie przeglądarki.', 'Weighted, normalized and collapsed into one Bottom Score. No formulas in the browser.')}</p>
@@ -976,7 +976,7 @@ function Methodology({ lang }: { lang: Lang }) {
         <div className="method-top">
           <SectionHead
             eyebrow={L(lang, 'Metodologia', 'Methodology')}
-            title={L(lang, '21 wskaźników. Pięć rodzin. Jeden werdykt.', '21 indicators. Five families. One verdict.')}
+            title={L(lang, '24 wskaźniki. Siedem rodzin. Jeden werdykt.', '24 indicators. Seven families. One verdict.')}
             sub={L(lang, 'Każdy wskaźnik jest znormalizowany, zważony i sprawdzony pod kątem kompletności. Progi kalibrowano na dołkach z 2018 i 2022 roku oraz dostosowano do obecnej ery ETF.', 'Every indicator is normalized, weighted and checked for completeness. Thresholds were calibrated on the 2018 and 2022 cycle bottoms and adapted for the current ETF era.')}
           />
           <div className="method-legend">
@@ -1241,7 +1241,7 @@ function GlossaryPage({ lang }: { lang: Lang }) {
   return (
     <PageShell
       eyebrow={L(lang, 'Słownik wskaźników', 'Indicator glossary')}
-      title={L(lang, '21 sygnałów opisanych prostym językiem.', '21 signals, explained clearly.')}
+      title={L(lang, '24 sygnały opisane prostym językiem.', '24 signals, explained clearly.')}
       copy={L(
         lang,
         'To publiczny opis logiki modelu: co mierzy dana grupa i dlaczego ma znaczenie. Wagi, progi, wkłady i pełna normalizacja pozostają w terminalu Investor.',

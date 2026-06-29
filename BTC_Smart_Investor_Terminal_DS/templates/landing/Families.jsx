@@ -7,7 +7,7 @@
 
   function Families({ lang }) {
     const L = (pl, en) => window.L(lang, pl, en);
-    const totalIndicators = 21, totalSources = 6;
+    const totalIndicators = 24, totalSources = 6;
     return (
       <section id="signals" style={{ paddingBlock: 'var(--section-y)', position: 'relative' }}>
         <div className="nadir-container">

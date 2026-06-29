@@ -7,7 +7,7 @@
 </head>
 <body>
 <x-dc>
-<!-- @template name="Dashboard — Smart" description="Gated Smart-plan view: BTC bottom status + strategy meta-info open; 21-indicator table, whale/ETF detail & DCA plan locked behind Investor upgrade" -->
+<!-- @template name="Dashboard — Smart" description="Gated Smart-plan view: BTC bottom status + strategy meta-info open; 24-indicator table, whale/ETF detail & DCA plan locked behind Investor upgrade" -->
 <helmet>
   <script src="./ds-base.js"></script>
 </helmet>
@@ -85,7 +85,7 @@
             <p style="margin:6px 0 0; font-size:13px; color:var(--text-muted); line-height:1.5; max-width:560px;">{{ metaSub }}</p>
           </div>
           <div style="display:flex; gap:10px;">
-            <x-import component-from-global-scope="NADIRDesignSystem_54e725.KpiStat" label="{{ indCountLabel }}" value="21" accent="var(--ice-400)" hint-size="110px,72px"></x-import>
+            <x-import component-from-global-scope="NADIRDesignSystem_54e725.KpiStat" label="{{ indCountLabel }}" value="24" accent="var(--ice-400)" hint-size="110px,72px"></x-import>
             <x-import component-from-global-scope="NADIRDesignSystem_54e725.KpiStat" label="{{ srcCountLabel }}" value="34" accent="var(--gold-300)" hint-size="110px,72px"></x-import>
           </div>
         </div>
@@ -137,7 +137,7 @@
         </section>
       </div>
 
-      <!-- GATED: 21-INDICATOR CONFLUENCE (locked teaser) -->
+      <!-- GATED: 24-INDICATOR CONFLUENCE (locked teaser) -->
       <x-import component-from-global-scope="NADIRDesignSystem_54e725.LockOverlay" title="{{ lockTitle }}" note="{{ lockConfluenceNote }}" cta="{{ lockCta }}" on-upgrade="{{ openInvite }}" min-height="{{ 300 }}" hint-size="100%,300px">
     <div style="padding:22px; border-radius:var(--radius-lg); background:var(--grad-glass), var(--bg-glass); border:1px solid var(--line);">
       <div style="font-family:var(--font-display); font-size:18px; font-weight:700; color:var(--text-primary); margin-bottom:16px;">{{ confluenceTeaserTitle }}</div>
@@ -272,15 +272,15 @@ class Component extends DCLogic {
       flowTitle: L('Kierunek przepływów · zagregowany', 'Flow direction · aggregated'),
       flows, flowNote: L('Smart pokazuje tylko kierunek netto. Dziennik zdarzeń i kwoty — w planie Investor.', 'Smart shows net direction only. The event log and amounts are on Investor.'),
       lockTitle: L('Tylko Investor', 'Investor only'),
-      lockConfluenceNote: L('Pełna tabela 21 wskaźników z wagami, wkładem i sparklines jest częścią terminala Investor.', 'The full 21-indicator table with weights, contributions and sparklines is part of the Investor terminal.'),
+      lockConfluenceNote: L('Pełna tabela 24 wskaźników z wagami, wkładem i sparklines jest częścią terminala Investor.', 'The full 24-indicator table with weights, contributions and sparklines is part of the Investor terminal.'),
       lockWhaleNote: L('Dziennik zdarzeń wielorybów i ETF z kwotami — w planie Investor.', 'The whale & ETF event log with amounts is on Investor.'),
       lockDcaNote: L('Plan transz DCA i automatyczne progi — w planie Investor.', 'The DCA tranche plan and auto-thresholds are on Investor.'),
       lockCta: L('Przejdź na Investor', 'Upgrade to Investor'), lockCtaShort: L('Odblokuj', 'Unlock'),
-      confluenceTeaserTitle: L('Konfluencja 21 wskaźników', '21-indicator confluence'),
+      confluenceTeaserTitle: L('Konfluencja 24 wskaźników', '24-indicator confluence'),
       ctaEyebrow: L('Dostęp na zaproszenie', 'Invite-only access'),
       ctaTitle: L('Odblokuj pełny terminal Investor', 'Unlock the full Investor terminal'),
-      ctaSub: L('Wszystkie 21 wskaźników, dziennik wielorybów i ETF, plan DCA, alerty i głębsze narzędzia dla zaangażowanych inwestorów BTC.',
-                'All 21 indicators, the whale & ETF log, the DCA plan, alerts and deeper tools for committed BTC investors.'),
+      ctaSub: L('Wszystkie 24 wskaźniki, dziennik wielorybów i ETF, plan DCA, alerty i głębsze narzędzia dla zaangażowanych inwestorów BTC.',
+                'All 24 indicators, the whale & ETF log, the DCA plan, alerts and deeper tools for committed BTC investors.'),
       ctaBtn: L('Poproś o zaproszenie Investor', 'Request Investor invite'),
       inviteOpen: this.state.invite, openInvite: () => this.setState({ invite: true }), closeInvite: () => this.setState({ invite: false }),
       inviteEyebrow: L('Dostęp na zaproszenie', 'Invite-only access'), inviteTitle: L('Przejdź na plan Investor', 'Upgrade to Investor'),

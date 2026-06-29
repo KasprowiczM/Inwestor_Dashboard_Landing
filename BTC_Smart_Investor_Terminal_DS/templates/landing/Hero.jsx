@@ -31,8 +31,8 @@
               lineHeight: 1.65, color: 'var(--text-secondary)',
             }}>
               {L(
-                'Terminal analityczny, który łączy 21 wskaźników on-chain, cyklicznych i sentymentu w jeden Bottom Score — i mówi wprost, czy jesteś w opłacalnej strefie akumulacji BTC.',
-                'An analytical terminal that fuses 21 on-chain, cycle and sentiment indicators into one Bottom Score — and tells you plainly whether you are in a worthwhile BTC accumulation zone.'
+                'Terminal analityczny, który łączy 24 wskaźniki on-chain, cykliczne i sentymentu w jeden Bottom Score — i mówi wprost, czy jesteś w opłacalnej strefie akumulacji BTC.',
+                'An analytical terminal that fuses 24 on-chain, cycle and sentiment indicators into one Bottom Score — and tells you plainly whether you are in a worthwhile BTC accumulation zone.'
               )}
             </p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 32 }}>
@@ -45,7 +45,7 @@
             </div>
             <div className="hero-stats" style={{ marginTop: 44 }}>
               {[
-                { v: '21', pl: 'wskaźników w konfluencji', en: 'indicators in confluence' },
+                { v: '24', pl: 'wskaźników w konfluencji', en: 'indicators in confluence' },
                 { v: '2018 · 2022', pl: 'cykle backtestowane', en: 'cycles backtested' },
                 { v: '3×', pl: 'aktualizacja / dobę', en: 'updates / day' },
               ].map((s, i) => (

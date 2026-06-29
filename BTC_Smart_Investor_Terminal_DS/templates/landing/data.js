@@ -87,8 +87,8 @@
       n: '01',
       plT: 'Konfluencja, nie pojedynczy sygnał',
       enT: 'Confluence, not a single signal',
-      plD: '21 wskaźników on-chain, cyklicznych, sentymentu i makro — odświeżanych trzy razy dziennie z redundancją źródeł.',
-      enD: '21 on-chain, cycle, sentiment and macro indicators — refreshed three times a day with source redundancy.',
+      plD: '24 wskaźniki on-chain, cykliczne, sentymentu i makro — odświeżane trzy razy dziennie z redundancją źródeł.',
+      enD: '24 on-chain, cycle, sentiment and macro indicators — refreshed three times a day with source redundancy.',
     },
     {
       n: '02',
@@ -128,10 +128,10 @@
       features: [
         { pl: 'Bottom Score na żywo i 5-pasmowy werdykt', en: 'Live Bottom Score & 5-band verdict', on: true },
         { pl: '„Gdzie jesteśmy" w oknie akumulacji', en: '"Where we are" in the accumulation window', on: true },
-        { pl: 'Meta strategii: 21 wskaźników w 7 rodzinach danych', en: 'Strategy meta: 21 indicators across 7 data families', on: true },
+        { pl: 'Meta strategii: 24 wskaźniki w 7 rodzinach danych', en: 'Strategy meta: 24 indicators across 7 data families', on: true },
         { pl: 'Zagregowany indeks sentymentu i momentum', en: 'Aggregated sentiment & momentum index', on: true },
         { pl: 'Wieloryby i ETF — tylko kierunek', en: 'Whales & ETF — direction only', on: true },
-        { pl: 'Pełna siatka 21 wskaźników, wagi i wkłady', en: 'Full 21-indicator grid, weights & contributions', on: false },
+        { pl: 'Pełna siatka 24 wskaźników, wagi i wkłady', en: 'Full 24-indicator grid, weights & contributions', on: false },
         { pl: 'Planer transz DCA i progi wejścia', en: 'DCA tranche planner & entry thresholds', on: false },
         { pl: 'Replay historii, cykle i alerty Telegram', en: 'History replay, cycles & Telegram alerts', on: false },
       ],
@@ -148,7 +148,7 @@
       enDesc: 'The whole terminal: on-chain confluence, weights, contributions, DCA plan and alerts. The serious choice for the committed BTC investor.',
       features: [
         { pl: 'Wszystko z planu Smart', en: 'Everything in Smart', on: true },
-        { pl: 'Pełna siatka 21 wskaźników ze sparklines', en: 'Full 21-indicator grid with sparklines', on: true },
+        { pl: 'Pełna siatka 24 wskaźników ze sparklines', en: 'Full 24-indicator grid with sparklines', on: true },
         { pl: 'Wagi, wkłady, progi normalizacji, mnożnik G', en: 'Weights, contributions, thresholds, G-multiplier', on: true },
         { pl: 'Planer transz DCA i strefy wejścia', en: 'DCA tranche planner & entry zones', on: true },
         { pl: 'Pełna oś zdarzeń wielorybów i ETF', en: 'Full whale & ETF event timeline', on: true },

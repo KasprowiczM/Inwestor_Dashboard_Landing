@@ -1,4 +1,4 @@
-/* NADIR landing — methodology / 21 indicators */
+/* NADIR landing — methodology / 24 indicators */
 (function () {
   const SectionHead = window.SectionHead;
   const { CAT, INDICATORS } = window.NADIR_CONTENT;
@@ -14,7 +14,7 @@
           <div className="method-top">
             <SectionHead
               eyebrow={L('Metodologia', 'Methodology')}
-              title={L('21 wskaźników. Pięć rodzin. Jeden werdykt.', '21 indicators. Five families. One verdict.')}
+              title={L('24 wskaźniki. Siedem rodzin. Jeden werdykt.', '24 indicators. Seven families. One verdict.')}
               sub={L('Każdy wskaźnik jest znormalizowany, zważony i sprawdzony pod kątem kompletności. Progi kalibrowano na dołkach z 2018 i 2022 roku.',
                      'Every indicator is normalized, weighted and checked for completeness. Thresholds were calibrated on the 2018 and 2022 cycle bottoms.')}
             />
