@@ -26,7 +26,7 @@
 - **The mono voice:** Data, tickers, eyebrows and disclaimers use JetBrains Mono with a leading `//` — the "terminal" register (`// BOTTOM SCORE · LIVE`).
 - **Discipline framing:** Always "tool of discipline, not an oracle." Every surface that gives a verdict pairs it with the disclaimer that it's educational, not financial advice.
 - **No emoji** in marketing surfaces (the app's README uses them internally; the brand does not). No exclamation hype. Numbers are specific and real (21 indicators, 2018/2022 backtests, 3×/day refresh, -58.2% drawdown).
-- **Signature lines:** *"Read the cycle. Protect the signal."* (motto, retained from app) · *"Znajdź dołek. Zanim zrobi to tłum."* / *"Find the floor. Before the crowd."* (hero).
+- **Signature lines:** *"Read the cycle. Protect the signal."* (motto, retained from app) · *"Znajdź dołek. Jak wytrawni inwestorzy."* / *"Find the floor. Like seasoned investors."* (hero).
 
 ---
 

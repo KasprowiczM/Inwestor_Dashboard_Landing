@@ -151,8 +151,8 @@ Centered column on sonar-arc backdrop: orb → `BrandLockup` → eyebrow → hea
 ## 7. Plans & access model
 
 - **No free tier. Invite-only everywhere** — copy uses “Access by invitation / Request invite”, never “Free / Sign up free”.
-- **Smart** (replaces *Free*) — ice identity. Tracks the **BTC bottom only**: Bottom Score, 5-band verdict, aggregated sentiment, **flow direction only**, and **meta-info** about the strategy (counts: 21 indicators, 34 sources; 7 data families) — **never methodology/formulas**. Everything deeper is `LockOverlay`-gated to Investor; one primary upgrade CTA.
-- **Investor** (replaces *Full*) — gold identity, the **complete terminal**: full 21-indicator confluence (weights, contributions, sparklines), whale & ETF event log w/ amounts, cycle phase, DCA tranche plan, Telegram alerts, history replay.
+- **Smart** (replaces *Free*) — ice identity. Tracks the **BTC bottom only**: Bottom Score, 5-band verdict, aggregated sentiment, **flow direction only**, and **meta-info** about the strategy (21 indicators; 7 data families) — **never methodology/formulas, vendor lists, weights, thresholds, or contributions**. Everything deeper is `LockOverlay`-gated to Investor; one primary upgrade CTA.
+- **Investor** (replaces *Full*) — gold identity, the **complete terminal**: full 21-indicator confluence (weights, contributions, sparklines), whale & ETF event log w/ amounts, cycle phase, DCA tranche plan, Telegram alerts up to 3 times daily, one-year scoring history, and strategy access for future cycles.
 
 ---
 

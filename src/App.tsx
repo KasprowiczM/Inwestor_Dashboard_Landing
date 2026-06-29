@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 
 type Lang = 'pl' | 'en';
+type Currency = 'eur' | 'pln';
 type Tone = 'ice' | 'emerald' | 'amber' | 'red' | 'slate' | 'gold' | 'live' | 'neutral';
 
 const DASHBOARD_URL = import.meta.env.VITE_DASHBOARD_URL ?? 'https://btc-dash.64bit.site';
@@ -136,8 +137,8 @@ const STEPS = [
     n: '01',
     plT: 'Konfluencja, nie pojedynczy sygnał',
     enT: 'Confluence, not a single signal',
-    plD: '21 wskaźników on-chain, cyklicznych, sentymentu i makro — odświeżanych trzy razy dziennie z redundancją źródeł.',
-    enD: '21 on-chain, cycle, sentiment and macro indicators — refreshed three times a day with source redundancy.',
+    plD: '21 wskaźników on-chain, cyklicznych, sentymentu i makro — odświeżanych trzy razy dziennie z kontrolą jakości danych.',
+    enD: '21 on-chain, cycle, sentiment and macro indicators — refreshed three times a day with data-quality checks.',
   },
   {
     n: '02',
@@ -169,10 +170,10 @@ const PLANS = [
     tag: 'Na zaproszenie',
     tagEn: 'Invite-only',
     accent: 'ice',
-    plPrice: 'Tylko dno',
-    enPrice: 'Bottom only',
-    plPer: 'dostęp na zaproszenie',
-    enPer: 'access by invitation',
+    eurPrice: 99,
+    plnPrice: 426,
+    plPer: 'wybrana waluta · dostęp na zaproszenie',
+    enPer: 'selected currency · invite-only access',
     plDesc: 'Inteligentne śledzenie dna BTC. Widzisz status strategii i zagregowane sygnały — bez wglądu w metodologię.',
     enDesc: 'Smart tracking of the BTC bottom. You see the strategy status and aggregated signals — without seeing the methodology.',
     features: [
@@ -192,10 +193,10 @@ const PLANS = [
     tag: 'Pełny terminal',
     tagEn: 'Full terminal',
     accent: 'gold',
-    plPrice: 'Pełny dostęp',
-    enPrice: 'Full access',
-    plPer: 'na zaproszenie',
-    enPer: 'by invitation',
+    eurPrice: 399,
+    plnPrice: 1716,
+    plPer: 'wybrana waluta · na zaproszenie',
+    enPer: 'selected currency · by invitation',
     plDesc: 'Cały terminal: konfluencja on-chain, wagi, wkłady, plan DCA i alerty. Poważny wybór dla zaangażowanego inwestora BTC.',
     enDesc: 'The whole terminal: on-chain confluence, weights, contributions, DCA plan and alerts. The serious choice for the committed BTC investor.',
     features: [
@@ -204,9 +205,10 @@ const PLANS = [
       { pl: 'Wagi, wkłady, progi normalizacji, mnożnik G', en: 'Weights, contributions, thresholds, G-multiplier', on: true },
       { pl: 'Planer transz DCA i strefy wejścia', en: 'DCA tranche planner & entry zones', on: true },
       { pl: 'Pełna oś zdarzeń wielorybów i ETF', en: 'Full whale & ETF event timeline', on: true },
-      { pl: 'Replay historii i cykli (2018 · 2022)', en: 'History & cycle replay (2018 · 2022)', on: true },
-      { pl: 'Alerty Telegram co 60 min', en: 'Telegram alerts every 60 min', on: true },
+      { pl: 'Historia scoringu od roku i replay snapshotów', en: 'One-year scoring history and snapshot replay', on: true },
+      { pl: 'Alerty Telegram do 3 razy dziennie', en: 'Telegram alerts up to 3 times daily', on: true },
       { pl: 'Flaga Generacyjne Dno', en: 'Generational Bottom flag', on: true },
+      { pl: 'Pełny dostęp do strategii na kolejne cykle', en: 'Full strategy access for future cycles', on: true },
     ],
   },
 ];
@@ -233,8 +235,8 @@ const FAQ = [
   {
     pl: 'Skąd pochodzą dane?',
     en: 'Where does the data come from?',
-    plA: 'On-chain z BGeometrics (12 rotacyjnych kluczy), sentyment z alternative.me, ETF z publicznych źródeł, makro z FRED (Rezerwa Federalna). Cena: Binance → Kraken → CoinGecko z fallbackiem.',
-    enA: 'On-chain from BGeometrics (12 rotating keys), sentiment from alternative.me, ETF from public sources, macro from FRED (Federal Reserve). Price: Binance → Kraken → CoinGecko with fallback.',
+    plA: 'Model korzysta z kontrolowanych źródeł rynkowych, on-chain, sentymentu, przepływów i makro. Publiczny landing pokazuje tylko bezpieczny kontekst, bez listy dostawców i bez szczegółów metodologii.',
+    enA: 'The model uses controlled market, on-chain, sentiment, flow and macro inputs. The public landing only shows safe context, without vendor lists or methodology details.',
   },
   {
     pl: 'Jak często aktualizują się dane?',
@@ -507,7 +509,7 @@ function Hero({ lang }: { lang: Lang }) {
           </Eyebrow>
           <h1>
             {L(lang, 'Znajdź', 'Find the')} <span>{L(lang, 'dołek', 'floor')}</span>.<br />
-            {L(lang, 'Zanim zrobi to tłum.', 'Before the crowd.')}
+            {L(lang, 'Jak wytrawni inwestorzy.', 'Like seasoned investors.')}
           </h1>
           <p>
             {L(
@@ -623,7 +625,7 @@ function Families({ lang }: { lang: Lang }) {
       <div className="nadir-container">
         <SectionHead
           align="center"
-          eyebrow={L(lang, 'Sygnały i źródła danych', 'Signals & data sources')}
+          eyebrow={L(lang, 'Sygnały i konfluencja', 'Signals & confluence')}
           title={L(lang, 'Siedem rodzin sygnałów. Jedna decyzja.', 'Seven signal families. One decision.')}
           sub={L(
             lang,
@@ -651,7 +653,7 @@ function Families({ lang }: { lang: Lang }) {
             <StatusChip tone="ice" size="sm">{L(lang, 'Konfluencja', 'Confluence')}</StatusChip>
             <div>
               <strong>21</strong>
-              <span>{L(lang, 'wskaźników z', 'indicators from')} 6 {L(lang, 'źródeł danych', 'data sources')}</span>
+              <span>{L(lang, 'wskaźników w modelu', 'model indicators')}</span>
             </div>
             <p>{L(lang, 'Ważone, znormalizowane i sprowadzone do jednego Bottom Score. Bez wzorów po stronie przeglądarki.', 'Weighted, normalized and collapsed into one Bottom Score. No formulas in the browser.')}</p>
           </div>
@@ -758,7 +760,7 @@ function Methodology({ lang }: { lang: Lang }) {
           <SectionHead
             eyebrow={L(lang, 'Metodologia', 'Methodology')}
             title={L(lang, '21 wskaźników. Pięć rodzin. Jeden werdykt.', '21 indicators. Five families. One verdict.')}
-            sub={L(lang, 'Każdy wskaźnik jest znormalizowany, zważony i sprawdzony pod kątem kompletności. Progi kalibrowano na dołkach z 2018 i 2022 roku.', 'Every indicator is normalized, weighted and checked for completeness. Thresholds were calibrated on the 2018 and 2022 cycle bottoms.')}
+            sub={L(lang, 'Każdy wskaźnik jest znormalizowany, zważony i sprawdzony pod kątem kompletności. Progi kalibrowano na dołkach z 2018 i 2022 roku oraz dostosowano do obecnej ery ETF.', 'Every indicator is normalized, weighted and checked for completeness. Thresholds were calibrated on the 2018 and 2022 cycle bottoms and adapted for the current ETF era.')}
           />
           <div className="method-legend">
             {order.map((key) => (
@@ -792,8 +794,8 @@ function Methodology({ lang }: { lang: Lang }) {
         <p className="method-note">
           {L(
             lang,
-            '* Wskaźniki on-chain w wersji nie-entity-adjusted (BGeometrics). Mogą różnić się od Glassnode. Model służy jako wskaźnik reżimu strefy, nie precyzyjny timer dna.',
-            '* On-chain indicators in non-entity-adjusted form (BGeometrics). May differ from Glassnode. The model is a regime-zone indicator, not a precise bottom timer.',
+            '* Publiczna wersja pokazuje zakres modelu bez listy dostawców danych, wag i progów. Model służy jako wskaźnik reżimu strefy, nie precyzyjny timer dna.',
+            '* The public version shows model scope without data vendor lists, weights or thresholds. The model is a regime-zone indicator, not a precise bottom timer.',
           )}
         </p>
       </div>
@@ -802,6 +804,16 @@ function Methodology({ lang }: { lang: Lang }) {
 }
 
 function Pricing({ lang }: { lang: Lang }) {
+  const [currency, setCurrency] = React.useState<Currency>('eur');
+  const formatPrice = React.useCallback((plan: (typeof PLANS)[number]) => {
+    const amount = currency === 'eur' ? plan.eurPrice : plan.plnPrice;
+    return new Intl.NumberFormat(lang === 'pl' ? 'pl-PL' : 'en-US', {
+      style: 'currency',
+      currency: currency.toUpperCase(),
+      maximumFractionDigits: 0,
+    }).format(amount);
+  }, [currency, lang]);
+
   return (
     <section id="pricing" className="ds-section">
       <div className="nadir-container">
@@ -811,6 +823,13 @@ function Pricing({ lang }: { lang: Lang }) {
           title={L(lang, 'Dwa poziomy. Oba na zaproszenie.', 'Two tiers. Both invite-only.')}
           sub={L(lang, 'Smart pokazuje status dna i zagregowane sygnały. Investor odkrywa cały terminal. Chronione szczegóły są redagowane po stronie serwera — nigdy nie trafiają do przeglądarki.', 'Smart shows the bottom status and aggregated signals. Investor reveals the whole terminal. Protected detail is redacted server-side — it never reaches the browser.')}
         />
+        <div className="currency-switch" aria-label={L(lang, 'Wybór waluty', 'Currency selector')}>
+          {(['eur', 'pln'] as const).map((option) => (
+            <button key={option} type="button" className={currency === option ? 'is-active' : ''} onClick={() => setCurrency(option)}>
+              {option.toUpperCase()}
+            </button>
+          ))}
+        </div>
         <div className="pricing-grid">
           {PLANS.map((plan) => {
             const gold = plan.accent === 'gold';
@@ -821,7 +840,7 @@ function Pricing({ lang }: { lang: Lang }) {
                   <StatusChip tone={gold ? 'gold' : 'ice'} size="sm">{L(lang, plan.tag, plan.tagEn)}</StatusChip>
                 </div>
                 <div className="pricing-price">
-                  <strong>{L(lang, plan.plPrice, plan.enPrice)}</strong>
+                  <strong>{formatPrice(plan)}</strong>
                   <span>· {L(lang, plan.plPer, plan.enPer)}</span>
                 </div>
                 <p>{L(lang, plan.plDesc, plan.enDesc)}</p>
@@ -848,20 +867,39 @@ function Pricing({ lang }: { lang: Lang }) {
 
 function Trust({ lang }: { lang: Lang }) {
   const stats = [
-    { v: '2018', plL: 'dno cyklu oznaczone', enL: 'cycle bottom flagged', tone: 'var(--signal-accumulate)' },
-    { v: '2022', plL: 'dno cyklu oznaczone', enL: 'cycle bottom flagged', tone: 'var(--signal-accumulate)' },
-    { v: '−58.2%', plL: 'średni drawdown w strefie', enL: 'avg drawdown in zone', tone: 'var(--signal-aggressive)' },
+    { v: '2018', plL: 'kalibracja dna cyklu', enL: 'cycle-bottom calibration', tone: 'var(--signal-accumulate)' },
+    { v: '2022', plL: 'kalibracja dna cyklu', enL: 'cycle-bottom calibration', tone: 'var(--signal-accumulate)' },
+    { v: 'ETF', plL: 'uwzględniona nowa era rynku', enL: 'new market era included', tone: 'var(--gold-300)' },
     { v: '3×', plL: 'odświeżanie / dobę', enL: 'refresh / day', tone: 'var(--ice-400)' },
   ];
-  const sources = ['BGeometrics', 'alternative.me', 'FRED', 'Binance', 'Kraken', 'CoinGecko'];
+  const pillars = [
+    {
+      titlePl: 'Kalibracja bez obietnic',
+      titleEn: 'Calibration without promises',
+      copyPl: 'Progi służą do rozpoznania reżimu strefy akumulacji. Landing nie sprzedaje pewności ani dokładnego dnia dołka.',
+      copyEn: 'Thresholds are used to identify an accumulation-zone regime. The landing does not sell certainty or an exact bottom day.',
+    },
+    {
+      titlePl: 'Dane kontrolowane w terminalu',
+      titleEn: 'Controlled data inside the terminal',
+      copyPl: 'Szczegółowe zasilanie, wagi, wkłady i logika kontroli pozostają po stronie zamkniętej aplikacji.',
+      copyEn: 'Detailed data feeds, weights, contributions and control logic remain inside the closed application.',
+    },
+    {
+      titlePl: 'Rygor zamiast marketingu',
+      titleEn: 'Rigor over marketing',
+      copyPl: 'System wspiera dyscyplinę decyzji: obserwować, akumulować lub czekać. Nie zastępuje własnej analizy ryzyka.',
+      copyEn: 'The system supports decision discipline: observe, accumulate or wait. It does not replace personal risk analysis.',
+    },
+  ];
 
   return (
     <section id="trust" className="ds-section">
       <div className="nadir-container">
         <SectionHead
           eyebrow={L(lang, 'Zaufanie i autorytet', 'Trust & authority')}
-          title={L(lang, 'Sprawdzone na dwóch dnach cyklu.', 'Backtested on two cycle bottoms.')}
-          sub={L(lang, 'Progi kalibrowano na dołkach z 2018 i 2022 roku. Liczby poniżej są poglądowe — narzędzie wskazuje reżim strefy, nie obiecuje zysków.', 'Thresholds were calibrated on the 2018 and 2022 bottoms. The figures below are illustrative — the tool indicates a zone regime, it does not promise returns.')}
+          title={L(lang, 'Kalibracja cykli z uwzględnieniem ery ETF.', 'Cycle calibration with the ETF era included.')}
+          sub={L(lang, 'Model opiera się na historycznych dołkach z 2018 i 2022 roku, ale nie ignoruje strukturalnej zmiany rynku po wejściu spotowych ETF. Publicznie pokazujemy rygor, nie pełną recepturę.', 'The model uses the 2018 and 2022 historical bottoms, but does not ignore the structural market change after spot ETFs. Publicly, we show rigor, not the full recipe.')}
         />
         <div className="trust-stats">
           {stats.map((stat) => (
@@ -872,26 +910,12 @@ function Trust({ lang }: { lang: Lang }) {
           ))}
         </div>
         <div className="trust-lower">
-          {[0, 1].map((item) => (
-            <div key={item} className="quote-card">
-              <div>{[0, 1, 2, 3, 4].map((star) => <span key={star}>★</span>)}</div>
-              <p>{L(lang, '// cytat członka', '// member quote')}</p>
-              <div>
-                <i />
-                <span>
-                  <strong>{L(lang, 'Członek terminala', 'Terminal member')}</strong>
-                  <em>{L(lang, '// rola · zaproszony', '// role · invited')}</em>
-                </span>
-              </div>
+          {pillars.map((pillar) => (
+            <div key={pillar.titlePl} className="trust-card">
+              <h3>{icon.shield} {L(lang, pillar.titlePl, pillar.titleEn)}</h3>
+              <p>{L(lang, pillar.copyPl, pillar.copyEn)}</p>
             </div>
           ))}
-          <div className="sources-card">
-            <h3>{icon.shield} {L(lang, 'Zasilane danymi z', 'Powered by data from')}</h3>
-            <div>
-              {sources.map((source) => <span key={source}>{source}</span>)}
-            </div>
-            <p>{L(lang, 'Redundancja źródeł i dead-man’s switch — alert, gdy snapshot jest starszy niż 18 godzin.', 'Source redundancy and a dead-man’s switch — an alert if the snapshot is older than 18 hours.')}</p>
-          </div>
         </div>
       </div>
     </section>

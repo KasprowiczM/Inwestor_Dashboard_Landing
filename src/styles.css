@@ -8,6 +8,7 @@
 
 :root {
   color-scheme: dark;
+  --section-y: clamp(32px, 4vw, 56px);
 }
 
 html {
@@ -210,10 +211,10 @@ button {
 }
 
 .nadir-button-lg {
-  height: 56px;
-  padding: 0 28px;
-  border-radius: var(--radius-lg);
-  font-size: 15.5px;
+  height: 50px;
+  padding: 0 22px;
+  border-radius: var(--radius-md);
+  font-size: 14.5px;
 }
 
 .nadir-button-primary {
@@ -349,7 +350,7 @@ button {
 .ds-hero {
   position: relative;
   overflow: hidden;
-  padding-top: 48px;
+  padding-top: 38px;
   padding-bottom: var(--section-y);
 }
 
@@ -366,7 +367,7 @@ button {
   z-index: 1;
   display: grid;
   grid-template-columns: 1fr;
-  gap: clamp(40px, 6vw, 72px);
+  gap: clamp(30px, 5vw, 58px);
   align-items: center;
 }
 
@@ -380,10 +381,10 @@ button {
   margin: 22px 0 0;
   color: var(--text-primary);
   font-family: var(--font-display);
-  font-size: var(--fs-hero);
+  font-size: var(--fs-4xl);
   font-weight: 800;
-  letter-spacing: -0.045em;
-  line-height: 0.95;
+  letter-spacing: -0.035em;
+  line-height: 1.04;
 }
 
 .hero-copy h1 span {
@@ -393,7 +394,7 @@ button {
 
 .hero-copy p {
   max-width: 520px;
-  margin-top: 22px;
+  margin-top: 18px;
   color: var(--text-secondary);
   font-size: clamp(1rem, 1.4vw, 1.18rem);
   line-height: 1.65;
@@ -403,7 +404,7 @@ button {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 32px;
+  margin-top: 26px;
 }
 
 .hero-stats {
@@ -411,7 +412,7 @@ button {
   grid-template-columns: repeat(3, auto);
   justify-content: start;
   gap: 22px;
-  margin-top: 44px;
+  margin-top: 30px;
 }
 
 .hero-stats div {
@@ -429,6 +430,7 @@ button {
   font-size: clamp(1.2rem, 2vw, 1.7rem);
   font-weight: 700;
   letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
 .hero-stats span {
@@ -667,7 +669,7 @@ button {
 .steps-grid {
   grid-template-columns: 1fr;
   gap: 16px;
-  margin-top: 56px;
+  margin-top: 34px;
 }
 
 @media (min-width: 760px) {
@@ -685,8 +687,7 @@ button {
 .preview-indicator,
 .pricing-card,
 .trust-stats div,
-.quote-card,
-.sources-card,
+.trust-card,
 .faq-list > div {
   border: 1px solid var(--line);
   background: var(--grad-glass), var(--bg-glass);
@@ -869,7 +870,7 @@ button {
 .families-grid {
   grid-template-columns: 1fr;
   gap: 16px;
-  margin-top: 52px;
+  margin-top: 34px;
 }
 
 @media (min-width: 560px) {
@@ -943,8 +944,8 @@ button {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 14px;
-  padding: 24px;
+  gap: 12px;
+  padding: 22px;
   border: 1px solid var(--line-ice);
   border-radius: var(--radius-lg);
   background: var(--grad-depth), var(--grad-glass), var(--bg-glass);
@@ -954,13 +955,14 @@ button {
 .family-summary div {
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .family-summary strong {
   color: var(--ice-400);
   font-family: var(--font-display);
-  font-size: 44px;
+  font-size: clamp(2rem, 4vw, 2.35rem);
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 1;
@@ -980,7 +982,7 @@ button {
 }
 
 .preview-frame {
-  margin-top: 48px;
+  margin-top: 34px;
   overflow: hidden;
   border-color: var(--line-strong);
   border-radius: var(--radius-xl);
@@ -1255,7 +1257,7 @@ button {
 .method-grid {
   grid-template-columns: 1fr;
   gap: 26px;
-  margin-top: 48px;
+  margin-top: 32px;
 }
 
 @media (min-width: 560px) {
@@ -1333,7 +1335,39 @@ button {
   grid-template-columns: 1fr;
   gap: 18px;
   max-width: 860px;
-  margin: 52px auto 0;
+  margin: 24px auto 0;
+}
+
+.currency-switch {
+  display: flex;
+  width: fit-content;
+  margin: 30px auto 0;
+  padding: 4px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: rgba(255,255,255,0.035);
+  box-shadow: var(--shadow-layer);
+}
+
+.currency-switch button {
+  min-width: 76px;
+  height: 34px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: background var(--dur), color var(--dur), box-shadow var(--dur);
+}
+
+.currency-switch button.is-active {
+  background: var(--grad-ice-cta);
+  color: var(--text-on-ice);
+  box-shadow: 0 8px 20px rgba(6,182,212,0.18), inset 0 1px 0 rgba(255,255,255,0.34);
 }
 
 @media (min-width: 720px) {
@@ -1379,6 +1413,7 @@ button {
   align-items: baseline;
   gap: 8px;
   margin-top: 18px;
+  flex-wrap: wrap;
 }
 
 .pricing-price strong {
@@ -1458,7 +1493,7 @@ button {
 .trust-stats {
   grid-template-columns: repeat(2, 1fr);
   gap: 14px;
-  margin-top: 44px;
+  margin-top: 30px;
 }
 
 @media (min-width: 760px) {
@@ -1507,76 +1542,15 @@ button {
   }
 }
 
-.quote-card,
-.sources-card {
+.trust-card {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
   padding: 26px;
   border-radius: var(--radius-lg);
 }
 
-.quote-card > div:first-child {
-  display: flex;
-  gap: 6px;
-  color: var(--gold-300);
-  font-size: 14px;
-}
-
-.quote-card > p,
-.quote-card i {
-  border: 1px dashed var(--line-strong);
-  background: repeating-linear-gradient(135deg, rgba(255,255,255,0.05) 0 8px, rgba(255,255,255,0.015) 8px 16px);
-}
-
-.quote-card > p {
-  display: grid;
-  place-items: center;
-  height: 52px;
-  border-radius: var(--radius-sm);
-  color: var(--text-faint);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-}
-
-.quote-card > div:last-child {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.quote-card i {
-  width: 38px;
-  height: 38px;
-  flex: 0 0 auto;
-  border-radius: 50%;
-}
-
-.quote-card strong,
-.quote-card em {
-  display: block;
-}
-
-.quote-card strong {
-  color: var(--text-secondary);
-  font-size: 13.5px;
-  font-weight: 700;
-}
-
-.quote-card em {
-  color: var(--text-faint);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-style: normal;
-}
-
-.sources-card {
-  justify-content: center;
-  gap: 18px;
-}
-
-.sources-card h3 {
+.trust-card h3 {
   display: inline-flex;
   align-items: center;
   gap: 9px;
@@ -1588,26 +1562,10 @@ button {
   text-transform: uppercase;
 }
 
-.sources-card div {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.sources-card span {
-  padding: 6px 11px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-pill);
-  background: rgba(255,255,255,0.03);
-  color: var(--text-secondary);
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-}
-
-.sources-card p {
+.trust-card p {
   color: var(--text-muted);
-  font-size: 12px;
-  line-height: 1.55;
+  font-size: 13.5px;
+  line-height: 1.6;
 }
 
 .faq-layout {
@@ -1965,10 +1923,8 @@ button {
 }
 
 .footer-bottom {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 14px;
   margin-top: clamp(40px, 5vw, 64px);
   padding-top: 24px;
@@ -1984,10 +1940,17 @@ button {
 }
 
 .footer-bottom em {
-  max-width: 540px;
+  max-width: 760px;
   font-size: 11px;
   line-height: 1.5;
-  text-align: right;
+  text-align: left;
+}
+
+@media (min-width: 900px) {
+  .footer-bottom {
+    grid-template-columns: minmax(0, 0.9fr) minmax(360px, 1.1fr);
+    align-items: start;
+  }
 }
 
 @media (max-width: 760px) {
@@ -2004,10 +1967,6 @@ button {
 
   .nav-actions .nadir-button {
     display: none;
-  }
-
-  .hero-copy h1 {
-    font-size: clamp(3.2rem, 18vw, 5.1rem);
   }
 
   .hero-actions {
@@ -2034,13 +1993,8 @@ button {
 
   .preview-command,
   .preview-command > div,
-  .score-explainer-head,
-  .footer-bottom {
+  .score-explainer-head {
     align-items: flex-start;
     flex-direction: column;
-  }
-
-  .footer-bottom em {
-    text-align: left;
   }
 }
