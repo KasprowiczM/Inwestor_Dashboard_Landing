@@ -11,10 +11,11 @@ Updated the BTC Smart Investor landing page only. No changes were made in the ma
 - Hero score panel is a historical 2022 illustrative example only. It must not fetch or display current dashboard data.
 - Primary hero buttons are lower and closer to the top-nav proportions.
 - Section vertical spacing is reduced globally through the local `--section-y` override.
-- The confluence card shows only "21 model indicators"; it does not expose provider counts.
-- Pricing has an EUR/PLN selector:
-  - Smart: 99 EUR / 426 PLN.
-  - Investor: 399 EUR / 1716 PLN.
+- The confluence card shows only "24 model indicators"; it does not expose provider counts.
+- Pricing features PLN / EUR / USD currency selector with monthly vs 6-month options:
+  - Smart Monthly: 39 EUR / 179 PLN / 45 USD
+  - Smart 6 Months: 199 EUR / 859 PLN / 225 USD
+  - Investor 6 Months: 649 EUR / 2849 PLN / 719 USD
 - Investor plan copy now says Telegram alerts are available up to 3 times daily and history covers one year of scoring snapshots.
 - Trust section removes testimonials, stars, and named data providers.
 - Footer disclaimer is laid out as a separate text column for cleaner wrapping.
@@ -27,7 +28,7 @@ Updated the BTC Smart Investor landing page only. No changes were made in the ma
 
 - Do not reveal exact data vendors, weights, thresholds, contributions, or formulas on the landing page.
 - Keep Smart and Investor invite-only; do not reintroduce FREE/FULL naming.
-- Keep pricing UI ready for a future Stripe integration with user-selected currency.
+- Linked pricing buttons to Stripe checkout dynamically using the dashboard auto-checkout parameters (?trigger_checkout=true).
 - Landing page must not query dashboard APIs for current market data. Current readings belong inside the authenticated terminal.
 - Legal text is a strong operational draft, not a substitute for formal legal review before production publication.
 - If new public pages are added, update `sitemap.xml`, `llms.txt`, `vercel.json`, route metadata, and footer links together.
