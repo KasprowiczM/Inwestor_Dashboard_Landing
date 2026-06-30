@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 
 type Lang = 'pl' | 'en';
-type Currency = 'eur' | 'pln';
+type Currency = 'eur' | 'pln' | 'usd';
 type RouteKey = 'home' | 'glossary' | 'telegram' | 'disclaimer' | 'privacy' | 'terms';
 type Tone = 'ice' | 'emerald' | 'amber' | 'red' | 'slate' | 'gold' | 'live' | 'stale' | 'neutral';
 
@@ -174,10 +174,8 @@ const PLANS = [
     tag: 'Na zaproszenie',
     tagEn: 'Invite-only',
     accent: 'ice',
-    eurPrice: 99,
-    plnPrice: 426,
-    plPer: 'wybrana waluta · dostęp na zaproszenie',
-    enPer: 'selected currency · invite-only access',
+    plPer: 'wybrana waluta · subskrypcja',
+    enPer: 'selected currency · subscription',
     plDesc: 'Inteligentne śledzenie dna BTC. Widzisz status strategii i zagregowane sygnały — bez wglądu w metodologię.',
     enDesc: 'Smart tracking of the BTC bottom. You see the strategy status and aggregated signals — without seeing the methodology.',
     features: [
@@ -197,10 +195,8 @@ const PLANS = [
     tag: 'Pełny terminal',
     tagEn: 'Full terminal',
     accent: 'gold',
-    eurPrice: 399,
-    plnPrice: 1716,
-    plPer: 'wybrana waluta · na zaproszenie',
-    enPer: 'selected currency · by invitation',
+    plPer: 'wybrana waluta · pakiet 6-miesięczny',
+    enPer: 'selected currency · 6-month package',
     plDesc: 'Cały terminal: konfluencja on-chain, wagi, wkłady, plan DCA i alerty. Poważny wybór dla zaangażowanego inwestora BTC.',
     enDesc: 'The whole terminal: on-chain confluence, weights, contributions, DCA plan and alerts. The serious choice for the committed BTC investor.',
     features: [
@@ -1020,16 +1016,70 @@ function Methodology({ lang }: { lang: Lang }) {
   );
 }
 
+const PRICES = {
+  pln: {
+    symbol: 'zł',
+    smart: {
+      monthly: 179,
+      '6m': 859,
+    },
+    investor: {
+      '6m': 2849,
+    }
+  },
+  eur: {
+    symbol: '€',
+    smart: {
+      monthly: 39,
+      '6m': 199,
+    },
+    investor: {
+      '6m': 649,
+    }
+  },
+  usd: {
+    symbol: '$',
+    smart: {
+      monthly: 45,
+      '6m': 225,
+    },
+    investor: {
+      '6m': 719,
+    }
+  }
+} as const;
+
 function Pricing({ lang }: { lang: Lang }) {
-  const [currency, setCurrency] = React.useState<Currency>('eur');
-  const formatPrice = React.useCallback((plan: (typeof PLANS)[number]) => {
-    const amount = currency === 'eur' ? plan.eurPrice : plan.plnPrice;
+  const [currency, setCurrency] = React.useState<Currency>('pln');
+  const [smartTerm, setSmartTerm] = React.useState<'monthly' | '6m'>('6m');
+
+  const formatPrice = React.useCallback((amount: number, curr: string) => {
     return new Intl.NumberFormat(lang === 'pl' ? 'pl-PL' : 'en-US', {
       style: 'currency',
-      currency: currency.toUpperCase(),
+      currency: curr.toUpperCase(),
       maximumFractionDigits: 0,
     }).format(amount);
-  }, [currency, lang]);
+  }, [lang]);
+
+  const getPriceText = React.useCallback((planKey: string) => {
+    if (planKey === 'smart') {
+      const price = PRICES[currency].smart[smartTerm];
+      return formatPrice(price, currency);
+    } else {
+      const price = PRICES[currency].investor['6m'];
+      return formatPrice(price, currency);
+    }
+  }, [currency, smartTerm, formatPrice]);
+
+  const getPerText = React.useCallback((planKey: string) => {
+    if (planKey === 'smart') {
+      return smartTerm === 'monthly'
+        ? L(lang, 'miesięcznie', 'monthly')
+        : L(lang, 'za 6 miesięcy', 'for 6 months');
+    } else {
+      return L(lang, 'za 6 miesięcy', 'for 6 months');
+    }
+  }, [smartTerm, lang]);
 
   return (
     <section id="pricing" className="ds-section">
@@ -1037,15 +1087,25 @@ function Pricing({ lang }: { lang: Lang }) {
         <SectionHead
           align="center"
           eyebrow={L(lang, 'Plany', 'Plans')}
-          title={L(lang, 'Dwa poziomy. Oba na zaproszenie.', 'Two tiers. Both invite-only.')}
-          sub={L(lang, 'Smart pokazuje status dna i zagregowane sygnały. Investor odkrywa cały terminal. Chronione szczegóły są redagowane po stronie serwera — nigdy nie trafiają do przeglądarki.', 'Smart shows the bottom status and aggregated signals. Investor reveals the whole terminal. Protected detail is redacted server-side — it never reaches the browser.')}
+          title={L(lang, 'Wybierz swój plan i zacznij korzystać.', 'Choose your tier and start tracking.')}
+          sub={L(lang, 'Smart pokazuje status dna i zagregowane sygnały. Investor odkrywa cały terminal. Płatności realizowane bezpiecznie przez Stripe.', 'Smart shows the bottom status and aggregated signals. Investor reveals the whole terminal. Payments handled securely via Stripe.')}
         />
-        <div className="currency-switch" aria-label={L(lang, 'Wybór waluty', 'Currency selector')}>
-          {(['eur', 'pln'] as const).map((option) => (
-            <button key={option} type="button" className={currency === option ? 'is-active' : ''} onClick={() => setCurrency(option)}>
-              {option.toUpperCase()}
-            </button>
-          ))}
+        <div className="flex flex-col items-center gap-4 mb-8">
+          <div className="currency-switch" aria-label={L(lang, 'Wybór waluty', 'Currency selector')}>
+            {(['pln', 'eur', 'usd'] as const).map((option) => (
+              <button key={option} type="button" className={currency === option ? 'is-active' : ''} onClick={() => setCurrency(option)}>
+                {option.toUpperCase()}
+              </button>
+            ))}
+          </div>
+
+          <div className="currency-switch scale-90" aria-label={L(lang, 'Okres Smart', 'Smart term')}>
+            {(['monthly', '6m'] as const).map((option) => (
+              <button key={option} type="button" className={smartTerm === option ? 'is-active' : ''} onClick={() => setSmartTerm(option)}>
+                {option === 'monthly' ? L(lang, 'Miesięcznie', 'Monthly') : L(lang, '6 miesięcy', '6 months')}
+              </button>
+            ))}
+          </div>
         </div>
         <div className="pricing-grid">
           {PLANS.map((plan) => {
@@ -1057,8 +1117,8 @@ function Pricing({ lang }: { lang: Lang }) {
                   <StatusChip tone={gold ? 'gold' : 'ice'} size="sm">{L(lang, plan.tag, plan.tagEn)}</StatusChip>
                 </div>
                 <div className="pricing-price">
-                  <strong>{formatPrice(plan)}</strong>
-                  <span>· {L(lang, plan.plPer, plan.enPer)}</span>
+                  <strong>{getPriceText(plan.key)}</strong>
+                  <span>· {getPerText(plan.key)}</span>
                 </div>
                 <p>{L(lang, plan.plDesc, plan.enDesc)}</p>
                 <i />
@@ -1070,8 +1130,14 @@ function Pricing({ lang }: { lang: Lang }) {
                     </li>
                   ))}
                 </ul>
-                <Button variant={gold ? 'gold' : 'primary'} size="lg" fullWidth href="/#invite" iconRight={icon.arrow}>
-                  {gold ? L(lang, 'Poproś o dostęp Investor', 'Request Investor access') : L(lang, 'Poproś o zaproszenie Smart', 'Request Smart invite')}
+                <Button 
+                  variant={gold ? 'gold' : 'primary'} 
+                  size="lg" 
+                  fullWidth 
+                  href={`${DASHBOARD_URL}/?trigger_checkout=true&plan=${plan.key}&term=${plan.key === 'investor' ? '6m' : smartTerm}&currency=${currency}`} 
+                  iconRight={icon.arrow}
+                >
+                  {gold ? L(lang, 'Wybierz Investor', 'Select Investor') : L(lang, 'Wybierz Smart', 'Select Smart')}
                 </Button>
               </div>
             );
@@ -1511,8 +1577,9 @@ function updateSeo(lang: Lang, routeKey: RouteKey) {
         operatingSystem: 'Web',
         description,
         offers: [
-          { '@type': 'Offer', name: 'Smart', price: '99', priceCurrency: 'EUR', availability: 'https://schema.org/LimitedAvailability' },
-          { '@type': 'Offer', name: 'Investor', price: '399', priceCurrency: 'EUR', availability: 'https://schema.org/LimitedAvailability' },
+          { '@type': 'Offer', name: 'Smart Monthly', price: '39', priceCurrency: 'EUR', availability: 'https://schema.org/LimitedAvailability' },
+          { '@type': 'Offer', name: 'Smart 6 Months', price: '199', priceCurrency: 'EUR', availability: 'https://schema.org/LimitedAvailability' },
+          { '@type': 'Offer', name: 'Investor 6 Months', price: '649', priceCurrency: 'EUR', availability: 'https://schema.org/LimitedAvailability' },
         ],
       },
       {
