@@ -2,18 +2,17 @@
 
 ## Scope
 
-Zaktualizowano landing page **BTC Smart Investor Terminal** (`Inwestor_Dashboard_Landing`) do pełnej spójności z główną aplikacją produkcyjną **BTC Bottom Dashboard (v28.4)**. Naprawiono persystencję języka angielskiego oraz zweryfikowano 100% tłumaczeń.
+Zaktualizowano landing page **BTC Smart Investor Terminal** (`Inwestor_Dashboard_Landing`) do pełnej spójności z główną aplikacją produkcyjną **BTC Bottom Dashboard (v28.4)** oraz usunięto wskazane usterki wizualne i językowe.
 
 ## Key Upgrades & UI Decisions (v28.4)
 
-- **Trwała Persystencja Języka (`localStorage` + `URL` + SPA Router):** Wybór języka `PL` / `EN` jest zapamiętywany w `localStorage.getItem('btc_invest_lang')`. Klikanie linków nawigacyjnych (`/slownik-wskaznikow`, `/telegram`, regulaminy itp.) wykorzystuje nawigację SPA (`window.history.pushState`), zapobiegając przeładowaniu strony i powrotowi do języka polskiego.
-- **Pełne Tłumaczenia 100% EN:** Przeaudytowano wszystkie tytuły, nagłówki, etykiety, modale, karty mockupu terminala, statusy i legalne podstrony w języku angielskim.
-- **Ujednolicenie Liczby Wskaźników:** Zastąpiono wszystkie stare wzmianki (np. 21 czy 24) spójną liczbą **28 wskaźników** w 4 rodzinach konfluencji V2 + makro, zarówno w języku polskim, jak i angielskim.
-- **Usunięcie Widoku LIVE ze Strony Publicznej:** Landing page prezentuje wyłącznie historyczny przykład kalibracyjny z dołka 2022 r. Odczyty na żywo są zarezerwowane wyłącznie dla zalogowanych użytkowników zautoryzowanego terminala.
-- **Anonimizacja Dostawców Danych:** Usunięto nazwy konkretnych dostawców (BGeometrics, SoSoValue, FRED, alternative.me itp.). Wszędzie stosowany jest opis ogólny o równoległej agregacji danych z wielu niezależnych źródeł rynkowych, giełdowych, on-chain, sentymentu i makro.
-- **Silnik Scoringowy V2.3.0 Era-Aware:** Wprowadzono pełny opis 4 rodzin konfluencji (Wycena 30%, Podaż 30%, Cykl 20%, Popyt ETF 20%) oraz otoczenia makro.
-- **Flaga Generacyjne Dno (Generational Bottom):** Zaprezentowano wykrywanie skrajnej kapitulacji przy dołku ≥4 ortogonalnych bloków.
-- **Płatności i Auto-Checkout Stripe:** Przycisk zakupu wyzwala parametrem query `?trigger_checkout=true&plan=...&term=...&currency=...`.
+- **Poprawa Tłumaczenia Statystyk EN (`3x Daily`):** Zaktualizowano etykietę odświeżania w sekcjach Hero oraz Trust z hardkodowanego `3× / dobę` na dynamiczne `L(lang, '3× / dobę', '3x Daily')`.
+- **Naprawa Wykraczania Tekstu w Kartach KPI (`Generational`):** Skorygowano style CSS dla `.ds-kpi strong` i `.preview-kpis` (`minmax(130px, 1fr)`, `clamp(0.8rem, 1.1vw, 1.25rem)`, `white-space: nowrap`, `overflow: hidden`, `text-overflow: ellipsis`), eliminując problem wychodzenia napisów poza krawędź obramowania karty.
+- **Trwała Persystencja Języka (`localStorage` + `URL` + SPA Router):** Wybór języka `PL` / `EN` jest zapamiętywany w `localStorage`. Nawigacja między podstronami wykorzystuje nawigację SPA (`window.history.pushState`).
+- **Pełne Tłumaczenia 100% EN:** Przeaudytowano wszystkie tytuły, nagłówki, etykiety, modale, karty mockupu terminala, statusy i legalne podstrony.
+- **Ujednolicenie Liczby Wskaźników:** Zastąpiono wszystkie stare wzmianki (np. 21 czy 24) spójną liczbą **28 wskaźników** w 4 rodzinach konfluencji V2 + makro.
+- **Usunięcie Widoku LIVE ze Strony Publicznej:** Landing page prezentuje wyłącznie historyczny przykład kalibracyjny z dołka 2022 r. Odczyty na żywo są zarezerwowane dla zalogowanych użytkowników terminala.
+- **Anonimizacja Dostawców Danych:** Usunięto nazwy konkretnych dostawców (BGeometrics, SoSoValue, FRED, alternative.me itp.).
 
 ## Guardrails & Security
 
@@ -24,6 +23,6 @@ Zaktualizowano landing page **BTC Smart Investor Terminal** (`Inwestor_Dashboard
 
 - [x] Run `npm run typecheck` — 0 błędów typowania TS.
 - [x] Run `npm run build` — produkcyjny build zbudowany w dist/.
-- [x] Audyt 100% treści PL oraz EN — zweryfikowane.
-- [x] Test persystencji języka przy przełączaniu podstron — zapamiętywanie w localStorage i wsparcie SPA.
+- [x] Test etykiety `3x Daily` w wersji EN w Hero i Trust.
+- [x] Test braku wykraczania napisu `Generational` w kartach KPI.
 - [x] Git merge/commit na gałęzi `main`.

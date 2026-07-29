@@ -1123,18 +1123,19 @@ button {
 
 .preview-kpis {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 10px;
   margin-top: 16px;
 }
 
 .ds-kpi {
   min-width: 0;
-  padding: 14px 16px;
+  padding: 12px 14px;
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background: var(--grad-glass), var(--bg-glass);
   box-shadow: var(--shadow-layer);
+  overflow: hidden;
 }
 
 .ds-kpi > span {
@@ -1143,22 +1144,28 @@ button {
   gap: 6px;
   color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .ds-kpi strong {
   display: block;
-  margin-top: 8px;
+  margin-top: 6px;
   color: var(--text-primary);
   font-family: var(--font-mono);
-  font-size: clamp(1.1rem, 1.6vw, 1.55rem);
+  font-size: clamp(0.8rem, 1.1vw, 1.25rem);
   font-weight: 800;
   letter-spacing: -0.01em;
-  line-height: 1.05;
+  line-height: 1.1;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .ds-kpi p {

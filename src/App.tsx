@@ -746,7 +746,7 @@ function Hero({ lang, onNavigate }: { lang: Lang; onNavigate: (path: string, e?:
             {[
               { v: '28', pl: 'wskaźników w 5 kategoriach', en: 'indicators in 5 categories' },
               { v: '2018 · 2022', pl: 'kalibracja cykli + ETF era', en: 'calibrated cycles + ETF era' },
-              { v: '3× / dobę', pl: 'odświeżanie danych w terminalu', en: 'terminal data refreshes' },
+              { v: L(lang, '3× / dobę', '3x Daily'), pl: 'odświeżanie danych w terminalu', en: 'terminal data refreshes' },
             ].map((stat, index) => (
               <div key={stat.v} className={index < 2 ? 'with-border' : ''}>
                 <strong>{stat.v}</strong>
@@ -1161,7 +1161,7 @@ function Trust({ lang }: { lang: Lang }) {
   const stats = [
     { v: '2018 · 2022', plL: 'kalibracja cykli historycznych', enL: 'historical cycle calibration', tone: 'var(--signal-accumulate)' },
     { v: 'Multi-Source', plL: 'niezależne źródła danych', enL: 'independent data sources', tone: 'var(--gold-300)' },
-    { v: '3× / dobę', plL: 'odświeżanie danych w terminalu', enL: 'terminal data refreshes', tone: 'var(--ice-400)' },
+    { v: L(lang, '3× / dobę', '3x Daily'), plL: 'odświeżanie danych w terminalu', enL: 'terminal data refreshes', tone: 'var(--ice-400)' },
     { v: 'V1 Audit', plL: 'podwójny ślad audytowy bazy', enL: 'dual DB audit trail', tone: 'var(--emerald-400)' },
   ];
   const pillars = [
