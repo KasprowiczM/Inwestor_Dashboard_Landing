@@ -12,9 +12,9 @@ Główny portal **BTC Bottom Dashboard** to zaawansowany terminal analityczny dl
 
 1. **Edukacja i Prezentacja:** Wyjaśnienie założeń Strategii Inwestora Długoterminowego BTC w erze spotowych ETF oraz przedstawienie korzyści z korzystania z panelu.
 2. **Dwupoziomowy Model:** Wyjaśnienie różnicy między planem **Smart** (widok statusu na żywo z server-side redaction) i **Investor** (pełny terminal analityczny, wagi, progi, flaga Generacyjne Dno, alerty).
-3. **Integracja z API na Żywo:** Bezpieczny podgląd aktualnego odczytu z endpointu `https://btc-dash.64bit.site/api/snapshot` z możliwością przełączenia na przykład historyczny z 2022 roku.
+3. **Podgląd Historyczny:** Hero i sekcje pokazują wyłącznie sprawdzony przykładowy odczyt historyczny z kalibracji dna poprzednich cykli (np. dołek 2022). Bieżące odczyty na żywo chronią wartość produktu i są dostępne wyłącznie po zalogowaniu do zamkniętego terminala.
 4. **Płatności Stripe & Zaproszenia:** Zbieranie zapisów na listę oczekujących (Waitlist) oraz wyzwalanie auto-checkoutu Stripe dla wybranych walut (PLN, EUR, USD).
-5. **Słownik 28 Wskaźników V2:** Publiczny opis 28 wskaźników on-chain, podaży, sentymentu, ery ETF (SoSoValue) i makro (FRED).
+5. **Słownik 28 Wskaźników V2:** Publiczny opis 28 wskaźników on-chain, podaży, sentymentu, ery ETF i makroekonomii bez ujawniania nazw zewnętrznych dostawców danych.
 
 ---
 
@@ -22,7 +22,7 @@ Główny portal **BTC Bottom Dashboard** to zaawansowany terminal analityczny dl
 
 * **Framework:** React + Vite.
 * **Stylizacja:** Vanilla CSS + Nadir Design System v2 (glassmorphism, dark mode, neon-gold/ice accents).
-* **API Integration:** Moduł `src/lib/api.ts` komunikujący się z `/api/snapshot`.
+* **Agregacja Danych:** Model korzysta z wielu niezależnych i zweryfikowanych źródeł rynkowych, giełdowych, on-chain i makro równocześnie.
 * **Płatności:** Integracja dynamicznych linków Stripe Checkout (`?trigger_checkout=true`).
 
 ---
@@ -39,12 +39,11 @@ Landing prezentuje dwa plany w modelu invite-only z wyzwalaniem Stripe checkout:
 
 ---
 
-## 🧭 Aktualna Dokumentacja i Funkcje (v28.4)
+## 🧭 Dokumentacja i Zasady Ochrony Treści (v28.4)
 
-* **Hero Section:** Dynamiczny odczyt API na żywo (`bottomScore`, cena, drawdown, confidence %) z przełącznikiem na przykład 2022.
+* **Hero Section:** Prezentacja wyłącznie odczytu historycznego z kalibracji dna 2022. Brak publicznego API na żywo.
+* **Anonimizacja Źródeł:** Brak nazw zewnętrznych dostawców (opisy mówią o agregacji z wielu niezależnych źródeł rynkowych).
 * **Silnik Scoringowy V2 Engine (v2.3.0):** 4 rodziny konfluencji, mnożnik spójności `c_agree`, flaga *Generacyjne Dno* (≥4 ortogonalne bloki na dnie).
-* **Harmonogram Odświeżania:** 3× na dobę (AM/PM slots: 06:00, 12:00, 18:00 UTC) + Freshness Watchdog (>18h alert) i digest 07:00 UTC.
-* **Źródła Danych:** Otwarte API SoSoValue dla przepływów spot ETF USA oraz FRED dla wskaźników makro.
 * **Podstrony:** `/slownik-wskaznikow` (pełne 28 wskaźników), `/telegram`, `/zastrzezenia`, `/prywatnosc`, `/regulamin`.
 * **SEO & GEO:** `robots.txt`, `sitemap.xml`, `llms.txt`, Open Graph, JSON-LD i rewrites Vercel.
 

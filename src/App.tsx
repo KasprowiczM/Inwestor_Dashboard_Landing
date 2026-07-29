@@ -11,7 +11,6 @@ import {
   Layers,
   Lock,
   Mail,
-  RefreshCw,
   Scale,
   Shield,
   Target,
@@ -20,7 +19,6 @@ import {
   X,
   Zap,
 } from 'lucide-react';
-import { fetchPublicSnapshot, PublicSnapshotData } from './lib/api';
 
 type Lang = 'pl' | 'en';
 type Currency = 'eur' | 'pln' | 'usd';
@@ -72,8 +70,8 @@ const FAMILIES = [
     tone: 'var(--category-auxiliary)',
     pl: 'Cykl i psychologia (Cycle & Sentiment)',
     en: 'Cycle Timing & Crowd Sentiment',
-    plD: 'Drawdown od ATH, Dni od ATH, Monthly RSI(14), Weekly RSI, Bull Run Index (CBBI) i Fear & Greed — timing cykliczny i sentyment tłumu.',
-    enD: 'Drawdown from ATH, Days since ATH, Monthly RSI(14), Weekly RSI, Bull Run Index (CBBI) and Fear & Greed — cycle timing & crowd psychology.',
+    plD: 'Drawdown od ATH, Dni od ATH, Monthly RSI(14), Weekly RSI, Bull Run Index i Fear & Greed — timing cykliczny i sentyment tłumu.',
+    enD: 'Drawdown from ATH, Days since ATH, Monthly RSI(14), Weekly RSI, Bull Run Index and Fear & Greed — cycle timing & crowd psychology.',
   },
   {
     key: 'etf',
@@ -83,8 +81,8 @@ const FAMILIES = [
     tone: 'var(--category-confirmation)',
     pl: 'Popyt instytucjonalny (Era ETF)',
     en: 'Institutional Demand & ETF Era',
-    plD: 'ETF Balance, ETF Balance Trend, ETF Flow Momentum (otwarte dane SoSoValue bez klucza API) i Exchange Reserve — nowa dynamika kapitału po 2024r.',
-    enD: 'ETF Balance, ETF Balance Trend, ETF Flow Momentum (SoSoValue open API data) and Exchange Reserve — post-2024 institutional capital dynamics.',
+    plD: 'ETF Balance, ETF Balance Trend, ETF Flow Momentum i Exchange Reserve — nowa dynamika kapitału po 2024r.',
+    enD: 'ETF Balance, ETF Balance Trend, ETF Flow Momentum and Exchange Reserve — post-2024 institutional capital dynamics.',
   },
   {
     key: 'macro',
@@ -94,8 +92,8 @@ const FAMILIES = [
     tone: 'var(--category-macro)',
     pl: 'Otoczenie makroekonomiczne (Macro)',
     en: 'Macroeconomic Context & Liquidity',
-    plD: 'Płynność netto USD (FRED WALCL), Indeks Dolara (DXY), Spread 10Y-2Y i VIX Volatility Index — tło płynnościowe dla aktywów ryzykownych.',
-    enD: 'USD net liquidity (FRED WALCL), Dollar Index (DXY), 10Y-2Y Spread and VIX Volatility Index — global risk liquidity backdrop.',
+    plD: 'Płynność netto USD, Indeks Dolara (DXY), Spread 10Y-2Y i VIX Volatility Index — tło płynnościowe dla aktywów ryzykownych.',
+    enD: 'USD Net Liquidity, Dollar Index (DXY), 10Y-2Y Spread and VIX Volatility Index — global risk liquidity backdrop.',
   },
 ];
 
@@ -103,7 +101,7 @@ const INDICATORS = [
   // --- 1. Wycena (Valuation) ---
   { cat: 'valuation', pl: 'MVRV Z-Score', en: 'MVRV Z-Score', plD: 'Ocenia odchylenie wartości rynkowej od zrealizowanej. Niskie odczyty historycznie wyznaczały dołki cyklu.', enD: 'Evaluates market value deviation from realized value. Low readings historically marked cycle bottoms.', sample: [76, 65, 52, 38, 28, 24, 31, 42] },
   { cat: 'valuation', pl: 'NUPL (Net Unrealized Profit/Loss)', en: 'NUPL', plD: 'Pokazuje bilans niezrealizowanych zysków i strat. Przejście w strefę kapitulacji (poniżej 0) sygnalizuje ekstremalne schłodzenie.', enD: 'Shows unrealized profit/loss balance. Entering capitulation zone (below 0) signals extreme cooling.', sample: [72, 60, 44, 30, 21, 19, 27, 38] },
-  { cat: 'valuation', pl: 'LTH Realized Price', en: 'LTH Realized Price Ratio', plD: 'Cena bazowa długoterminowych posiadaczy. Spadek ceny spot poniżej LTH Realized Price oznacza głęboką kapitulację rynku.', enD: 'Long-term holder cost basis. Spot price falling below LTH Realized Price marks deep market capitulation.', sample: [82, 76, 66, 55, 44, 39, 43, 50] },
+  { cat: 'valuation', pl: 'LTH Realized Price Ratio', en: 'LTH Realized Price Ratio', plD: 'Cena bazowa długoterminowych posiadaczy. Spadek ceny spot poniżej LTH Realized Price oznacza głęboką kapitulację rynku.', enD: 'Long-term holder cost basis. Spot price falling below LTH Realized Price marks deep market capitulation.', sample: [82, 76, 66, 55, 44, 39, 43, 50] },
   { cat: 'valuation', pl: 'STH MVRV', en: 'STH MVRV', plD: 'Mierzy pozycję krótkoterminowych inwestorów. Gdy świeży kapitał znajduje się pod presją strat, szansa na zwrot wzrasta.', enD: 'Measures short-term holder position. When recent capital holds steep losses, potential turning points emerge.', sample: [73, 61, 49, 38, 31, 28, 35, 44] },
 
   // --- 2. Podaż i Zachowanie (Holder & Supply) ---
@@ -116,25 +114,25 @@ const INDICATORS = [
   { cat: 'holder', pl: 'Mayer Multiple', en: 'Mayer Multiple', plD: 'Stosunek ceny spot do 200-dniowej średniej kroczącej (200DMA). Odczyty w przedziale 0.5–0.65 wyznaczały dno bessy.', enD: 'Ratio of spot price to 200-day moving average (200DMA). Readings between 0.5–0.65 marked bear market bottoms.', sample: [85, 74, 62, 53, 48, 51, 58, 65] },
   { cat: 'holder', pl: 'Pi Cycle Bottom', en: 'Pi Cycle Bottom', plD: 'Odległość 150-dniowej EMA od 471-dniowej SMA pomnożonej przez 0.745. Wartości <= 0 wyznaczają sygnał dołka.', enD: 'Distance between 150-day EMA and 471-day SMA multiplied by 0.745. Values <= 0 trigger a bottom buy signal.', sample: [35, 28, 20, 12, 4, -2, 3, 10] },
   { cat: 'holder', pl: 'Reserve Risk', en: 'Reserve Risk', plD: 'Ocenia relację ryzyka do potencjału zysku na podstawie przekonania i cierpliwości długoterminowych posiadaczy.', enD: 'Evaluates risk-to-reward ratio based on the conviction and patience of long-term holders.', sample: [70, 58, 41, 30, 24, 23, 29, 40] },
-  { cat: 'holder', pl: 'OKX Funding Rate (8h)', en: 'OKX Funding Rate', plD: 'Stopa finansowania pozycji wieczystych (perpetual futures). Ujemny funding potwierdza kapitulację i dominację pozycji krótkich.', enD: 'Perpetual futures funding rate. Negative funding confirms long-side capitulation and short-side dominance.', sample: [50, 45, 35, 20, 10, 15, 30, 45] },
+  { cat: 'holder', pl: 'Funding Rate (8h)', en: 'Funding Rate (8h)', plD: 'Stopa finansowania pozycji wieczystych (perpetual futures). Ujemny funding potwierdza kapitulację i dominację pozycji krótkich.', enD: 'Perpetual futures funding rate. Negative funding confirms long-side capitulation and short-side dominance.', sample: [50, 45, 35, 20, 10, 15, 30, 45] },
 
   // --- 3. Cykl i Sentyment (Cycle & Sentiment) ---
   { cat: 'cycle', pl: 'Drawdown z ATH', en: 'Drawdown from ATH', plD: 'Procentowy spadek od szczytu wszech czasów. W erze ETF silnik V2 uwzględnia zarówno głębokie (-75%+), jak i płytkie dołki.', enD: 'Percentage drop from ATH. In the ETF era, V2 engine accounts for both deep (-75%+) and shallow bottoms.', sample: [18, 24, 36, 49, 57, 63, 59, 54] },
   { cat: 'cycle', pl: 'Dni od ATH', en: 'Days since ATH', plD: 'Mierzy czas trwania fazy spadkowej cyklu. Ramuje oczekiwanie w strefie akumulacji (zazwyczaj 300–400 dni od ATH).', enD: 'Measures duration of cycle downtrend. Frames timing expectations in the accumulation zone.', sample: [94, 86, 72, 58, 45, 39, 34, 31] },
   { cat: 'cycle', pl: 'Monthly RSI(14)', en: 'Monthly RSI', plD: 'Wskaźnik impetu na interwale miesięcznym. Wykrywa skrajne wyprzedanie w długim horyzoncie czasowym.', enD: 'Long-term momentum indicator on monthly interval. Detects multi-year oversold regimes.', sample: [64, 55, 43, 33, 27, 30, 38, 46] },
   { cat: 'cycle', pl: 'Weekly RSI(14)', en: 'Weekly RSI', plD: 'RSI z interwału tygodniowego. Szybszy od miesięcznego, używany jako potwierdzenie wyprzedania w oknie dołkowym.', enD: 'Weekly timeframe RSI. Faster than monthly RSI, used to confirm oversold conditions in cycle windows.', sample: [58, 48, 38, 28, 24, 29, 36, 45] },
-  { cat: 'cycle', pl: 'Bull Run Index (CBBI)', en: 'Bull Run Index', plD: 'Syntetyczny indeks hossy używany odwrotnie do identyfikacji dołków cyklu.', enD: 'Synthetic bull index used in reverse to identify cycle bottoms.', sample: [80, 68, 50, 32, 18, 14, 22, 35] },
+  { cat: 'cycle', pl: 'Bull Run Index', en: 'Bull Run Index', plD: 'Syntetyczny indeks hossy używany odwrotnie do identyfikacji dołków cyklu.', enD: 'Synthetic bull index used in reverse to identify cycle bottoms.', sample: [80, 68, 50, 32, 18, 14, 22, 35] },
   { cat: 'cycle', pl: 'Fear & Greed Index', en: 'Fear & Greed', plD: 'Indeks strachu i chciwości. Skrajny strach (< 20) służy jako wspierający sygnał kontrariański.', enD: 'Fear & Greed index. Extreme fear (< 20) serves as a supportive contrarian input.', sample: [52, 39, 26, 18, 12, 16, 24, 36] },
 
   // --- 4. Era ETF i Popyt (Demand & ETF) ---
   { cat: 'etf', pl: 'ETF Balance Context', en: 'ETF Balance', plD: 'Całkowity bilans BTC przetrzymywany w amerykańskich spotowych ETF-ach (kontekst instytucjonalny od 2024 roku).', enD: 'Total BTC balance held across US spot BTC ETFs (institutional adoption context post-2024).', sample: [30, 35, 42, 48, 55, 60, 64, 70] },
   { cat: 'etf', pl: 'ETF Balance Trend (30d Δ)', en: 'ETF Balance Trend', plD: '30-dniowa zmiana (delta) salda BTC w ETF-ach spotowych USA. Mierzy trwały napływ kapitału instytucjonalnego.', enD: '30-day net change in US spot ETF BTC balance. Measures sustained institutional adoption.', sample: [32, 36, 41, 38, 44, 51, 57, 62] },
-  { cat: 'etf', pl: 'ETF Flow Momentum (30d)', en: 'ETF Flow Momentum', plD: 'Skumulowane 30-dniowe przepływy netto w USD na podstawie otwartego API SoSoValue (bez klucza).', enD: 'Cumulative 30-day net USD flows built on SoSoValue open API data.', sample: [28, 35, 46, 42, 39, 50, 61, 70] },
+  { cat: 'etf', pl: 'ETF Flow Momentum (30d)', en: 'ETF Flow Momentum', plD: 'Skumulowane 30-dniowe przepływy netto w USD na podstawie zbiorczych danych rynkowych.', enD: 'Cumulative 30-day net USD flows built on aggregated market data.', sample: [28, 35, 46, 42, 39, 50, 61, 70] },
   { cat: 'etf', pl: 'Exchange Reserve Trend (30d)', en: 'Exchange Reserve Trend', plD: '30-dniowa zmiana netto rezerw Bitcoina na giełdach. Spadek rezerw sugeruje akumulację on-chain.', enD: '30-day net change in exchange BTC reserves. Declining reserves confirm spot accumulation.', sample: [60, 55, 48, 42, 36, 30, 28, 25] },
 
   // --- 5. Otoczenie Makro (Macro Context) ---
-  { cat: 'macro', pl: 'Płynność netto USD (WALCL)', en: 'USD Net Liquidity', plD: 'Tło makro na podstawie rezerw Fed, TGA i RRP (FRED API). Dostępność płynności napędza aktywa ryzykowne.', enD: 'Macro backdrop based on Fed balance sheet, TGA and RRP (FRED API). Liquidity feeds risk assets.', sample: [38, 36, 40, 45, 43, 48, 54, 60] },
-  { cat: 'macro', pl: 'Indeks Dolara (DXY / DTWEXBGS)', en: 'Dollar Index (DXY)', plD: 'Siła dolara amerykańskiego. Szczyt DXY często pokrywał się z lokalnym lub cyklicznym dołkiem na Bitcoinie.', enD: 'US Dollar strength index. DXY peaks often coincide with BTC local or cycle bottoms.', sample: [44, 50, 61, 68, 64, 58, 49, 42] },
+  { cat: 'macro', pl: 'Płynność netto USD', en: 'USD Net Liquidity', plD: 'Tło makro na podstawie bilansu Rezerwy Federalnej, TGA i RRP. Dostępność płynności napędza aktywa ryzykowne.', enD: 'Macro backdrop based on Fed balance sheet, TGA and RRP. Liquidity feeds risk assets.', sample: [38, 36, 40, 45, 43, 48, 54, 60] },
+  { cat: 'macro', pl: 'Indeks Dolara (DXY)', en: 'Dollar Index (DXY)', plD: 'Siła dolara amerykańskiego. Szczyt DXY często pokrywał się z lokalnym lub cyklicznym dołkiem na Bitcoinie.', enD: 'US Dollar strength index. DXY peaks often coincide with BTC local or cycle bottoms.', sample: [44, 50, 61, 68, 64, 58, 49, 42] },
   { cat: 'macro', pl: 'Spread Rentowności 10Y-2Y', en: '10Y-2Y Yield Spread', plD: 'Spread rentowności obligacji skarbowych USA. Kontekst cyklu koniunkturalnego i ryzyka recesji.', enD: 'US Treasury yield curve spread. Provides business cycle and recession risk context.', sample: [35, 32, 28, 24, 30, 38, 46, 52] },
   { cat: 'macro', pl: 'Indeks Zmienności VIX', en: 'VIX Volatility Index', plD: 'Indeks zmienności rynków akcji. Wykrywa globalne epizody risk-off i płynnościowej kapitulacji.', enD: 'Equity market volatility index. Detects global risk-off & liquidity capitulation events.', sample: [22, 28, 41, 58, 53, 44, 35, 30] },
 ];
@@ -179,14 +177,14 @@ const PLANS = [
     accent: 'ice',
     plPer: 'wybrana waluta · subskrypcja',
     enPer: 'selected currency · subscription',
-    plDesc: 'Inteligentne śledzenie dna BTC. Status strategii V2, Bottom Score na żywo, wskaźniki sentymentu i przepływy ETF — z ochroną poufnej metodologii.',
-    enDesc: 'Smart tracking of BTC bottom. Live V2 strategy status, Bottom Score, sentiment & ETF flows — with protected methodology.',
+    plDesc: 'Inteligentne śledzenie dna BTC. Widzisz status strategii V2, Bottom Score na żywo po zalogowaniu, wskaźniki sentymentu i przepływy ETF — z ochroną poufnej metodologii.',
+    enDesc: 'Smart tracking of BTC bottom. Live V2 strategy status after sign-in, Bottom Score, sentiment & ETF flows — with protected methodology.',
     features: [
-      { pl: 'Bottom Score na żywo z API i 5-pasmowy werdykt', en: 'Live API Bottom Score & 5-band verdict', on: true },
+      { pl: 'Bottom Score na żywo w zamkniętym terminalu i 5-pasmowy werdykt', en: 'Live Bottom Score inside closed terminal & 5-band verdict', on: true },
       { pl: 'Status okna akumulacji i dystans od ATH', en: 'Accumulation window status & ATH distance', on: true },
       { pl: 'Meta strategii V2 Engine: 28 wskaźników w 4 rodzinach', en: 'V2 Engine strategy meta: 28 indicators in 4 families', on: true },
       { pl: 'Zagregowane wskaźniki Fear & Greed i ETF Flows', en: 'Aggregated Fear & Greed & ETF flows', on: true },
-      { pl: 'Bezpieczny widok publiczny z server-side redaction', en: 'Safe public view with server-side redaction', on: true },
+      { pl: 'Bezpieczny widok z server-side redaction', en: 'Safe view with server-side redaction', on: true },
       { pl: 'Pełna siatka 24 wskaźników w siatce ze sparklines', en: 'Full 24-indicator grid with sparklines', on: false },
       { pl: 'Wagi, wkłady, progi normalizacji, mnożnik c_agree', en: 'Weights, contributions, thresholds, c_agree multiplier', on: false },
       { pl: 'Planer transz DCA, flaga Generacyjne Dno i alerty', en: 'DCA tranche planner, Generational Bottom flag & alerts', on: false },
@@ -223,22 +221,28 @@ const FAQ = [
     enA: 'It is the latest scoring algorithm version built following the launch of US spot BTC ETFs. It structures indicators into 4 main confluence families: Valuation (30%), Supply & Holders (30%), Cycle & Sentiment (20%), and ETF Demand (20%). It also introduces a dispersion penalty c_agree and Generational Bottom detection.',
   },
   {
+    pl: 'Dlaczego na stronie publicznej prezentowany jest tylko widok historyczny?',
+    en: 'Why does the public landing page display only historical calibration data?',
+    plA: 'Publiczny landing page przedstawia wyłącznie sprawdzony przykład historyczny z kalibracji dna poprzednich cykli (np. dołek z listopada 2022 roku), aby zademonstrować działanie skali Bottom Score i 5-pasmowego werdyktu. Bieżący odczyt rynkowy na żywo oraz aktualne sygnały są chronione i dostępne wyłącznie po zalogowaniu do zamkniętego terminala.',
+    enA: 'The public landing page displays strictly historical calibration examples from past cycle floors (e.g. November 2022 bottom) to demonstrate the Bottom Score scale and 5-band verdict. Live real-time market readings and current signals remain protected and accessible exclusively after logging in to the closed terminal.',
+  },
+  {
     pl: 'Dlaczego dostęp do terminala jest tylko na zaproszenie (Invite-Only)?',
     en: 'Why is terminal access invite-only?',
     plA: 'BTC Smart Investor Terminal to zamknięte środowisko dla świadomych inwestorów długoterminowych. Aby chronić metodologię strategii oraz zapewnić najwyższą wydajność infrastruktury (bramki API z limitem zapytań i rotacją), konta zakładane są wyłącznie poprzez zaproszenia administratorów lub aktywnych członków.',
     enA: 'BTC Smart Investor Terminal is a closed environment for deliberate long-term investors. To protect protected strategy methodology and maintain system performance (rate-limited API gateways), accounts are activated strictly via admin or member invites.',
   },
   {
-    pl: 'Jak często aktualizowane są dane rynkowe?',
-    en: 'How often are market data updated?',
-    plA: 'System aktualizuje dane 3 razy na dobę: slot AM o 06:00 UTC (GitHub Actions), slot PM o 12:00 UTC (Vercel Cron) oraz o 18:00 UTC. Ponadto wbudowany watchdog świeżości (Freshness Watchdog) wysyła alert na Telegram, jeśli dane byłyby starsze niż 18 godzin.',
-    enA: 'The system updates data 3 times daily: AM slot at 06:00 UTC (GitHub Actions), PM slot at 12:00 UTC (Vercel Cron), and 18:00 UTC. A built-in Freshness Watchdog sends Telegram alerts if readings exceed 18 hours.',
+    pl: 'Jak często aktualizowane są dane rynkowe wewnątrz terminala?',
+    en: 'How often are market data updated inside the terminal?',
+    plA: 'Wewnątrz zautoryzowanego terminala system aktualizuje dane 3 razy na dobę: slot AM o 06:00 UTC, slot PM o 12:00 UTC oraz o 18:00 UTC. Ponadto wbudowany watchdog świeżości (Freshness Watchdog) wysyła alert na Telegram, jeśli dane byłyby starsze niż 18 godzin.',
+    enA: 'Inside the authorized terminal, the system updates data 3 times daily: AM slot at 06:00 UTC, PM slot at 12:00 UTC, and 18:00 UTC. A built-in Freshness Watchdog sends Telegram alerts if readings exceed 18 hours.',
   },
   {
     pl: 'Czym różni się plan Smart od Investor?',
     en: 'How does Smart differ from Investor?',
-    plA: 'Plan Smart daje dostęp do bezpiecznego statusu strategii na żywo (Bottom Score, werdykt, status okna akumulacji, Fear & Greed i ETF flows) bez dostępu do chronionej metodologii. Plan Investor odblokowuje pełny terminal: 24 wskaźniki w siatce ze sparklines, wagi, wkłady, flagę Generacyjne Dno, planer DCA oraz alerty Telegram.',
-    enA: 'Smart grants access to safe live strategy status (Bottom Score, verdict, window status, Fear & Greed & ETF flows) without exposing protected methodology. Investor unlocks the whole terminal: 24 indicators with sparklines, weights, contributions, Generational Bottom flag, DCA planner & Telegram alerts.',
+    plA: 'Plan Smart daje dostęp do bezpiecznego statusu strategii na żywo w terminalu (Bottom Score, werdykt, status okna akumulacji, Fear & Greed i ETF flows) z server-side redaction. Plan Investor odblokowuje pełny terminal: 24 wskaźniki w siatce ze sparklines, wagi, wkłady, flagę Generacyjne Dno, planer DCA oraz alerty Telegram.',
+    enA: 'Smart grants access to safe live strategy status inside the terminal (Bottom Score, verdict, window status, Fear & Greed & ETF flows) with server-side redaction. Investor unlocks the whole terminal: 24 indicators with sparklines, weights, contributions, Generational Bottom flag, DCA planner & Telegram alerts.',
   },
   {
     pl: 'Czy to porada inwestycyjna?',
@@ -257,7 +261,6 @@ const icon = {
   chevron: <ChevronDown size={18} />,
   shield: <Shield size={15} />,
   bolt: <Zap size={16} />,
-  refresh: <RefreshCw size={14} />,
 };
 
 const ROUTES: Record<RouteKey, { path: string; pl: string; en: string; titlePl: string; titleEn: string; descPl: string; descEn: string }> = {
@@ -267,8 +270,8 @@ const ROUTES: Record<RouteKey, { path: string; pl: string; en: string; titlePl: 
     en: 'Home',
     titlePl: 'BTC Smart Investor Terminal | Analiza dołka cyklu Bitcoina (v28.4 V2 Engine)',
     titleEn: 'BTC Smart Investor Terminal | Bitcoin cycle-bottom analytics (v28.4 V2 Engine)',
-    descPl: 'Invite-only terminal dla inwestora BTC: Bottom Score na żywo, konfluencja 28 wskaźników w 4 rodzinach V2 Engine i dyscyplina akumulacji.',
-    descEn: 'Invite-only BTC investor terminal: Live Bottom Score, 28-indicator V2 Engine confluence across 4 families and accumulation discipline.',
+    descPl: 'Invite-only terminal dla inwestora BTC: Konfluencja 28 wskaźników w 4 rodzinach V2 Engine, kalibracja cykli i dyscyplina akumulacji.',
+    descEn: 'Invite-only BTC investor terminal: 28-indicator V2 Engine confluence across 4 families, cycle calibration and accumulation discipline.',
   },
   glossary: {
     path: '/slownik-wskaznikow',
@@ -276,8 +279,8 @@ const ROUTES: Record<RouteKey, { path: string; pl: string; en: string; titlePl: 
     en: 'Indicator glossary',
     titlePl: 'Słownik 28 wskaźników V2 Engine | BTC Smart Investor Terminal',
     titleEn: 'V2 Engine 28 Indicator Glossary | BTC Smart Investor Terminal',
-    descPl: 'Publiczny słownik 28 wskaźników on-chain, cyklu, sentymentu, ery ETF (SoSoValue) i makro (FRED) używanych w silniku V2.',
-    descEn: 'Public glossary of 28 on-chain, cycle, sentiment, ETF era (SoSoValue) and macro (FRED) indicators used in the V2 engine.',
+    descPl: 'Publiczny słownik 28 wskaźników on-chain, cyklu, sentymentu, ery ETF i makro używanych w silniku V2.',
+    descEn: 'Public glossary of 28 on-chain, cycle, sentiment, ETF era and macro indicators used in the V2 engine.',
   },
   telegram: {
     path: '/telegram',
@@ -381,10 +384,10 @@ const LEGAL_SECTIONS = {
       enD: 'Every investment decision belongs solely to the user. Always perform your own research (DYOR) and consult a licensed adviser if needed.',
     },
     {
-      plT: 'Ograniczenia danych i dostawców',
-      enT: 'Data and vendor limitations',
-      plD: 'Dane pochodzące od zewnętrznych dostawców (BGeometrics, SoSoValue, FRED, alternative.me) mogą ulegać opóźnieniom lub korektom. Terminal wykorzystuje architekturę bramek API i buforowania dla zapewnienia ciągłości działania.',
-      enD: 'Data from third-party vendors (BGeometrics, SoSoValue, FRED, alternative.me) may experience delays or revisions. The terminal employs API gateway architecture and caching to maintain uptime.',
+      plT: 'Agregacja danych z wielu źródeł',
+      enT: 'Multi-source data aggregation',
+      plD: 'Dane pochodzą z wielu niezależnych i zweryfikowanych źródeł rynkowych, giełdowych, on-chain, sentymentu oraz makroekonomicznych równocześnie, co zapewnia najwyższą wiarygodność, spójność i odporność pomiaru na opóźnienia.',
+      enD: 'Data are aggregated from multiple independent and verified market, exchange, on-chain, sentiment, and macro sources simultaneously to ensure reliability and fault tolerance.',
     },
     {
       plT: 'Brak gwarancji trafności dna',
@@ -441,8 +444,8 @@ const LEGAL_SECTIONS = {
     {
       plT: 'Zasady planów Smart i Investor',
       enT: 'Smart & Investor plan terms',
-      plD: 'Plan Smart oferuje widok statusu strategii V2 na żywo z server-side redaction. Plan Investor daje pełny dostęp do siatki 24 wskaźników ze sparklines, wag, flagi Generacyjne Dno i alertów Telegram.',
-      enD: 'Smart grants live V2 strategy status with server-side redaction. Investor provides full 24-indicator grid access with sparklines, weights, Generational Bottom flag & Telegram alerts.',
+      plD: 'Plan Smart oferuje widok statusu strategii V2 na żywo po zalogowaniu z server-side redaction. Plan Investor daje pełny dostęp do siatki 24 wskaźników ze sparklines, wag, flagi Generacyjne Dno i alertów Telegram.',
+      enD: 'Smart grants live V2 strategy status inside the terminal with server-side redaction. Investor provides full 24-indicator grid access with sparklines, weights, Generational Bottom flag & Telegram alerts.',
     },
     {
       plT: 'Dozwolony użytek i zakaz redystrybucji',
@@ -536,7 +539,7 @@ function BrandLockup() {
   );
 }
 
-function ScoreRing({ score = 72, size = 168, stroke = 9, label = 'Bottom Score' }: { score?: number; size?: number; stroke?: number; label?: string | null }) {
+function ScoreRing({ score = 86, size = 168, stroke = 9, label = 'Bottom Score' }: { score?: number; size?: number; stroke?: number; label?: string | null }) {
   const verdict = score >= 78 ? 'aggressive' : score >= 55 ? 'accumulate' : score >= 30 ? 'observe' : 'tooEarly';
   const radius = (size - stroke) / 2 - 4;
   const circumference = 2 * Math.PI * radius;
@@ -708,30 +711,10 @@ function Nav({ lang, setLang }: { lang: Lang; setLang: (lang: Lang) => void }) {
 }
 
 function Hero({ lang }: { lang: Lang }) {
-  const [snapshot, setSnapshot] = React.useState<PublicSnapshotData | null>(null);
-  const [loading, setLoading] = React.useState(true);
-  const [viewMode, setViewMode] = React.useState<'live' | '2022'>('live');
-
-  React.useEffect(() => {
-    let isMounted = true;
-    fetchPublicSnapshot().then((data) => {
-      if (isMounted) {
-        setSnapshot(data);
-        setLoading(false);
-      }
-    });
-    return () => { isMounted = false; };
-  }, []);
-
-  const isLive = viewMode === 'live' && snapshot;
-  const score = isLive ? snapshot.bottomScore : 86;
-  const verdictLabel = isLive ? snapshot.verdictLabel : L(lang, 'Dno cyklu 2022 (Historia)', '2022 cycle-bottom (Historical)');
-  const priceDisplay = isLive
-    ? (snapshot.currentPrice ? `$${snapshot.currentPrice.toLocaleString('en-US', { maximumFractionDigits: 0 })}` : 'B.D.')
-    : '$15,760';
-  const drawdownDisplay = isLive
-    ? (snapshot.drawdownPct !== null ? `${snapshot.drawdownPct > 0 ? '-' : ''}${Math.abs(snapshot.drawdownPct)}%` : 'B.D.')
-    : '-77%';
+  const score = 86;
+  const verdictLabel = L(lang, 'Agresywna Akumulacja (Dno 2022)', 'Aggressive Accumulation (2022 Bottom)');
+  const priceDisplay = '$15,760';
+  const drawdownDisplay = '-77%';
 
   return (
     <section id="top" className="ds-hero">
@@ -748,8 +731,8 @@ function Hero({ lang }: { lang: Lang }) {
           <p>
             {L(
               lang,
-              'Zamknięty terminal analityczny łączący 28 wskaźników on-chain, podaży, sentymentu, przepływów spot ETF (SoSoValue) i makro w jeden precyzyjny Bottom Score.',
-              'A closed analytics terminal joining 28 indicators across on-chain, supply, sentiment, spot ETF flows (SoSoValue) and macro into one precise Bottom Score.',
+              'Zamknięty terminal analityczny łączący 28 wskaźników on-chain, podaży, sentymentu, przepływów spot ETF i makro w jeden precyzyjny Bottom Score.',
+              'A closed analytics terminal joining 28 indicators across on-chain, supply, sentiment, spot ETF flows and macro into one precise Bottom Score.',
             )}
           </p>
           <div className="hero-actions">
@@ -764,7 +747,7 @@ function Hero({ lang }: { lang: Lang }) {
             {[
               { v: '28', pl: 'wskaźników w 5 kategoriach', en: 'indicators in 5 categories' },
               { v: '2018 · 2022', pl: 'kalibracja cykli + ETF era', en: 'calibrated cycles + ETF era' },
-              { v: '3× / dobę', pl: 'odświeżanie danych (AM/PM)', en: 'data refresh (AM/PM slots)' },
+              { v: '3× / dobę', pl: 'odświeżanie danych w terminalu', en: 'terminal data refreshes' },
             ].map((stat, index) => (
               <div key={stat.v} className={index < 2 ? 'with-border' : ''}>
                 <strong>{stat.v}</strong>
@@ -779,23 +762,9 @@ function Hero({ lang }: { lang: Lang }) {
             <img src="/assets/orb.png" alt="" />
             <div aria-hidden="true" />
             <div className="orb-live">
-              <div className="flex items-center gap-2">
-                <Badge tone={isLive ? (snapshot?.isLive ? 'live' : 'amber') : 'gold'}>
-                  {isLive
-                    ? (snapshot?.isLive ? L(lang, 'Bieżący rynek na żywo (API)', 'Live market reading (API)') : L(lang, 'Tryb awaryjny (Cache)', 'Fallback Cache'))
-                    : L(lang, 'Przykład historyczny · Dno 2022', 'Historical example · 2022 bottom')}
-                </Badge>
-
-                <button
-                  type="button"
-                  onClick={() => setViewMode(viewMode === 'live' ? '2022' : 'live')}
-                  className="text-xs px-2 py-1 rounded bg-slate-800/80 hover:bg-slate-700 text-slate-300 transition-colors flex items-center gap-1 border border-slate-700"
-                  title={L(lang, 'Przełącz tryb danych', 'Toggle data mode')}
-                >
-                  {icon.refresh}
-                  <span>{viewMode === 'live' ? '2022' : 'LIVE'}</span>
-                </button>
-              </div>
+              <Badge tone="gold">
+                {L(lang, 'Przykład historyczny · Kalibracja Dna 2022', 'Historical example · 2022 bottom calibration')}
+              </Badge>
             </div>
           </div>
           <div className="orb-score-panel">
@@ -804,10 +773,7 @@ function Hero({ lang }: { lang: Lang }) {
               <span>{L(lang, 'Werdykt strategii V2', 'V2 Strategy verdict')}</span>
               <strong>{verdictLabel}</strong>
               <p>
-                BTC {priceDisplay} · <em>{drawdownDisplay}</em> {L(lang, 'od ATH', 'from ATH')}
-                {isLive && snapshot?.confidence && (
-                  <> · Confidence: <em>{snapshot.confidence}%</em></>
-                )}
+                BTC {priceDisplay} · <em>{drawdownDisplay}</em> {L(lang, 'od ATH · dane poglądowe', 'from ATH · illustrative data')}
               </p>
             </div>
           </div>
@@ -826,7 +792,7 @@ function HowItWorks({ lang }: { lang: Lang }) {
           title={L(lang, 'Od szumu rynkowego do rygoru jednej decyzji.', 'From market noise to single-decision rigor.')}
           sub={L(
             lang,
-            'Zamiast analizowania dziesiątek osobnych wykresów, BTC Smart Investor Terminal sprowadza cykl Bitcoina do konfluencji 4 głównych bloki danych oraz kontekstu makro.',
+            'Zamiast analizowania dziesiątek osobnych wykresów, BTC Smart Investor Terminal sprowadza cykl Bitcoina do konfluencji 4 głównych bloków danych oraz kontekstu makro.',
             'Instead of analyzing dozens of disjointed charts, BTC Smart Investor Terminal collapses the Bitcoin cycle into 4 core data blocks plus macro context.',
           )}
         />
@@ -939,7 +905,7 @@ function ProductPreview({ lang }: { lang: Lang }) {
   const series = [
     { catColor: 'var(--category-core)', plL: 'MVRV Z-Score (Wycena)', enL: 'MVRV Z-Score (Valuation)', val: '-0.12', pts: [9, 8, 7, 6, 5, 4, 3, 3.4, 3, 2.6] },
     { catColor: 'var(--category-fundament)', plL: 'LTH SOPR (Podaż)', enL: 'LTH SOPR (Supply)', val: '0.94', pts: [3, 4, 5, 4.4, 5.6, 7, 6.4, 7.6, 8.4, 9] },
-    { catColor: 'var(--category-confirmation)', plL: 'ETF Flow Momentum (SoSoValue)', enL: 'ETF Flow Momentum (SoSoValue)', val: '+$142M', pts: [2, 3, 4, 5, 6, 6.8, 7.5, 8.2, 9] },
+    { catColor: 'var(--category-confirmation)', plL: 'ETF Flow Momentum (Popyt)', enL: 'ETF Flow Momentum (Demand)', val: '+$142M', pts: [2, 3, 4, 5, 6, 6.8, 7.5, 8.2, 9] },
   ];
 
   return (
@@ -966,7 +932,7 @@ function ProductPreview({ lang }: { lang: Lang }) {
                 </span>
               </div>
               <div>
-                <Badge tone="live">{L(lang, 'Dane odświeżane 3×/dobę', 'Data refreshed 3x/day')}</Badge>
+                <Badge tone="live">{L(lang, 'Kalibracja Cykli · V2 Engine', 'Cycle Calibration · V2 Engine')}</Badge>
                 <StatusChip tone="ice" size="sm">{L(lang, 'Strefa DCA Otwarta', 'DCA Zone Open')}</StatusChip>
               </div>
             </div>
@@ -1015,8 +981,8 @@ function Methodology({ lang }: { lang: Lang }) {
             title={L(lang, '28 wskaźników. 4 rodziny konfluencji. 1 sprawdzony silnik.', '28 indicators. 4 confluence families. 1 verified engine.')}
             sub={L(
               lang,
-              'Każdy odczyt jest normalizowany, ważony i filtrowany przez bramkę kompletności danych. Kalibracja została oparta o historyczne dołki 2018 i 2022 oraz zaktualizowana pod kątem napływów spot ETF USA (SoSoValue API).',
-              'Every reading is normalized, weighted and filtered through data-completeness gates. Calibration is based on 2018 and 2022 historical floors and updated for US spot ETF flows (SoSoValue API).',
+              'Każdy odczyt jest normalizowany, ważony i filtrowany przez bramkę kompletności danych. Kalibracja została oparta o historyczne dołki 2018 i 2022 oraz zaktualizowana pod kątem napływów spot ETF USA z wielu niezależnych źródeł.',
+              'Every reading is normalized, weighted and filtered through data-completeness gates. Calibration is based on 2018 and 2022 historical floors and updated for US spot ETF flows from multiple independent sources.',
             )}
           />
           <div className="method-legend">
@@ -1132,7 +1098,7 @@ function Pricing({ lang }: { lang: Lang }) {
           align="center"
           eyebrow={L(lang, 'Plany Subskrypcyjne', 'Subscription Tiers')}
           title={L(lang, 'Wybierz poziom dostępu i dołącz do terminala.', 'Choose your tier and join the terminal.')}
-          sub={L(lang, 'Plan Smart prezentuje stan strategii na żywo z bezpiecznym server-side redaction. Plan Investor odblokowuje pełny terminal analityczny. Bezpieczne płatności przez Stripe.', 'Smart shows live strategy status with server-side redaction. Investor unlocks full terminal analytics. Payments processed via Stripe.')}
+          sub={L(lang, 'Plan Smart prezentuje stan strategii na żywo w zamkniętym terminalu z bezpiecznym server-side redaction. Plan Investor odblokowuje pełny terminal analityczny. Bezpieczne płatności przez Stripe.', 'Smart shows live strategy status inside the terminal with server-side redaction. Investor unlocks full terminal analytics. Payments processed via Stripe.')}
         />
         <div className="flex flex-col items-center gap-4 mb-8">
           <div className="currency-switch" aria-label={L(lang, 'Wybór waluty', 'Currency selector')}>
@@ -1195,8 +1161,8 @@ function Pricing({ lang }: { lang: Lang }) {
 function Trust({ lang }: { lang: Lang }) {
   const stats = [
     { v: '2018 · 2022', plL: 'kalibracja cykli historycznych', enL: 'historical cycle calibration', tone: 'var(--signal-accumulate)' },
-    { v: 'SoSoValue', plL: 'otwarte dane przepływów ETF', enL: 'open ETF flow data', tone: 'var(--gold-300)' },
-    { v: '3× / dobę', plL: 'odświeżanie AM/PM + Watchdog', enL: 'AM/PM refresh + Watchdog', tone: 'var(--ice-400)' },
+    { v: 'Multi-Source', plL: 'niezależne źródła danych', enL: 'independent data sources', tone: 'var(--gold-300)' },
+    { v: '3× / dobę', plL: 'odświeżanie danych w terminalu', enL: 'terminal data refreshes', tone: 'var(--ice-400)' },
     { v: 'V1 Audit', plL: 'podwójny ślad audytowy bazy', enL: 'dual DB audit trail', tone: 'var(--emerald-400)' },
   ];
   const pillars = [
@@ -1207,16 +1173,16 @@ function Trust({ lang }: { lang: Lang }) {
       copyEn: 'V2 engine thresholds are calibrated on 2018 and 2022 cycle bottoms with c_agree dispersion protection against noise.',
     },
     {
-      titlePl: 'Odporność potoku danych (v25 Gateway)',
-      titleEn: 'Pipeline resilience (v25 Gateway)',
-      copyPl: 'Infrastruktura wykorzystuje rotację kluczy BGeometrics z limitem współbieżności, darmowe dane SoSoValue ETF oraz buforowanie 24h.',
-      copyEn: 'Infrastructure uses BGeometrics key rotation with concurrency limits, SoSoValue open ETF data, and 24h caching.',
+      titlePl: 'Agregacja danych z wielu źródeł',
+      titleEn: 'Multi-source data aggregation',
+      copyPl: 'Infrastruktura wykorzystuje równoległą agregację danych z wielu niezależnych źródeł rynkowych z limitem współbieżności i buforowaniem.',
+      copyEn: 'Infrastructure uses parallel data aggregation across multiple independent market sources with concurrency limits and caching.',
     },
     {
       titlePl: 'Dyscyplina i nadzór świeżości',
       titleEn: 'Discipline and freshness monitoring',
-      copyPl: 'Automatyczny Freshness Watchdog oraz natychmiastowe alerty Telegram dbają o to, by inwestor zawsze bazował na aktualnych odczytach.',
-      copyEn: 'Automated Freshness Watchdog and instant Telegram alerts ensure investors always act on up-to-date data.',
+      copyPl: 'Automatyczny Freshness Watchdog oraz natychmiastowe alerty Telegram dbają o to, by inwestor wewnątrz terminala zawsze bazował na aktualnych odczytach.',
+      copyEn: 'Automated Freshness Watchdog and instant Telegram alerts ensure investors inside the terminal always act on up-to-date data.',
     },
   ];
 
@@ -1289,7 +1255,7 @@ function RequestInvite({ lang }: { lang: Lang }) {
             <div>
               <Eyebrow>{L(lang, 'Dostęp na zaproszenie', 'Invite-only access')}</Eyebrow>
               <h2>{L(lang, 'Dołącz do zamkniętego kręgu inwestorów.', 'Join the closed investor circle.')}</h2>
-              <p>{L(lang, 'Zostaw e-mail, a gdy zwolni się miejsce w puli dostępowym, przekażemy Ci indywidualny link aktywacyjny.', 'Leave your email and we will send an individual activation link when an access slot opens up.')}</p>
+              <p>{L(lang, 'Zostaw e-mail, a gdy zwolni się miejsce w puli dostępowej, przekażemy Ci indywidualny link aktywacyjny.', 'Leave your email and we will send an individual activation link when an access slot opens up.')}</p>
               <div>
                 <span>{icon.shield} {L(lang, 'Silnik V2 Era-Aware i server-side redaction', 'V2 Era-Aware engine with server-side redaction')}</span>
                 <span>{icon.bolt} {L(lang, 'Alerty Telegram 3x/dobę w planie Investor', '3x daily Telegram alerts on Investor tier')}</span>
