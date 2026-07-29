@@ -8,83 +8,57 @@ Strona produkcyjna głównego panelu: [https://btc-dash.64bit.site](https://btc-
 
 ## 🎯 Cel Projektu
 
-Główny portal **BTC Bottom Dashboard** to zaawansowane narzędzie dla inwestorów kryptowalutowych, oceniające rynek w oparciu o 21 wskaźników on-chain, makro i sentymentu (obliczając *Bottom Score* w skali 0–100). Ponieważ dostęp do terminala oraz rejestracja są ograniczone do systemu zaproszeń (**Invite-Only**), ten **landing page** ma kluczowe zadania:
+Główny portal **BTC Bottom Dashboard** to zaawansowany terminal analityczny dla inwestorów kryptowalutowych, oceniający rynek w oparciu o 28 wskaźników w ramach silnika **V2 Era-Aware (v2.3.0)** podzielonych na 4 rodziny konfluencji (Wycena 30%, Podaż 30%, Cykl 20%, Popyt ETF 20%) oraz otoczenie makro (obliczając *Bottom Score* w skali 0–100). Ponieważ dostęp do terminala oraz rejestracja są ograniczone do systemu zaproszeń (**Invite-Only**), ten **landing page** realizuje kluczowe zadania:
 
-1. **Edukacja i Prezentacja:** Wyjaśnienie założeń Strategii Inwestora Długoterminowego BTC oraz przedstawienie korzyści z korzystania z panelu.
-2. **Dwupoziomowy Model:** Wyjaśnienie różnicy między planem **Smart** i **Investor** bez używania modelu FREE/FULL.
-3. **Konwersja:** Zbieranie zapisów na listę oczekujących (Waitlist) lub umożliwienie wysłania prośby o zaproszenie do administratora.
-4. **Teaser Produktowy:** Pokazanie bezpiecznego, publicznego kontekstu Bottom Score bez ujawniania wag, progów, wkładów ani listy dostawców danych.
-
----
-
-## 🛠️ Proponowany Stos Technologiczny
-
-Projekt jest przygotowany pod nowoczesne technologie webowe:
-*   **Framework:** React + Vite.
-*   **Stylizacja:** Vanilla CSS / TailwindCSS (zapewniające płynne animacje, glassmorphism i elegancki Dark Mode).
-*   **Integracja:** Linkowanie do głównego dashboardu i formularza zaproszenia. Landing nie odpytuje API dashboardu o bieżące dane.
+1. **Edukacja i Prezentacja:** Wyjaśnienie założeń Strategii Inwestora Długoterminowego BTC w erze spotowych ETF oraz przedstawienie korzyści z korzystania z panelu.
+2. **Dwupoziomowy Model:** Wyjaśnienie różnicy między planem **Smart** (widok statusu na żywo z server-side redaction) i **Investor** (pełny terminal analityczny, wagi, progi, flaga Generacyjne Dno, alerty).
+3. **Integracja z API na Żywo:** Bezpieczny podgląd aktualnego odczytu z endpointu `https://btc-dash.64bit.site/api/snapshot` z możliwością przełączenia na przykład historyczny z 2022 roku.
+4. **Płatności Stripe & Zaproszenia:** Zbieranie zapisów na listę oczekujących (Waitlist) oraz wyzwalanie auto-checkoutu Stripe dla wybranych walut (PLN, EUR, USD).
+5. **Słownik 28 Wskaźników V2:** Publiczny opis 28 wskaźników on-chain, podaży, sentymentu, ery ETF (SoSoValue) i makro (FRED).
 
 ---
 
-## 🔌 Integracja z Głównym Dashboardem
+## 🛠️ Stos Technologiczny
 
-Landing page nie pobiera bieżących danych z głównego dashboardu. Hero pokazuje wyłącznie historyczny, poglądowy przykład z okolic dna cyklu 2022, żeby wyjaśnić skalę Bottom Score bez sugerowania aktualnego sygnału.
+* **Framework:** React + Vite.
+* **Stylizacja:** Vanilla CSS + Nadir Design System v2 (glassmorphism, dark mode, neon-gold/ice accents).
+* **API Integration:** Moduł `src/lib/api.ts` komunikujący się z `/api/snapshot`.
+* **Płatności:** Integracja dynamicznych linków Stripe Checkout (`?trigger_checkout=true`).
 
-**Zasada:** nie ujawniać wag, progów, wkładów, listy dostawców danych ani szczegółowej metodologii.
-
-Przejścia do produktu prowadzą do:
-*   **Dashboard:** `https://btc-dash.64bit.site`
-*   **Logowanie:** `https://btc-dash.64bit.site/login`
+---
 
 ## 💳 Plany i Waluty
 
-Landing prezentuje dwa plany, oba invite-only:
+Landing prezentuje dwa plany w modelu invite-only z wyzwalaniem Stripe checkout:
 
-*   **Smart:** 99 EUR albo 426 PLN.
-*   **Investor:** 399 EUR albo 1716 PLN.
+* **Smart:**
+  * Miesięcznie: 179 PLN / 39 EUR / $45
+  * 6 Miesięcy: 859 PLN / 199 EUR / $225
+* **Investor:**
+  * 6 Miesięcy: 2849 PLN / 649 EUR / $719
 
-Przełącznik waluty w sekcji planów przygotowuje UI pod późniejsze podłączenie płatności Stripe w wybranej walucie.
+---
 
-## 🧭 Aktualny Handoff
+## 🧭 Aktualna Dokumentacja i Funkcje (v28.4)
 
-Ostatni etap zmian landing page:
-
-*   Hero ma mniejszy nagłówek, zbliżony skalą do tytułów sekcji, oraz niższe CTA.
-*   Hasło hero brzmi: „Znajdź dołek. Z przewagą analityczną.”
-*   Hero używa danych poglądowych z 2022 roku; nie pokazuje i nie pobiera aktualnych danych rynkowych.
-*   Sekcje mają ciaśniejszy pionowy rytm.
-*   Karta konfluencji nie pokazuje liczby źródeł danych, tylko 21 wskaźników w modelu.
-*   Metodologia mówi o kalibracji na dołkach 2018/2022 i uwzględnieniu ery ETF.
-*   Sekcja zaufania nie zawiera testimoniali, gwiazdek ani nazw dostawców danych.
-*   Stopka ma disclaimer w osobnej, czytelniejszej kolumnie.
-*   Dodano podstrony: `/slownik-wskaznikow`, `/telegram`, `/zastrzezenia`, `/prywatnosc`, `/regulamin`.
-*   Landing ma `robots.txt`, `sitemap.xml`, `llms.txt`, canonical, Open Graph, Twitter tags i JSON-LD.
-*   Vercel ma jawne rewrites dla podstron SPA.
+* **Hero Section:** Dynamiczny odczyt API na żywo (`bottomScore`, cena, drawdown, confidence %) z przełącznikiem na przykład 2022.
+* **Silnik Scoringowy V2 Engine (v2.3.0):** 4 rodziny konfluencji, mnożnik spójności `c_agree`, flaga *Generacyjne Dno* (≥4 ortogonalne bloki na dnie).
+* **Harmonogram Odświeżania:** 3× na dobę (AM/PM slots: 06:00, 12:00, 18:00 UTC) + Freshness Watchdog (>18h alert) i digest 07:00 UTC.
+* **Źródła Danych:** Otwarte API SoSoValue dla przepływów spot ETF USA oraz FRED dla wskaźników makro.
+* **Podstrony:** `/slownik-wskaznikow` (pełne 28 wskaźników), `/telegram`, `/zastrzezenia`, `/prywatnosc`, `/regulamin`.
+* **SEO & GEO:** `robots.txt`, `sitemap.xml`, `llms.txt`, Open Graph, JSON-LD i rewrites Vercel.
 
 ---
 
 ## 🚀 Uruchomienie Lokalne
 
-1. Sklonuj repozytorium:
-   ```bash
-   git clone https://github.com/KasprowiczM/Inwestor_Dashboard_Landing.git
-   cd Inwestor_Dashboard_Landing
-   ```
-
-2. Zainstaluj zależności:
-   ```bash
-   npm install
-   ```
-
-3. Skonfiguruj plik ze zmiennymi środowiskowymi `.env.local`:
-   ```bash
-   VITE_DASHBOARD_URL=https://btc-dash.64bit.site
-   ```
-
-4. Uruchom serwer deweloperski:
-   ```bash
-   npm run dev
-   ```
+```bash
+git clone https://github.com/KasprowiczM/Inwestor_Dashboard_Landing.git
+cd Inwestor_Dashboard_Landing
+npm install
+npm run dev
+# Landing uruchomi się na http://localhost:5173
+```
 
 ---
 

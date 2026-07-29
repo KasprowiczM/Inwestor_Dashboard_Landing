@@ -1,40 +1,29 @@
-# Landing Page Handoff
+# Landing Page Handoff — v28.4 Sync
 
 ## Scope
 
-Updated the BTC Smart Investor landing page only. No changes were made in the main dashboard repository.
+Zaktualizowano landing page **BTC Smart Investor Terminal** (`Inwestor_Dashboard_Landing`) do pełnej spójności z główną aplikacją produkcyjną **BTC Bottom Dashboard (v28.4)**.
 
-## Current UI Decisions
+## Key Upgrades & UI Decisions (v28.4)
 
-- Hero headline scale now matches the section-title family instead of the previous oversized poster scale.
-- Hero copy uses: "Znajdz dolek. Z przewaga analityczna." / "Find the floor. With an analytical edge."
-- Hero score panel is a historical 2022 illustrative example only. It must not fetch or display current dashboard data.
-- Primary hero buttons are lower and closer to the top-nav proportions.
-- Section vertical spacing is reduced globally through the local `--section-y` override.
-- The confluence card shows only "24 model indicators"; it does not expose provider counts.
-- Pricing features PLN / EUR / USD currency selector with monthly vs 6-month options:
-  - Smart Monthly: 39 EUR / 179 PLN / 45 USD
-  - Smart 6 Months: 199 EUR / 859 PLN / 225 USD
-  - Investor 6 Months: 649 EUR / 2849 PLN / 719 USD
-- Investor plan copy now says Telegram alerts are available up to 3 times daily and history covers one year of scoring snapshots.
-- Trust section removes testimonials, stars, and named data providers.
-- Footer disclaimer is laid out as a separate text column for cleaner wrapping.
-- Footer links now resolve to real pages or home sections, not placeholders.
-- Added content pages: indicator glossary, Telegram setup, investment disclaimer, privacy/GDPR, and terms.
-- Added SEO/GEO assets: `robots.txt`, `sitemap.xml`, `llms.txt`, static meta tags, dynamic route metadata, canonical links, and JSON-LD.
-- Added `vercel.json` rewrites for direct entry into SPA subpages.
+- **Live API Snapshot Integration (`src/lib/api.ts`):** Hero i Product Preview łączą się bezpośrednio z endpointem `https://btc-dash.64bit.site/api/snapshot`.
+- **Toggle Trybu Danych:** Dodano przełącznik umożliwiający porównanie odczytu rynkowego na żywo (API) z przykładem historycznym dna z listopada 2022 r.
+- **Silnik Scoringowy V2.3.0 Era-Aware:** Wprowadzono pełny opis 4 rodzin konfluencji (Wycena 30%, Podaż 30%, Cykl 20%, Popyt ETF 20%) oraz otoczenia makro.
+- **Flaga Generacyjne Dno (Generational Bottom):** Zaprezentowano wykrywanie skrajnej kapitulacji przy dołku ≥4 ortogonalnych bloków.
+- **Słownik 28 Wskaźników V2:** Strona `/slownik-wskaznikow` zawiera pełną listę 28 wskaźników podzielonych na 5 czytelnych sekcji.
+- **Ochrona Poufności (Server-Side Redaction):** Landing pokazuje wyciąg statusowy bez ujawniania wag, progów normalizacji i wkładów poszczególnych wskaźników.
+- **Płatności i Auto-Checkout Stripe:** Przycisk zakupu wyzwala parametrem query `?trigger_checkout=true&plan=...&term=...&currency=...`.
+- **Harmonogram Odświeżania:** Dokładna informacja o 3 odświeżeniach/dobę (AM 06:00, PM 12:00, 18:00 UTC), watchdogu świeżości i digeście o 07:00 UTC.
 
-## Guardrails
+## Guardrails & Security
 
-- Do not reveal exact data vendors, weights, thresholds, contributions, or formulas on the landing page.
-- Keep Smart and Investor invite-only; do not reintroduce FREE/FULL naming.
-- Linked pricing buttons to Stripe checkout dynamically using the dashboard auto-checkout parameters (?trigger_checkout=true).
-- Landing page must not query dashboard APIs for current market data. Current readings belong inside the authenticated terminal.
-- Legal text is a strong operational draft, not a substitute for formal legal review before production publication.
-- If new public pages are added, update `sitemap.xml`, `llms.txt`, `vercel.json`, route metadata, and footer links together.
+- Nie ujawniać dokładnych wag ani chronionej metodologii na landing page.
+- Wszystkie plany pozostają w konwencji **Invite-Only (Smart vs Investor)**.
+- Wykorzystywać bezpieczny handler `fetchPublicSnapshot` z fallbackiem buforowym na wypadek problemów sieciowych.
 
-## Verification
+## Verification Checklist
 
-- Run `npm run typecheck`.
-- Run `npm run build`.
-- Check the page in desktop and mobile viewports before shipping visual changes.
+- [x] Run `npm run typecheck` — 0 błędów typowania TS.
+- [x] Run `npm run build` — produkcyjny build zbudowany w dist/.
+- [x] Test zapytań do API `https://btc-dash.64bit.site/api/snapshot`.
+- [x] Git merge/commit na gałęzi `main`.
