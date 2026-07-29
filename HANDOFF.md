@@ -2,11 +2,11 @@
 
 ## Scope
 
-Zaktualizowano landing page **BTC Smart Investor Terminal** (`Inwestor_Dashboard_Landing`) do pełnej spójności z główną aplikacją produkcyjną **BTC Bottom Dashboard (v28.4)** oraz usunięto wskazane usterki wizualne i językowe.
+Zaktualizowano landing page **BTC Smart Investor Terminal** (`Inwestor_Dashboard_Landing`) do pełnej spójności z główną aplikacją produkcyjną **BTC Bottom Dashboard (v28.4)** oraz dostosowano etykietę statystyk do formatu `Dziennie` (PL) / `Daily` (EN).
 
 ## Key Upgrades & UI Decisions (v28.4)
 
-- **Poprawa Tłumaczenia Statystyk EN (`3x Daily`):** Zaktualizowano etykietę odświeżania w sekcjach Hero oraz Trust z hardkodowanego `3× / dobę` na dynamiczne `L(lang, '3× / dobę', '3x Daily')`.
+- **Etykieta Statystyki Odświeżania (`Dziennie` / `Daily`):** Zaktualizowano kafelki statystyk w Hero i Trust z wersji `3× / dobę` / `3x Daily` na czystą postać `Dziennie` (PL) oraz `Daily` (EN) bez zbędnych cyfr i ukośników.
 - **Naprawa Wykraczania Tekstu w Kartach KPI (`Generational`):** Skorygowano style CSS dla `.ds-kpi strong` i `.preview-kpis` (`minmax(130px, 1fr)`, `clamp(0.8rem, 1.1vw, 1.25rem)`, `white-space: nowrap`, `overflow: hidden`, `text-overflow: ellipsis`), eliminując problem wychodzenia napisów poza krawędź obramowania karty.
 - **Trwała Persystencja Języka (`localStorage` + `URL` + SPA Router):** Wybór języka `PL` / `EN` jest zapamiętywany w `localStorage`. Nawigacja między podstronami wykorzystuje nawigację SPA (`window.history.pushState`).
 - **Pełne Tłumaczenia 100% EN:** Przeaudytowano wszystkie tytuły, nagłówki, etykiety, modale, karty mockupu terminala, statusy i legalne podstrony.
@@ -23,6 +23,6 @@ Zaktualizowano landing page **BTC Smart Investor Terminal** (`Inwestor_Dashboard
 
 - [x] Run `npm run typecheck` — 0 błędów typowania TS.
 - [x] Run `npm run build` — produkcyjny build zbudowany w dist/.
-- [x] Test etykiety `3x Daily` w wersji EN w Hero i Trust.
+- [x] Test etykiety `Dziennie` / `Daily` w Hero i Trust.
 - [x] Test braku wykraczania napisu `Generational` w kartach KPI.
 - [x] Git merge/commit na gałęzi `main`.

@@ -15,7 +15,7 @@ Główny portal **BTC Bottom Dashboard** to zaawansowany terminal analityczny dl
 3. **Podgląd Historyczny:** Hero i sekcje pokazują wyłącznie sprawdzony przykładowy odczyt historyczny z kalibracji dna poprzednich cykli (np. dołek 2022). Bieżące odczyty na żywo chronią wartość produktu i są dostępne wyłącznie po zalogowaniu do zamkniętego terminala.
 4. **Płatności Stripe & Zaproszenia:** Zbieranie zapisów na listę oczekujących (Waitlist) oraz wyzwalanie auto-checkoutu Stripe dla wybranych walut (PLN, EUR, USD).
 5. **Słownik 28 Wskaźników V2:** Publiczny opis 28 wskaźników on-chain, podaży, sentymentu, ery ETF i makroekonomii bez ujawniania nazw zewnętrznych dostawców danych.
-6. **Pełna Dwujęzyczność (PL/EN) & Dopracowany UI:** Wersja EN wyświetla m.in. `3x Daily`, a długie wartości w kartach KPI (np. `Generational`) posiadają elastyczny font i zabezpieczenie przed wykraczaniem poza obramowanie karty.
+6. **Pełna Dwujęzyczność (PL/EN) & Dopracowany UI:** Czytelne etykiety `Dziennie` (PL) / `Daily` (EN) w kafekach statystyk oraz dopasowany układ kart KPI.
 
 ---
 
@@ -42,7 +42,7 @@ Landing prezentuje dwa plany w modelu invite-only z wyzwalaniem Stripe checkout:
 
 ## 🧭 Dokumentacja i Zasady Ochrony Treści (v28.4)
 
-* **Hero Section:** Prezentacja odczytu historycznego z kalibracji dna 2022 z etykietami `3× / dobę` (PL) oraz `3x Daily` (EN).
+* **Hero Section:** Prezentacja odczytu historycznego z kalibracji dna 2022 z etykietami `Dziennie` (PL) oraz `Daily` (EN).
 * **Karty KPI i Layout:** Wartości kart KPI (np. `Generational`) posiadają zabezpieczenia przed wychodzeniem poza ramki (`white-space: nowrap`, `overflow: hidden`, `text-overflow: ellipsis`, responsywny `clamp()`).
 * **Anonimizacja Źródeł:** Brak nazw zewnętrznych dostawców.
 * **Spójna Liczba Wskaźników:** Wszędzie na stronie widnieje dokładna liczba 28 wskaźników V2.
