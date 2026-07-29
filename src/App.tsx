@@ -56,82 +56,87 @@ const FAMILIES = [
   {
     key: 'holder',
     icon: Shield,
-    count: 6,
+    count: 10,
     weight: '30%',
     tone: 'var(--category-fundament)',
     pl: 'Zachowanie i podaż (Holder & Supply)',
     en: 'Holder Behavior & Supply Stress',
-    plD: 'LTH SOPR, UTXOs in Loss %, VDD Multiple, Hash Ribbons, Puell Multiple i 200WMA — mierzy stopień kapitulacji i stres podażowy.',
-    enD: 'LTH SOPR, UTXOs in Loss %, VDD Multiple, Hash Ribbons, Puell Multiple and 200WMA — measures capitulation & supply stress.',
+    plD: 'LTH SOPR, UTXOs in Loss %, VDD Multiple, Hash Ribbons, Puell Multiple, Cena do 200WMA, Mayer Multiple, Pi Cycle Bottom i Reserve Risk — mierzy stopień kapitulacji i stres podażowy.',
+    enD: 'LTH SOPR, UTXOs in Loss %, VDD Multiple, Hash Ribbons, Puell Multiple, Price to 200WMA, Mayer Multiple, Pi Cycle Bottom & Reserve Risk — measures capitulation & supply stress.',
   },
   {
     key: 'cycle',
     icon: Activity,
-    count: 5,
+    count: 6,
     weight: '20%',
     tone: 'var(--category-auxiliary)',
     pl: 'Cykl i psychologia (Cycle & Sentiment)',
     en: 'Cycle Timing & Crowd Sentiment',
-    plD: 'Drawdown od ATH, Dni od ATH, Monthly RSI(14), Bull Run Index (CBBI) i Fear & Greed — timing cykliczny i sentyment tłumu.',
-    enD: 'Drawdown from ATH, Days since ATH, Monthly RSI(14), Bull Run Index (CBBI) and Fear & Greed — cycle timing & crowd psychology.',
+    plD: 'Drawdown od ATH, Dni od ATH, Monthly RSI(14), Weekly RSI, Bull Run Index (CBBI) i Fear & Greed — timing cykliczny i sentyment tłumu.',
+    enD: 'Drawdown from ATH, Days since ATH, Monthly RSI(14), Weekly RSI, Bull Run Index (CBBI) and Fear & Greed — cycle timing & crowd psychology.',
   },
   {
     key: 'etf',
     icon: Layers,
-    count: 3,
+    count: 4,
     weight: '20%',
     tone: 'var(--category-confirmation)',
     pl: 'Popyt instytucjonalny (Era ETF)',
     en: 'Institutional Demand & ETF Era',
-    plD: 'ETF Balance Trend, ETF Flow Momentum (otwarte dane SoSoValue bez klucza API) i Exchange Reserve — nowa dynamika kapitału po 2024r.',
-    enD: 'ETF Balance Trend, ETF Flow Momentum (SoSoValue open API data) and Exchange Reserve — post-2024 institutional capital dynamics.',
+    plD: 'ETF Balance, ETF Balance Trend, ETF Flow Momentum (otwarte dane SoSoValue bez klucza API) i Exchange Reserve — nowa dynamika kapitału po 2024r.',
+    enD: 'ETF Balance, ETF Balance Trend, ETF Flow Momentum (SoSoValue open API data) and Exchange Reserve — post-2024 institutional capital dynamics.',
   },
   {
     key: 'macro',
     icon: Waves,
-    count: 5,
+    count: 4,
     weight: 'Aux',
     tone: 'var(--category-macro)',
     pl: 'Otoczenie makroekonomiczne (Macro)',
     en: 'Macroeconomic Context & Liquidity',
-    plD: 'Płynność netto USD (FRED WALCL), Indeks Dolara (DXY), Spread 10Y-2Y, VIX i OKX Funding Rate — tło płynnościowe dla aktywów ryzykownych.',
-    enD: 'USD net liquidity (FRED WALCL), Dollar Index (DXY), 10Y-2Y Spread, VIX and OKX Funding Rate — global risk liquidity backdrop.',
+    plD: 'Płynność netto USD (FRED WALCL), Indeks Dolara (DXY), Spread 10Y-2Y i VIX Volatility Index — tło płynnościowe dla aktywów ryzykownych.',
+    enD: 'USD net liquidity (FRED WALCL), Dollar Index (DXY), 10Y-2Y Spread and VIX Volatility Index — global risk liquidity backdrop.',
   },
 ];
 
 const INDICATORS = [
-  // Wycena
+  // --- 1. Wycena (Valuation) ---
   { cat: 'valuation', pl: 'MVRV Z-Score', en: 'MVRV Z-Score', plD: 'Ocenia odchylenie wartości rynkowej od zrealizowanej. Niskie odczyty historycznie wyznaczały dołki cyklu.', enD: 'Evaluates market value deviation from realized value. Low readings historically marked cycle bottoms.', sample: [76, 65, 52, 38, 28, 24, 31, 42] },
   { cat: 'valuation', pl: 'NUPL (Net Unrealized Profit/Loss)', en: 'NUPL', plD: 'Pokazuje bilans niezrealizowanych zysków i strat. Przejście w strefę kapitulacji (poniżej 0) sygnalizuje ekstremalne schłodzenie.', enD: 'Shows unrealized profit/loss balance. Entering capitulation zone (below 0) signals extreme cooling.', sample: [72, 60, 44, 30, 21, 19, 27, 38] },
-  { cat: 'valuation', pl: 'LTH Realized Price', en: 'LTH Realized Price', plD: 'Cena bazowa długoterminowych posiadaczy. Spadek ceny spot poniżej LTH Realized Price oznacza głęboką kapitulację rynku.', enD: 'Long-term holder cost basis. Spot price falling below LTH Realized Price marks deep market capitulation.', sample: [82, 76, 66, 55, 44, 39, 43, 50] },
+  { cat: 'valuation', pl: 'LTH Realized Price', en: 'LTH Realized Price Ratio', plD: 'Cena bazowa długoterminowych posiadaczy. Spadek ceny spot poniżej LTH Realized Price oznacza głęboką kapitulację rynku.', enD: 'Long-term holder cost basis. Spot price falling below LTH Realized Price marks deep market capitulation.', sample: [82, 76, 66, 55, 44, 39, 43, 50] },
   { cat: 'valuation', pl: 'STH MVRV', en: 'STH MVRV', plD: 'Mierzy pozycję krótkoterminowych inwestorów. Gdy świeży kapitał znajduje się pod presją strat, szansa na zwrot wzrasta.', enD: 'Measures short-term holder position. When recent capital holds steep losses, potential turning points emerge.', sample: [73, 61, 49, 38, 31, 28, 35, 44] },
 
-  // Podaż i Posiadacze
+  // --- 2. Podaż i Zachowanie (Holder & Supply) ---
   { cat: 'holder', pl: 'LTH SOPR', en: 'LTH SOPR', plD: 'Sprawdza, czy długoterminowi posiadacze sprzedają ze stratą. Odczyty < 1.0 to klasyczna flaga wyprzedania.', enD: 'Checks whether long-term holders realize losses. Readings < 1.0 are a classic oversold flag.', sample: [66, 54, 43, 34, 28, 26, 33, 45] },
   { cat: 'holder', pl: 'UTXOs in Loss %', en: 'UTXOs in Loss %', plD: 'Procent monet przetrzymywanych na minusie. Gdy ponad 50–60% UTXO jest w stracie, rynek znajduje się blisko dna.', enD: 'Percentage of coins held in loss. When over 50–60% of UTXOs sit in loss, the market approaches a floor.', sample: [20, 31, 45, 58, 67, 72, 63, 51] },
-  { cat: 'holder', pl: 'Value Days Destroyed (VDD) Multiple', en: 'VDD Multiple', plD: 'Łączy wiek i wartość przemieszczanych monet. Niski mnożnik potwierdza brak wyprzedaży ze strony starych портfeli.', enD: 'Combines age and volume of moved coins. Low multiple confirms absence of old wallet sell-offs.', sample: [58, 52, 44, 36, 30, 33, 41, 49] },
+  { cat: 'holder', pl: 'Value Days Destroyed (VDD) Multiple', en: 'VDD Multiple', plD: 'Łączy wiek i wartość przemieszczanych monet. Niski mnożnik potwierdza brak wyprzedaży ze strony starych portfeli.', enD: 'Combines age and volume of moved coins. Low multiple confirms absence of old wallet sell-offs.', sample: [58, 52, 44, 36, 30, 33, 41, 49] },
   { cat: 'holder', pl: 'Hash Ribbons', en: 'Hash Ribbons', plD: 'Sygnalizuje kapitulację górników i ponowne wyjście hash rate z dołka. Warstwa potwierdzenia struktury sieci.', enD: 'Signals miner capitulation and hash rate recovery. A network structure confirmation layer.', sample: [48, 42, 36, 31, 29, 35, 43, 55] },
   { cat: 'holder', pl: 'Puell Multiple', en: 'Puell Multiple', plD: 'Mierzy przychody górników w relacji do średniej rocznej. Poziomy < 0.5 oznaczają skrajny stres ekonomiczny wydobycia.', enD: 'Measures miner revenue vs 1-year moving average. Levels < 0.5 mean severe mining economic stress.', sample: [68, 59, 45, 33, 25, 28, 36, 48] },
   { cat: 'holder', pl: 'Cena do 200WMA', en: 'Price to 200WMA', plD: 'Stosunek ceny spot do 200-tygodniowej średniej kroczącej. Historycznie dno cyklu wypadało na lub poniżej 200WMA.', enD: 'Spot price ratio to the 200-week moving average. Cycle floors historically formed near or below 200WMA.', sample: [90, 78, 62, 47, 36, 33, 40, 52] },
+  { cat: 'holder', pl: 'Mayer Multiple', en: 'Mayer Multiple', plD: 'Stosunek ceny spot do 200-dniowej średniej kroczącej (200DMA). Odczyty w przedziale 0.5–0.65 wyznaczały dno bessy.', enD: 'Ratio of spot price to 200-day moving average (200DMA). Readings between 0.5–0.65 marked bear market bottoms.', sample: [85, 74, 62, 53, 48, 51, 58, 65] },
+  { cat: 'holder', pl: 'Pi Cycle Bottom', en: 'Pi Cycle Bottom', plD: 'Odległość 150-dniowej EMA od 471-dniowej SMA pomnożonej przez 0.745. Wartości <= 0 wyznaczają sygnał dołka.', enD: 'Distance between 150-day EMA and 471-day SMA multiplied by 0.745. Values <= 0 trigger a bottom buy signal.', sample: [35, 28, 20, 12, 4, -2, 3, 10] },
+  { cat: 'holder', pl: 'Reserve Risk', en: 'Reserve Risk', plD: 'Ocenia relację ryzyka do potencjału zysku na podstawie przekonania i cierpliwości długoterminowych posiadaczy.', enD: 'Evaluates risk-to-reward ratio based on the conviction and patience of long-term holders.', sample: [70, 58, 41, 30, 24, 23, 29, 40] },
+  { cat: 'holder', pl: 'OKX Funding Rate (8h)', en: 'OKX Funding Rate', plD: 'Stopa finansowania pozycji wieczystych (perpetual futures). Ujemny funding potwierdza kapitulację i dominację pozycji krótkich.', enD: 'Perpetual futures funding rate. Negative funding confirms long-side capitulation and short-side dominance.', sample: [50, 45, 35, 20, 10, 15, 30, 45] },
 
-  // Cykl i Sentyment
+  // --- 3. Cykl i Sentyment (Cycle & Sentiment) ---
   { cat: 'cycle', pl: 'Drawdown z ATH', en: 'Drawdown from ATH', plD: 'Procentowy spadek od szczytu wszech czasów. W erze ETF silnik V2 uwzględnia zarówno głębokie (-75%+), jak i płytkie dołki.', enD: 'Percentage drop from ATH. In the ETF era, V2 engine accounts for both deep (-75%+) and shallow bottoms.', sample: [18, 24, 36, 49, 57, 63, 59, 54] },
   { cat: 'cycle', pl: 'Dni od ATH', en: 'Days since ATH', plD: 'Mierzy czas trwania fazy spadkowej cyklu. Ramuje oczekiwanie w strefie akumulacji (zazwyczaj 300–400 dni od ATH).', enD: 'Measures duration of cycle downtrend. Frames timing expectations in the accumulation zone.', sample: [94, 86, 72, 58, 45, 39, 34, 31] },
   { cat: 'cycle', pl: 'Monthly RSI(14)', en: 'Monthly RSI', plD: 'Wskaźnik impetu na interwale miesięcznym. Wykrywa skrajne wyprzedanie w długim horyzoncie czasowym.', enD: 'Long-term momentum indicator on monthly interval. Detects multi-year oversold regimes.', sample: [64, 55, 43, 33, 27, 30, 38, 46] },
+  { cat: 'cycle', pl: 'Weekly RSI(14)', en: 'Weekly RSI', plD: 'RSI z interwału tygodniowego. Szybszy od miesięcznego, używany jako potwierdzenie wyprzedania w oknie dołkowym.', enD: 'Weekly timeframe RSI. Faster than monthly RSI, used to confirm oversold conditions in cycle windows.', sample: [58, 48, 38, 28, 24, 29, 36, 45] },
   { cat: 'cycle', pl: 'Bull Run Index (CBBI)', en: 'Bull Run Index', plD: 'Syntetyczny indeks hossy używany odwrotnie do identyfikacji dołków cyklu.', enD: 'Synthetic bull index used in reverse to identify cycle bottoms.', sample: [80, 68, 50, 32, 18, 14, 22, 35] },
   { cat: 'cycle', pl: 'Fear & Greed Index', en: 'Fear & Greed', plD: 'Indeks strachu i chciwości. Skrajny strach (< 20) służy jako wspierający sygnał kontrariański.', enD: 'Fear & Greed index. Extreme fear (< 20) serves as a supportive contrarian input.', sample: [52, 39, 26, 18, 12, 16, 24, 36] },
 
-  // Era ETF i Popyt
-  { cat: 'etf', pl: 'ETF Flow Momentum (30d)', en: 'ETF Flow Momentum', plD: 'Dynamika przepływów netto w amerykańskich spotowych ETF BTC na podstawie darmowego, otwartego API SoSoValue.', enD: 'Net flow momentum across US BTC spot ETFs built on SoSoValue open API data.', sample: [28, 35, 46, 42, 39, 50, 61, 70] },
-  { cat: 'etf', pl: 'ETF Balance Trend (30d)', en: 'ETF Balance Trend', plD: 'Śledzi całkowitą liczbę BTC przetrzymywaną przez 13 emitentów ETF. Mierzy napływ kapitału instytucjonalnego.', enD: 'Tracks total BTC balance held across 13 ETF issuers. Measures institutional adoption.', sample: [32, 36, 41, 38, 44, 51, 57, 62] },
-  { cat: 'etf', pl: 'Exchange Reserve Trend (30d)', en: 'Exchange Reserve Trend', plD: 'Zmiana rezerw BTC na giełdach w ujęciu 30-dniowym. Spadek rezerw sugeruje akumulację on-chain.', enD: '30-day change in exchange BTC reserves. Declining reserves confirm spot accumulation.', sample: [60, 55, 48, 42, 36, 30, 28, 25] },
+  // --- 4. Era ETF i Popyt (Demand & ETF) ---
+  { cat: 'etf', pl: 'ETF Balance Context', en: 'ETF Balance', plD: 'Całkowity bilans BTC przetrzymywany w amerykańskich spotowych ETF-ach (kontekst instytucjonalny od 2024 roku).', enD: 'Total BTC balance held across US spot BTC ETFs (institutional adoption context post-2024).', sample: [30, 35, 42, 48, 55, 60, 64, 70] },
+  { cat: 'etf', pl: 'ETF Balance Trend (30d Δ)', en: 'ETF Balance Trend', plD: '30-dniowa zmiana (delta) salda BTC w ETF-ach spotowych USA. Mierzy trwały napływ kapitału instytucjonalnego.', enD: '30-day net change in US spot ETF BTC balance. Measures sustained institutional adoption.', sample: [32, 36, 41, 38, 44, 51, 57, 62] },
+  { cat: 'etf', pl: 'ETF Flow Momentum (30d)', en: 'ETF Flow Momentum', plD: 'Skumulowane 30-dniowe przepływy netto w USD na podstawie otwartego API SoSoValue (bez klucza).', enD: 'Cumulative 30-day net USD flows built on SoSoValue open API data.', sample: [28, 35, 46, 42, 39, 50, 61, 70] },
+  { cat: 'etf', pl: 'Exchange Reserve Trend (30d)', en: 'Exchange Reserve Trend', plD: '30-dniowa zmiana netto rezerw Bitcoina na giełdach. Spadek rezerw sugeruje akumulację on-chain.', enD: '30-day net change in exchange BTC reserves. Declining reserves confirm spot accumulation.', sample: [60, 55, 48, 42, 36, 30, 28, 25] },
 
-  // Makro
+  // --- 5. Otoczenie Makro (Macro Context) ---
   { cat: 'macro', pl: 'Płynność netto USD (WALCL)', en: 'USD Net Liquidity', plD: 'Tło makro na podstawie rezerw Fed, TGA i RRP (FRED API). Dostępność płynności napędza aktywa ryzykowne.', enD: 'Macro backdrop based on Fed balance sheet, TGA and RRP (FRED API). Liquidity feeds risk assets.', sample: [38, 36, 40, 45, 43, 48, 54, 60] },
-  { cat: 'macro', pl: 'Indeks Dolara (DXY)', en: 'Dollar Index (DXY)', plD: 'Siła dolara amerykańskiego. Szczyt DXY często pokrywał się z lokalnym lub cyklicznym dołkiem na Bitcoinie.', enD: 'US Dollar strength index. DXY peaks often coincide with BTC local or cycle bottoms.', sample: [44, 50, 61, 68, 64, 58, 49, 42] },
-  { cat: 'macro', pl: 'Yield Curve Spread (10Y-2Y)', en: 'Yield Curve Spread', plD: 'Spread rentowności obligacji skarbowych USA. Kontekst cyklu koniunkturalnego i recesji.', enD: 'US Treasury yield curve spread. Provides business cycle and recession context.', sample: [35, 32, 28, 24, 30, 38, 46, 52] },
-  { cat: 'macro', pl: 'Indeks VIX', en: 'VIX Volatility Index', plD: 'Indeks zmienności rynkowej. Wykrywa globalne epizody risk-off i płynnościowej kapitulacji.', enD: 'Equity market volatility index. Detects global risk-off & liquidity capitulation events.', sample: [22, 28, 41, 58, 53, 44, 35, 30] },
-  { cat: 'macro', pl: 'OKX Funding Rate (8h)', en: 'OKX Funding Rate', plD: 'Stopa finansowania pozycji wieczystych (perpetual futures). Ujemny funding potwierdza dominację pozycji krótkich.', enD: 'Perpetual futures funding rate. Negative funding confirms short-side dominance.', sample: [50, 45, 35, 20, 10, 15, 30, 45] },
+  { cat: 'macro', pl: 'Indeks Dolara (DXY / DTWEXBGS)', en: 'Dollar Index (DXY)', plD: 'Siła dolara amerykańskiego. Szczyt DXY często pokrywał się z lokalnym lub cyklicznym dołkiem na Bitcoinie.', enD: 'US Dollar strength index. DXY peaks often coincide with BTC local or cycle bottoms.', sample: [44, 50, 61, 68, 64, 58, 49, 42] },
+  { cat: 'macro', pl: 'Spread Rentowności 10Y-2Y', en: '10Y-2Y Yield Spread', plD: 'Spread rentowności obligacji skarbowych USA. Kontekst cyklu koniunkturalnego i ryzyka recesji.', enD: 'US Treasury yield curve spread. Provides business cycle and recession risk context.', sample: [35, 32, 28, 24, 30, 38, 46, 52] },
+  { cat: 'macro', pl: 'Indeks Zmienności VIX', en: 'VIX Volatility Index', plD: 'Indeks zmienności rynków akcji. Wykrywa globalne epizody risk-off i płynnościowej kapitulacji.', enD: 'Equity market volatility index. Detects global risk-off & liquidity capitulation events.', sample: [22, 28, 41, 58, 53, 44, 35, 30] },
 ];
 
 const STEPS = [
@@ -139,8 +144,8 @@ const STEPS = [
     n: '01',
     plT: 'Konfluencja 4 Rodzin V2 Engine',
     enT: '4-Family Confluence V2 Engine',
-    plD: '26 wskaźników podzielonych na Wycenę (30%), Podaż (30%), Cykl (20%) i Popyt ETF (20%) + makro. Kara dyspersji c_agree weryfikuje spójność sygnałów.',
-    enD: '26 indicators across Valuation (30%), Supply (30%), Cycle (20%) & ETF Demand (20%) + macro. Dispersion penalty c_agree verifies signal agreement.',
+    plD: '28 wskaźników podzielonych na Wycenę (30%), Podaż (30%), Cykl (20%) i Popyt ETF (20%) + makro. Kara dyspersji c_agree weryfikuje spójność sygnałów.',
+    enD: '28 indicators across Valuation (30%), Supply (30%), Cycle (20%) & ETF Demand (20%) + macro. Dispersion penalty c_agree verifies signal agreement.',
   },
   {
     n: '02',
@@ -179,7 +184,7 @@ const PLANS = [
     features: [
       { pl: 'Bottom Score na żywo z API i 5-pasmowy werdykt', en: 'Live API Bottom Score & 5-band verdict', on: true },
       { pl: 'Status okna akumulacji i dystans od ATH', en: 'Accumulation window status & ATH distance', on: true },
-      { pl: 'Meta strategii V2 Engine: 26 wskaźników w 4 rodzinach', en: 'V2 Engine strategy meta: 26 indicators in 4 families', on: true },
+      { pl: 'Meta strategii V2 Engine: 28 wskaźników w 4 rodzinach', en: 'V2 Engine strategy meta: 28 indicators in 4 families', on: true },
       { pl: 'Zagregowane wskaźniki Fear & Greed i ETF Flows', en: 'Aggregated Fear & Greed & ETF flows', on: true },
       { pl: 'Bezpieczny widok publiczny z server-side redaction', en: 'Safe public view with server-side redaction', on: true },
       { pl: 'Pełna siatka 24 wskaźników w siatce ze sparklines', en: 'Full 24-indicator grid with sparklines', on: false },
@@ -262,17 +267,17 @@ const ROUTES: Record<RouteKey, { path: string; pl: string; en: string; titlePl: 
     en: 'Home',
     titlePl: 'BTC Smart Investor Terminal | Analiza dołka cyklu Bitcoina (v28.4 V2 Engine)',
     titleEn: 'BTC Smart Investor Terminal | Bitcoin cycle-bottom analytics (v28.4 V2 Engine)',
-    descPl: 'Invite-only terminal dla inwestora BTC: Bottom Score na żywo, konfluencja 26 wskaźników w 4 rodzinach V2 Engine i dyscyplina akumulacji.',
-    descEn: 'Invite-only BTC investor terminal: Live Bottom Score, 26-indicator V2 Engine confluence across 4 families and accumulation discipline.',
+    descPl: 'Invite-only terminal dla inwestora BTC: Bottom Score na żywo, konfluencja 28 wskaźników w 4 rodzinach V2 Engine i dyscyplina akumulacji.',
+    descEn: 'Invite-only BTC investor terminal: Live Bottom Score, 28-indicator V2 Engine confluence across 4 families and accumulation discipline.',
   },
   glossary: {
     path: '/slownik-wskaznikow',
     pl: 'Słownik wskaźników',
     en: 'Indicator glossary',
-    titlePl: 'Słownik 26 wskaźników V2 Engine | BTC Smart Investor Terminal',
-    titleEn: 'V2 Engine 26 Indicator Glossary | BTC Smart Investor Terminal',
-    descPl: 'Publiczny słownik 26 wskaźników on-chain, cyklu, sentymentu, ery ETF (SoSoValue) i makro (FRED) używanych w silniku V2.',
-    descEn: 'Public glossary of 26 on-chain, cycle, sentiment, ETF era (SoSoValue) and macro (FRED) indicators used in the V2 engine.',
+    titlePl: 'Słownik 28 wskaźników V2 Engine | BTC Smart Investor Terminal',
+    titleEn: 'V2 Engine 28 Indicator Glossary | BTC Smart Investor Terminal',
+    descPl: 'Publiczny słownik 28 wskaźników on-chain, cyklu, sentymentu, ery ETF (SoSoValue) i makro (FRED) używanych w silniku V2.',
+    descEn: 'Public glossary of 28 on-chain, cycle, sentiment, ETF era (SoSoValue) and macro (FRED) indicators used in the V2 engine.',
   },
   telegram: {
     path: '/telegram',
@@ -670,7 +675,7 @@ function Nav({ lang, setLang }: { lang: Lang; setLang: (lang: Lang) => void }) {
     { href: '/#signals', pl: 'Sygnały', en: 'Signals' },
     { href: '/#method', pl: 'Metodologia V2', en: 'V2 Methodology' },
     { href: '/#pricing', pl: 'Plany', en: 'Plans' },
-    { href: ROUTES.glossary.path, pl: 'Słownik', en: 'Glossary' },
+    { href: ROUTES.glossary.path, pl: 'Słownik (28)', en: 'Glossary (28)' },
   ];
 
   return (
@@ -743,8 +748,8 @@ function Hero({ lang }: { lang: Lang }) {
           <p>
             {L(
               lang,
-              'Zamknięty terminal analityczny łączący 26 wskaźników on-chain, podaży, sentymentu, przepływów spot ETF (SoSoValue) i makro w jeden precyzyjny Bottom Score.',
-              'A closed analytics terminal joining 26 indicators across on-chain, supply, sentiment, spot ETF flows (SoSoValue) and macro into one precise Bottom Score.',
+              'Zamknięty terminal analityczny łączący 28 wskaźników on-chain, podaży, sentymentu, przepływów spot ETF (SoSoValue) i makro w jeden precyzyjny Bottom Score.',
+              'A closed analytics terminal joining 28 indicators across on-chain, supply, sentiment, spot ETF flows (SoSoValue) and macro into one precise Bottom Score.',
             )}
           </p>
           <div className="hero-actions">
@@ -757,7 +762,7 @@ function Hero({ lang }: { lang: Lang }) {
           </div>
           <div className="hero-stats">
             {[
-              { v: '26', pl: 'wskaźników w 4 rodzinach', en: 'indicators in 4 families' },
+              { v: '28', pl: 'wskaźników w 5 kategoriach', en: 'indicators in 5 categories' },
               { v: '2018 · 2022', pl: 'kalibracja cykli + ETF era', en: 'calibrated cycles + ETF era' },
               { v: '3× / dobę', pl: 'odświeżanie danych (AM/PM)', en: 'data refresh (AM/PM slots)' },
             ].map((stat, index) => (
@@ -821,8 +826,8 @@ function HowItWorks({ lang }: { lang: Lang }) {
           title={L(lang, 'Od szumu rynkowego do rygoru jednej decyzji.', 'From market noise to single-decision rigor.')}
           sub={L(
             lang,
-            'Zamiast analizowania dziesiątek osobnych wykresów, BTC Smart Investor Terminal sprowadza cykl Bitcoina do konfluencji 4 głównych bloki danych.',
-            'Instead of analyzing dozens of disjointed charts, BTC Smart Investor Terminal collapses the Bitcoin cycle into 4 core data blocks.',
+            'Zamiast analizowania dziesiątek osobnych wykresów, BTC Smart Investor Terminal sprowadza cykl Bitcoina do konfluencji 4 głównych bloki danych oraz kontekstu makro.',
+            'Instead of analyzing dozens of disjointed charts, BTC Smart Investor Terminal collapses the Bitcoin cycle into 4 core data blocks plus macro context.',
           )}
         />
         <div className="steps-grid">
@@ -900,8 +905,8 @@ function Families({ lang }: { lang: Lang }) {
           <div className="family-summary">
             <StatusChip tone="ice" size="sm">{L(lang, 'V2 Confluence', 'V2 Confluence')}</StatusChip>
             <div>
-              <strong>26</strong>
-              <span>{L(lang, 'wskaźników w modelu (24 w siatce)', 'model indicators (24 in grid)')}</span>
+              <strong>28</strong>
+              <span>{L(lang, 'wskaźników w słowniku (24 w siatce)', 'indicators in glossary (24 in grid)')}</span>
             </div>
             <p>{L(lang, 'Znormalizowane, przefiltrowane przez mnożnik c_agree i zabezpieczone śladem audytowym V1 po stronie serwera.', 'Normalized, filtered through c_agree multiplier and backed by a server-side V1 audit trail.')}</p>
           </div>
@@ -1007,10 +1012,10 @@ function Methodology({ lang }: { lang: Lang }) {
         <div className="method-top">
           <SectionHead
             eyebrow={L(lang, 'Architektura V2', 'V2 Architecture')}
-            title={L(lang, '26 wskaźników. 4 rodziny konfluencji. 1 sprawdzony silnik.', '26 indicators. 4 confluence families. 1 verified engine.')}
+            title={L(lang, '28 wskaźników. 4 rodziny konfluencji. 1 sprawdzony silnik.', '28 indicators. 4 confluence families. 1 verified engine.')}
             sub={L(
               lang,
-              'Każdy odczyt jest normalizowany, waży i filtrowany przez bramkę kompletności danych. Kalibracja została oparta o historyczne dołki 2018 i 2022 oraz zaktualizowana pod kątem napływów spot ETF USA (SoSoValue API).',
+              'Każdy odczyt jest normalizowany, ważony i filtrowany przez bramkę kompletności danych. Kalibracja została oparta o historyczne dołki 2018 i 2022 oraz zaktualizowana pod kątem napływów spot ETF USA (SoSoValue API).',
               'Every reading is normalized, weighted and filtered through data-completeness gates. Calibration is based on 2018 and 2022 historical floors and updated for US spot ETF flows (SoSoValue API).',
             )}
           />
@@ -1346,11 +1351,11 @@ function GlossaryPage({ lang }: { lang: Lang }) {
   return (
     <PageShell
       eyebrow={L(lang, 'Słownik Wskaźników V2', 'V2 Indicator Glossary')}
-      title={L(lang, '26 wskaźników opisanych czytelnym językiem.', '26 indicators explained clearly.')}
+      title={L(lang, '28 wskaźników opisanych czytelnym językiem.', '28 indicators explained clearly.')}
       copy={L(
         lang,
-        'Publiczny opis logiki poszczególnych wskaźników silnika V2: co mierzy dana grupa i dlaczego ma znaczenie dla rozpoznania strefy akumulacji BTC. Poufne wagi i progi pozostają w zamkniętej części terminala.',
-        'Public explanation of V2 engine indicators: what each group measures and why it matters for BTC accumulation zone identification. Protected weights remain inside the terminal.',
+        'Publiczny opis logiki wszystkich 28 wskaźników silnika V2: co mierzy dana grupa i dlaczego ma znaczenie dla rozpoznania strefy akumulacji BTC. Poufne wagi i progi pozostają w zamkniętej części terminala.',
+        'Public explanation of all 28 V2 engine indicators: what each group measures and why it matters for BTC accumulation zone identification. Protected weights remain inside the terminal.',
       )}
     >
       <section className="page-section">
