@@ -15,7 +15,7 @@ Główny portal **BTC Bottom Dashboard** to zaawansowany terminal analityczny dl
 3. **Podgląd Historyczny:** Hero i sekcje pokazują wyłącznie sprawdzony przykładowy odczyt historyczny z kalibracji dna poprzednich cykli (np. dołek 2022). Bieżące odczyty na żywo chronią wartość produktu i są dostępne wyłącznie po zalogowaniu do zamkniętego terminala.
 4. **Płatności Stripe & Zaproszenia:** Zbieranie zapisów na listę oczekujących (Waitlist) oraz wyzwalanie auto-checkoutu Stripe dla wybranych walut (PLN, EUR, USD).
 5. **Słownik 28 Wskaźników V2:** Publiczny opis 28 wskaźników on-chain, podaży, sentymentu, ery ETF i makroekonomii bez ujawniania nazw zewnętrznych dostawców danych.
-6. **Pełna Dwujęzyczność (PL/EN):** 100% zweryfikowane, kompletne tłumaczenia wszystkich sekcji, modalów, słownika, zastrzeżeń i regulaminu na język angielski i polski.
+6. **Pełna Dwujęzyczność & Persystencja Języka (PL/EN):** Wybór języka jest trwale zapamiętywany w `localStorage` i query param `?lang=en`. Nawigacja między podstronami oraz kotwicami odbywa się w trybie SPA (`history.pushState`), dzięki czemu zmiana podstrony nie powoduje powrotu do języka polskiego.
 
 ---
 
@@ -45,6 +45,7 @@ Landing prezentuje dwa plany w modelu invite-only z wyzwalaniem Stripe checkout:
 * **Hero Section:** Prezentacja wyłącznie odczytu historycznego z kalibracji dna 2022. Brak publicznego API na żywo.
 * **Anonimizacja Źródeł:** Brak nazw zewnętrznych dostawców (opisy mówią o agregacji z wielu niezależnych źródeł rynkowych).
 * **Spójna Liczba Wskaźników:** Wszędzie na stronie widnieje dokładna liczba 28 wskaźników V2 (usunięto wszelkie stare wzmianki o 21/24 wskaźnikach).
+* **Persystencja Języka:** Stan `lang` jest trwale zapamiętywany i zachowywany podczas nawigacji SPA po podstronach.
 * **Silnik Scoringowy V2 Engine (v2.3.0):** 4 rodziny konfluencji, mnożnik spójności `c_agree`, flaga *Generacyjne Dno* (≥4 ortogonalne bloki na dnie).
 * **Podstrony:** `/slownik-wskaznikow` (pełne 28 wskaźników), `/telegram`, `/zastrzezenia`, `/prywatnosc`, `/regulamin`.
 * **SEO & GEO:** `robots.txt`, `sitemap.xml`, `llms.txt`, Open Graph, JSON-LD i rewrites Vercel.

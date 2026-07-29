@@ -100,14 +100,14 @@ const FAMILIES = [
 const INDICATORS = [
   // --- 1. Wycena (Valuation) ---
   { cat: 'valuation', pl: 'MVRV Z-Score', en: 'MVRV Z-Score', plD: 'Ocenia odchylenie wartości rynkowej od zrealizowanej. Niskie odczyty historycznie wyznaczały dołki cyklu.', enD: 'Evaluates market value deviation from realized value. Low readings historically marked cycle bottoms.', sample: [76, 65, 52, 38, 28, 24, 31, 42] },
-  { cat: 'valuation', pl: 'NUPL (Net Unrealized Profit/Loss)', en: 'NUPL', plD: 'Pokazuje bilans niezrealizowanych zysków i strat. Przejście w strefę kapitulacji (poniżej 0) sygnalizuje ekstremalne schłodzenie.', enD: 'Shows unrealized profit/loss balance. Entering capitulation zone (below 0) signals extreme cooling.', sample: [72, 60, 44, 30, 21, 19, 27, 38] },
+  { cat: 'valuation', pl: 'NUPL (Net Unrealized Profit/Loss)', en: 'NUPL (Net Unrealized Profit/Loss)', plD: 'Pokazuje bilans niezrealizowanych zysków i strat. Przejście w strefę kapitulacji (poniżej 0) sygnalizuje ekstremalne schłodzenie.', enD: 'Shows unrealized profit/loss balance. Entering capitulation zone (below 0) signals extreme cooling.', sample: [72, 60, 44, 30, 21, 19, 27, 38] },
   { cat: 'valuation', pl: 'LTH Realized Price Ratio', en: 'LTH Realized Price Ratio', plD: 'Cena bazowa długoterminowych posiadaczy. Spadek ceny spot poniżej LTH Realized Price oznacza głęboką kapitulację rynku.', enD: 'Long-term holder cost basis. Spot price falling below LTH Realized Price marks deep market capitulation.', sample: [82, 76, 66, 55, 44, 39, 43, 50] },
   { cat: 'valuation', pl: 'STH MVRV', en: 'STH MVRV', plD: 'Mierzy pozycję krótkoterminowych inwestorów. Gdy świeży kapitał znajduje się pod presją strat, szansa na zwrot wzrasta.', enD: 'Measures short-term holder position. When recent capital holds steep losses, potential turning points emerge.', sample: [73, 61, 49, 38, 31, 28, 35, 44] },
 
   // --- 2. Podaż i Zachowanie (Holder & Supply) ---
   { cat: 'holder', pl: 'LTH SOPR', en: 'LTH SOPR', plD: 'Sprawdza, czy długoterminowi posiadacze sprzedają ze stratą. Odczyty < 1.0 to klasyczna flaga wyprzedania.', enD: 'Checks whether long-term holders realize losses. Readings < 1.0 are a classic oversold flag.', sample: [66, 54, 43, 34, 28, 26, 33, 45] },
   { cat: 'holder', pl: 'UTXOs in Loss %', en: 'UTXOs in Loss %', plD: 'Procent monet przetrzymywanych na minusie. Gdy ponad 50–60% UTXO jest w stracie, rynek znajduje się blisko dna.', enD: 'Percentage of coins held in loss. When over 50–60% of UTXOs sit in loss, the market approaches a floor.', sample: [20, 31, 45, 58, 67, 72, 63, 51] },
-  { cat: 'holder', pl: 'Value Days Destroyed (VDD) Multiple', en: 'VDD Multiple', plD: 'Łączy wiek i wartość przemieszczanych monet. Niski mnożnik potwierdza brak wyprzedaży ze strony starych portfeli.', enD: 'Combines age and volume of moved coins. Low multiple confirms absence of old wallet sell-offs.', sample: [58, 52, 44, 36, 30, 33, 41, 49] },
+  { cat: 'holder', pl: 'Value Days Destroyed (VDD) Multiple', en: 'Value Days Destroyed (VDD) Multiple', plD: 'Łączy wiek i wartość przemieszczanych monet. Niski mnożnik potwierdza brak wyprzedaży ze strony starych portfeli.', enD: 'Combines age and volume of moved coins. Low multiple confirms absence of old wallet sell-offs.', sample: [58, 52, 44, 36, 30, 33, 41, 49] },
   { cat: 'holder', pl: 'Hash Ribbons', en: 'Hash Ribbons', plD: 'Sygnalizuje kapitulację górników i ponowne wyjście hash rate z dołka. Warstwa potwierdzenia struktury sieci.', enD: 'Signals miner capitulation and hash rate recovery. A network structure confirmation layer.', sample: [48, 42, 36, 31, 29, 35, 43, 55] },
   { cat: 'holder', pl: 'Puell Multiple', en: 'Puell Multiple', plD: 'Mierzy przychody górników w relacji do średniej rocznej. Poziomy < 0.5 oznaczają skrajny stres ekonomiczny wydobycia.', enD: 'Measures miner revenue vs 1-year moving average. Levels < 0.5 mean severe mining economic stress.', sample: [68, 59, 45, 33, 25, 28, 36, 48] },
   { cat: 'holder', pl: 'Cena do 200WMA', en: 'Price to 200WMA', plD: 'Stosunek ceny spot do 200-tygodniowej średniej kroczącej. Historycznie dno cyklu wypadało na lub poniżej 200WMA.', enD: 'Spot price ratio to the 200-week moving average. Cycle floors historically formed near or below 200WMA.', sample: [90, 78, 62, 47, 36, 33, 40, 52] },
@@ -119,16 +119,16 @@ const INDICATORS = [
   // --- 3. Cykl i Sentyment (Cycle & Sentiment) ---
   { cat: 'cycle', pl: 'Drawdown z ATH', en: 'Drawdown from ATH', plD: 'Procentowy spadek od szczytu wszech czasów. W erze ETF silnik V2 uwzględnia zarówno głębokie (-75%+), jak i płytkie dołki.', enD: 'Percentage drop from ATH. In the ETF era, V2 engine accounts for both deep (-75%+) and shallow bottoms.', sample: [18, 24, 36, 49, 57, 63, 59, 54] },
   { cat: 'cycle', pl: 'Dni od ATH', en: 'Days since ATH', plD: 'Mierzy czas trwania fazy spadkowej cyklu. Ramuje oczekiwanie w strefie akumulacji (zazwyczaj 300–400 dni od ATH).', enD: 'Measures duration of cycle downtrend. Frames timing expectations in the accumulation zone.', sample: [94, 86, 72, 58, 45, 39, 34, 31] },
-  { cat: 'cycle', pl: 'Monthly RSI(14)', en: 'Monthly RSI', plD: 'Wskaźnik impetu na interwale miesięcznym. Wykrywa skrajne wyprzedanie w długim horyzoncie czasowym.', enD: 'Long-term momentum indicator on monthly interval. Detects multi-year oversold regimes.', sample: [64, 55, 43, 33, 27, 30, 38, 46] },
-  { cat: 'cycle', pl: 'Weekly RSI(14)', en: 'Weekly RSI', plD: 'RSI z interwału tygodniowego. Szybszy od miesięcznego, używany jako potwierdzenie wyprzedania w oknie dołkowym.', enD: 'Weekly timeframe RSI. Faster than monthly RSI, used to confirm oversold conditions in cycle windows.', sample: [58, 48, 38, 28, 24, 29, 36, 45] },
+  { cat: 'cycle', pl: 'Monthly RSI(14)', en: 'Monthly RSI(14)', plD: 'Wskaźnik impetu na interwale miesięcznym. Wykrywa skrajne wyprzedanie w długim horyzoncie czasowym.', enD: 'Long-term momentum indicator on monthly interval. Detects multi-year oversold regimes.', sample: [64, 55, 43, 33, 27, 30, 38, 46] },
+  { cat: 'cycle', pl: 'Weekly RSI(14)', en: 'Weekly RSI(14)', plD: 'RSI z interwału tygodniowego. Szybszy od miesięcznego, używany jako potwierdzenie wyprzedania w oknie dołkowym.', enD: 'Weekly timeframe RSI. Faster than monthly RSI, used to confirm oversold conditions in cycle windows.', sample: [58, 48, 38, 28, 24, 29, 36, 45] },
   { cat: 'cycle', pl: 'Bull Run Index', en: 'Bull Run Index', plD: 'Syntetyczny indeks hossy używany odwrotnie do identyfikacji dołków cyklu.', enD: 'Synthetic bull index used in reverse to identify cycle bottoms.', sample: [80, 68, 50, 32, 18, 14, 22, 35] },
-  { cat: 'cycle', pl: 'Fear & Greed Index', en: 'Fear & Greed', plD: 'Indeks strachu i chciwości. Skrajny strach (< 20) służy jako wspierający sygnał kontrariański.', enD: 'Fear & Greed index. Extreme fear (< 20) serves as a supportive contrarian input.', sample: [52, 39, 26, 18, 12, 16, 24, 36] },
+  { cat: 'cycle', pl: 'Fear & Greed Index', en: 'Fear & Greed Index', plD: 'Indeks strachu i chciwości. Skrajny strach (< 20) służy jako wspierający sygnał kontrariański.', enD: 'Fear & Greed index. Extreme fear (< 20) serves as a supportive contrarian input.', sample: [52, 39, 26, 18, 12, 16, 24, 36] },
 
   // --- 4. Era ETF i Popyt (Demand & ETF) ---
-  { cat: 'etf', pl: 'ETF Balance Context', en: 'ETF Balance', plD: 'Całkowity bilans BTC przetrzymywany w amerykańskich spotowych ETF-ach (kontekst instytucjonalny od 2024 roku).', enD: 'Total BTC balance held across US spot BTC ETFs (institutional adoption context post-2024).', sample: [30, 35, 42, 48, 55, 60, 64, 70] },
-  { cat: 'etf', pl: 'ETF Balance Trend (30d Δ)', en: 'ETF Balance Trend', plD: '30-dniowa zmiana (delta) salda BTC w ETF-ach spotowych USA. Mierzy trwały napływ kapitału instytucjonalnego.', enD: '30-day net change in US spot ETF BTC balance. Measures sustained institutional adoption.', sample: [32, 36, 41, 38, 44, 51, 57, 62] },
-  { cat: 'etf', pl: 'ETF Flow Momentum (30d)', en: 'ETF Flow Momentum', plD: 'Skumulowane 30-dniowe przepływy netto w USD na podstawie zbiorczych danych rynkowych.', enD: 'Cumulative 30-day net USD flows built on aggregated market data.', sample: [28, 35, 46, 42, 39, 50, 61, 70] },
-  { cat: 'etf', pl: 'Exchange Reserve Trend (30d)', en: 'Exchange Reserve Trend', plD: '30-dniowa zmiana netto rezerw Bitcoina na giełdach. Spadek rezerw sugeruje akumulację on-chain.', enD: '30-day net change in exchange BTC reserves. Declining reserves confirm spot accumulation.', sample: [60, 55, 48, 42, 36, 30, 28, 25] },
+  { cat: 'etf', pl: 'ETF Balance Context', en: 'ETF Balance Context', plD: 'Całkowity bilans BTC przetrzymywany w amerykańskich spotowych ETF-ach (kontekst instytucjonalny od 2024 roku).', enD: 'Total BTC balance held across US spot BTC ETFs (institutional adoption context post-2024).', sample: [30, 35, 42, 48, 55, 60, 64, 70] },
+  { cat: 'etf', pl: 'ETF Balance Trend (30d Δ)', en: 'ETF Balance Trend (30d Δ)', plD: '30-dniowa zmiana (delta) salda BTC w ETF-ach spotowych USA. Mierzy trwały napływ kapitału instytucjonalnego.', enD: '30-day net change in US spot ETF BTC balance. Measures sustained institutional adoption.', sample: [32, 36, 41, 38, 44, 51, 57, 62] },
+  { cat: 'etf', pl: 'ETF Flow Momentum (30d)', en: 'ETF Flow Momentum (30d)', plD: 'Skumulowane 30-dniowe przepływy netto w USD na podstawie zbiorczych danych rynkowych.', enD: 'Cumulative 30-day net USD flows built on aggregated market data.', sample: [28, 35, 46, 42, 39, 50, 61, 70] },
+  { cat: 'etf', pl: 'Exchange Reserve Trend (30d)', en: 'Exchange Reserve Trend (30d)', plD: '30-dniowa zmiana netto rezerw Bitcoina na giełdach. Spadek rezerw sugeruje akumulację on-chain.', enD: '30-day net change in exchange BTC reserves. Declining reserves confirm spot accumulation.', sample: [60, 55, 48, 42, 36, 30, 28, 25] },
 
   // --- 5. Otoczenie Makro (Macro Context) ---
   { cat: 'macro', pl: 'Płynność netto USD', en: 'USD Net Liquidity', plD: 'Tło makro na podstawie bilansu Rezerwy Federalnej, TGA i RRP. Dostępność płynności napędza aktywa ryzykowne.', enD: 'Macro backdrop based on Fed balance sheet, TGA and RRP. Liquidity feeds risk assets.', sample: [38, 36, 40, 45, 43, 48, 54, 60] },
@@ -525,9 +525,9 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
   return <span className="nadir-eyebrow">{children}</span>;
 }
 
-function BrandLockup() {
+function BrandLockup({ onNavigate }: { onNavigate?: (path: string, e?: React.MouseEvent) => void }) {
   return (
-    <a className="ds-brand" href="/" aria-label="BTC Smart Investor Terminal">
+    <a className="ds-brand" href="/" onClick={(e) => onNavigate?.('/', e)} aria-label="BTC Smart Investor Terminal">
       <img src="/assets/logo.svg" alt="" />
       <span>
         <strong>BTC Smart Investor</strong>
@@ -663,7 +663,7 @@ function SectionHead({
   );
 }
 
-function Nav({ lang, setLang }: { lang: Lang; setLang: (lang: Lang) => void }) {
+function Nav({ lang, setLang, onNavigate }: { lang: Lang; setLang: (lang: Lang) => void; onNavigate: (path: string, e?: React.MouseEvent) => void }) {
   const [scrolled, setScrolled] = React.useState(false);
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -671,6 +671,7 @@ function Nav({ lang, setLang }: { lang: Lang; setLang: (lang: Lang) => void }) {
     onScroll();
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
   const links = [
     { href: '/#how', pl: 'Jak działa', en: 'How it works' },
     { href: '/#signals', pl: 'Sygnały', en: 'Signals' },
@@ -682,16 +683,16 @@ function Nav({ lang, setLang }: { lang: Lang; setLang: (lang: Lang) => void }) {
   return (
     <header className={`ds-nav ${scrolled ? 'is-scrolled' : ''}`}>
       <div className="nadir-container ds-nav-inner">
-        <BrandLockup />
+        <BrandLockup onNavigate={onNavigate} />
         <nav className="nav-links">
           {links.map((link) => (
-            <a key={link.href} href={link.href}>
+            <a key={link.href} href={link.href} onClick={(e) => onNavigate(link.href, e)}>
               {L(lang, link.pl, link.en)}
             </a>
           ))}
         </nav>
         <div className="nav-actions">
-          <button type="button" className="lang-button" onClick={() => setLang(lang === 'pl' ? 'en' : 'pl')}>
+          <button type="button" className="lang-button" onClick={() => setLang(lang === 'pl' ? 'en' : 'pl')} aria-label="Toggle language">
             <span className={lang === 'pl' ? 'active' : ''}>PL</span>
             <em>/</em>
             <span className={lang === 'en' ? 'active' : ''}>EN</span>
@@ -699,7 +700,7 @@ function Nav({ lang, setLang }: { lang: Lang; setLang: (lang: Lang) => void }) {
           <a className="nav-signin" href={`${DASHBOARD_URL}/login`}>
             {L(lang, 'Zaloguj', 'Sign in')}
           </a>
-          <Button variant="primary" size="sm" href="/#invite" iconRight={<ArrowRight size={15} />}>
+          <Button variant="primary" size="sm" href="/#invite" onClick={(e) => onNavigate('/#invite', e)} iconRight={<ArrowRight size={15} />}>
             {L(lang, 'Zaproszenie', 'Get invite')}
           </Button>
         </div>
@@ -708,7 +709,7 @@ function Nav({ lang, setLang }: { lang: Lang; setLang: (lang: Lang) => void }) {
   );
 }
 
-function Hero({ lang }: { lang: Lang }) {
+function Hero({ lang, onNavigate }: { lang: Lang; onNavigate: (path: string, e?: React.MouseEvent) => void }) {
   const score = 86;
   const verdictLabel = L(lang, 'Agresywna Akumulacja (Dno 2022)', 'Aggressive Accumulation (2022 Bottom)');
   const priceDisplay = '$15,760';
@@ -734,10 +735,10 @@ function Hero({ lang }: { lang: Lang }) {
             )}
           </p>
           <div className="hero-actions">
-            <Button variant="primary" size="lg" href="/#invite" iconRight={icon.arrow}>
+            <Button variant="primary" size="lg" href="/#invite" onClick={(e) => onNavigate('/#invite', e)} iconRight={icon.arrow}>
               {L(lang, 'Poproś o zaproszenie', 'Request invite')}
             </Button>
-            <Button variant="secondary" size="lg" href="/#method">
+            <Button variant="secondary" size="lg" href="/#method" onClick={(e) => onNavigate('/#method', e)}>
               {L(lang, 'Zobacz silnik V2', 'Explore V2 engine')}
             </Button>
           </div>
@@ -913,7 +914,7 @@ function ProductPreview({ lang }: { lang: Lang }) {
           align="center"
           eyebrow={L(lang, 'Interfejs Terminala', 'Terminal Interface')}
           title={L(lang, 'Jeden cockpit analityczny. Pełny rynek.', 'One analytical cockpit. The full market.')}
-          sub={L(lang, 'Werdykt, dwupoziomowy dostęp (Smart vs Investor), wykresy sparklines i flaga Generacyjne Dno w jednym miejscu.', 'Verdict, dual-tier access (Smart vs Investor), sparklines and Generational Bottom flag in one place.')}
+          sub={L(lang, 'Werdykt, dwupoziomowy dostęp (Smart vs Investor), siatka 28 wskaźników ze sparklines i flaga Generacyjne Dno w jednym miejscu.', 'Verdict, dual-tier access (Smart vs Investor), 28-indicator grid with sparklines and Generational Bottom flag in one place.')}
         />
         <div className="preview-frame">
           <div className="preview-urlbar">
@@ -943,8 +944,8 @@ function ProductPreview({ lang }: { lang: Lang }) {
                   <VerdictScale score={72} showLabels={false} />
                   <div className="preview-kpis">
                     <KpiStat label={L(lang, 'Silnik Scoringu', 'Scoring Engine')} value="V2 Era-Aware" accent="var(--ice-400)" />
-                    <KpiStat label={L(lang, 'Flaga Dna', 'Floor Flag')} value="Generacyjne" accent="var(--signal-aggressive)" />
-                    <KpiStat label="Spójność (c_agree)" value="0.88" accent="var(--emerald-400)" />
+                    <KpiStat label={L(lang, 'Flaga Dna', 'Floor Flag')} value={L(lang, 'Generacyjne', 'Generational')} accent="var(--signal-aggressive)" />
+                    <KpiStat label={L(lang, 'Spójność (c_agree)', 'Agreement (c_agree)')} value="0.88" accent="var(--emerald-400)" />
                   </div>
                 </div>
               </div>
@@ -1419,11 +1420,11 @@ function LegalPage({ lang, kind }: { lang: Lang; kind: 'disclaimer' | 'privacy' 
               {L(
                 lang,
                 'Ten dokument porządkuje zasady publicznie na landing page. Przed publikacją produkcyjną warto zatwierdzić go formalnie z prawnikiem.',
-                'This document structures the public landing-page terms.',
+                'This document structures the public landing-page terms. Please confirm with a lawyer before production publication.',
               )}
             </p>
             <p>
-              {L(lang, `Administrator danych: ${DATA_CONTROLLER.name}, ${DATA_CONTROLLER.address}. Kontakt: ${DATA_CONTROLLER.email}.`, `Controller: ${DATA_CONTROLLER.name}, ${DATA_CONTROLLER.address}. Contact: ${DATA_CONTROLLER.email}.`)}
+              {L(lang, `Administrator danych: ${DATA_CONTROLLER.name}, ${DATA_CONTROLLER.address}. Kontakt: ${DATA_CONTROLLER.email}.`, `Data Controller: ${DATA_CONTROLLER.name}, ${DATA_CONTROLLER.address}. Contact: ${DATA_CONTROLLER.email}.`)}
             </p>
           </aside>
           <div className="legal-sections">
@@ -1440,7 +1441,7 @@ function LegalPage({ lang, kind }: { lang: Lang; kind: 'disclaimer' | 'privacy' 
   );
 }
 
-function Footer({ lang }: { lang: Lang }) {
+function Footer({ lang, onNavigate }: { lang: Lang; onNavigate: (path: string, e?: React.MouseEvent) => void }) {
   const cols: Array<{ h: string; links: Array<{ label: string; href: string }> }> = [
     {
       h: L(lang, 'Produkt', 'Product'),
@@ -1473,7 +1474,7 @@ function Footer({ lang }: { lang: Lang }) {
       <div className="nadir-container">
         <div className="footer-grid">
           <div>
-            <BrandLockup />
+            <BrandLockup onNavigate={onNavigate} />
             <p>{L(lang, 'Terminal analityczny do prognozowania dołka cyklu Bitcoina z silnikiem V2. Czytaj cykl, chroń sygnał.', 'Analytical terminal for forecasting Bitcoin cycle bottoms with V2 engine. Read the cycle, protect the signal.')}</p>
             <span><i /> {L(lang, 'Silnik V2.3.0 · Wszystkie systemy sprawne', 'V2.3.0 Engine · All systems operational')}</span>
           </div>
@@ -1482,7 +1483,13 @@ function Footer({ lang }: { lang: Lang }) {
               <div key={col.h}>
                 <h3>{col.h}</h3>
                 <ul>
-                  {col.links.map((link) => <li key={link.href}><a href={link.href}>{link.label}</a></li>)}
+                  {col.links.map((link) => (
+                    <li key={link.href}>
+                      <a href={link.href} onClick={(e) => onNavigate(link.href, e)}>
+                        {link.label}
+                      </a>
+                    </li>
+                  ))}
                 </ul>
               </div>
             ))}
@@ -1490,7 +1497,7 @@ function Footer({ lang }: { lang: Lang }) {
         </div>
         <div className="footer-bottom">
           <span>© 2026 BTC Smart Investor Terminal · btc-dash.64bit.site</span>
-          <em>{L(lang, 'Narzędzie edukacyjne i informacyjne. Nie stanowi rekomendacji inwestycyjnej ani porady finansowej.', 'An educational and informational tool. Not investment advice or a financial recommendation.')}</em>
+          <em>{L(lang, 'Narzędzie edukacyjne i informacyjne. Nie stanowi rekomendacji inwestycyjnej ani porady finansowej.', 'Educational and informational tool. Not investment advice or a financial recommendation.')}</em>
         </div>
       </div>
     </footer>
@@ -1611,9 +1618,55 @@ function updateSeo(lang: Lang, routeKey: RouteKey) {
   });
 }
 
+const getInitialLang = (): Lang => {
+  if (typeof window === 'undefined') return 'pl';
+  const urlParams = new URLSearchParams(window.location.search);
+  const langParam = urlParams.get('lang');
+  if (langParam === 'en' || langParam === 'pl') return langParam;
+  const stored = localStorage.getItem('btc_invest_lang');
+  if (stored === 'en' || stored === 'pl') return stored;
+  return 'pl';
+};
+
 export function App() {
-  const [lang, setLang] = React.useState<Lang>('pl');
+  const [lang, setLangState] = React.useState<Lang>(getInitialLang);
   const [routeKey, setRouteKey] = React.useState<RouteKey>(() => getRouteKey(window.location.pathname));
+
+  const setLang = React.useCallback((next: Lang) => {
+    setLangState(next);
+    localStorage.setItem('btc_invest_lang', next);
+  }, []);
+
+  const handleNavigate = React.useCallback((path: string, e?: React.MouseEvent) => {
+    if (path.includes('#')) {
+      const parts = path.split('#');
+      const routePath = parts[0] || '/';
+      const hash = '#' + parts[1];
+
+      if (window.location.pathname !== routePath) {
+        e?.preventDefault();
+        window.history.pushState({}, '', path);
+        setRouteKey(getRouteKey(routePath));
+        setTimeout(() => {
+          const el = document.querySelector(hash);
+          el?.scrollIntoView({ behavior: 'smooth' });
+        }, 80);
+      } else {
+        e?.preventDefault();
+        window.history.pushState({}, '', hash);
+        const el = document.querySelector(hash);
+        el?.scrollIntoView({ behavior: 'smooth' });
+      }
+      return;
+    }
+
+    if (path.startsWith('/')) {
+      e?.preventDefault();
+      window.history.pushState({}, '', path);
+      setRouteKey(getRouteKey(path));
+      window.scrollTo(0, 0);
+    }
+  }, []);
 
   React.useEffect(() => {
     document.documentElement.lang = lang;
@@ -1629,7 +1682,7 @@ export function App() {
   const page =
     routeKey === 'home' ? (
       <main>
-        <Hero lang={lang} />
+        <Hero lang={lang} onNavigate={handleNavigate} />
         <HowItWorks lang={lang} />
         <Families lang={lang} />
         <ProductPreview lang={lang} />
@@ -1653,9 +1706,9 @@ export function App() {
 
   return (
     <div>
-      <Nav lang={lang} setLang={setLang} />
+      <Nav lang={lang} setLang={setLang} onNavigate={handleNavigate} />
       {page}
-      <Footer lang={lang} />
+      <Footer lang={lang} onNavigate={handleNavigate} />
     </div>
   );
 }
