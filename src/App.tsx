@@ -11,6 +11,7 @@ import {
   Layers,
   Lock,
   Mail,
+  RefreshCw,
   Scale,
   Shield,
   Target,
@@ -19,6 +20,7 @@ import {
   X,
   Zap,
 } from 'lucide-react';
+import { fetchPublicSnapshot, PublicSnapshotData } from './lib/api';
 
 type Lang = 'pl' | 'en';
 type Currency = 'eur' | 'pln' | 'usd';
@@ -32,139 +34,135 @@ function L(lang: Lang, pl: string, en: string) {
 }
 
 const CAT = {
-  fundament: { color: 'var(--category-fundament)', pl: 'Fundament', en: 'Fundamentals' },
-  core: { color: 'var(--category-core)', pl: 'Core', en: 'Core' },
-  auxiliary: { color: 'var(--category-auxiliary)', pl: 'Pomocnicze', en: 'Auxiliary' },
-  confirmation: { color: 'var(--category-confirmation)', pl: 'Potwierdzenie', en: 'Confirmation' },
-  macro: { color: 'var(--category-macro)', pl: 'Makro', en: 'Macro' },
+  valuation: { color: 'var(--category-core)', pl: 'Wycena (Valuation)', en: 'Valuation & Cost Basis' },
+  holder: { color: 'var(--category-fundament)', pl: 'Podaż i Zachowanie (Holder & Supply)', en: 'Holder Behavior & Supply' },
+  cycle: { color: 'var(--category-auxiliary)', pl: 'Cykl i Sentyment (Cycle & Sentiment)', en: 'Cycle Timing & Sentiment' },
+  etf: { color: 'var(--category-confirmation)', pl: 'Popyt ETF (Era ETF)', en: 'Institutional Demand & ETF' },
+  macro: { color: 'var(--category-macro)', pl: 'Tło Makro (Macro Context)', en: 'Macroeconomic Context' },
 };
 
 const FAMILIES = [
   {
-    key: 'history',
+    key: 'valuation',
     icon: Target,
-    count: 2,
-    tone: 'var(--category-fundament)',
-    pl: 'Historia i cykle',
-    en: 'History & cycles',
-    plD: 'Dane historyczne BTC i przebieg poprzednich cykli — punkt odniesienia dla każdego dna.',
-    enD: 'Historical BTC data and the shape of past cycles — the reference frame for every bottom.',
-  },
-  {
-    key: 'time',
-    icon: Activity,
-    count: 2,
+    count: 4,
+    weight: '30%',
     tone: 'var(--category-core)',
-    pl: 'Okna czasowe i sezonowość',
-    en: 'Time windows & seasonality',
-    plD: 'Analiza czasu i cyklu — okna, w których historycznie formowały się dołki.',
-    enD: 'Time and cycle analysis — the windows in which bottoms historically formed.',
+    pl: 'Wycena rynkowa (Valuation)',
+    en: 'Valuation & Cost Basis',
+    plD: 'MVRV Z-Score, NUPL, LTH Realized Price i STH MVRV — bada relację ceny rynkowej do zrealizowanej bazy kosztowej inwestorów.',
+    enD: 'MVRV Z-Score, NUPL, LTH Realized Price and STH MVRV — evaluates market price vs realized cost basis of investors.',
   },
   {
-    key: 'percent',
-    icon: Zap,
-    count: 2,
-    tone: 'var(--category-auxiliary)',
-    pl: 'Procenty i procent składany',
-    en: 'Percentage & compounding',
-    plD: 'Wyliczenia procentowe i składane — skala drawdownu i potencjału odbicia.',
-    enD: 'Percentage and compounded-percentage math — drawdown depth and rebound potential.',
-  },
-  {
-    key: 'risk',
+    key: 'holder',
     icon: Shield,
-    count: 3,
-    tone: 'var(--category-confirmation)',
-    pl: 'Prawdopodobieństwo i ryzyko',
-    en: 'Probability & risk',
-    plD: 'Metryki prawdopodobieństwa i ryzyka — jak pewny jest odczyt strefy.',
-    enD: 'Probability and risk metrics — how confident the zone read actually is.',
+    count: 6,
+    weight: '30%',
+    tone: 'var(--category-fundament)',
+    pl: 'Zachowanie i podaż (Holder & Supply)',
+    en: 'Holder Behavior & Supply Stress',
+    plD: 'LTH SOPR, UTXOs in Loss %, VDD Multiple, Hash Ribbons, Puell Multiple i 200WMA — mierzy stopień kapitulacji i stres podażowy.',
+    enD: 'LTH SOPR, UTXOs in Loss %, VDD Multiple, Hash Ribbons, Puell Multiple and 200WMA — measures capitulation & supply stress.',
   },
   {
-    key: 'market',
+    key: 'cycle',
+    icon: Activity,
+    count: 5,
+    weight: '20%',
+    tone: 'var(--category-auxiliary)',
+    pl: 'Cykl i psychologia (Cycle & Sentiment)',
+    en: 'Cycle Timing & Crowd Sentiment',
+    plD: 'Drawdown od ATH, Dni od ATH, Monthly RSI(14), Bull Run Index (CBBI) i Fear & Greed — timing cykliczny i sentyment tłumu.',
+    enD: 'Drawdown from ATH, Days since ATH, Monthly RSI(14), Bull Run Index (CBBI) and Fear & Greed — cycle timing & crowd psychology.',
+  },
+  {
+    key: 'etf',
+    icon: Layers,
+    count: 3,
+    weight: '20%',
+    tone: 'var(--category-confirmation)',
+    pl: 'Popyt instytucjonalny (Era ETF)',
+    en: 'Institutional Demand & ETF Era',
+    plD: 'ETF Balance Trend, ETF Flow Momentum (otwarte dane SoSoValue bez klucza API) i Exchange Reserve — nowa dynamika kapitału po 2024r.',
+    enD: 'ETF Balance Trend, ETF Flow Momentum (SoSoValue open API data) and Exchange Reserve — post-2024 institutional capital dynamics.',
+  },
+  {
+    key: 'macro',
     icon: Waves,
     count: 5,
-    tone: 'var(--category-core)',
-    pl: 'Bieżące wskaźniki rynku',
-    en: 'Current market indicators',
-    plD: 'Aktualny stan rynku — momentum, trend i pozycja wobec średnich.',
-    enD: 'The live market state — momentum, trend and position versus key averages.',
-  },
-  {
-    key: 'sentiment',
-    icon: Activity,
-    count: 2,
+    weight: 'Aux',
     tone: 'var(--category-macro)',
-    pl: 'Sentyment rynku',
-    en: 'Market sentiment',
-    plD: 'Strach i chciwość tłumu — kontrariański sygnał wokół dna.',
-    enD: 'Crowd fear and greed — the contrarian signal around the floor.',
-  },
-  {
-    key: 'whales',
-    icon: Layers,
-    count: 5,
-    tone: 'var(--category-fundament)',
-    pl: 'Wieloryby i przepływy ETF',
-    en: 'Whales & ETF flows',
-    plD: 'Ruchy dużego kapitału on-chain i bilans spotowych ETF — co robią silne ręce.',
-    enD: 'Large on-chain capital moves and spot-ETF balance — what strong hands are doing.',
+    pl: 'Otoczenie makroekonomiczne (Macro)',
+    en: 'Macroeconomic Context & Liquidity',
+    plD: 'Płynność netto USD (FRED WALCL), Indeks Dolara (DXY), Spread 10Y-2Y, VIX i OKX Funding Rate — tło płynnościowe dla aktywów ryzykownych.',
+    enD: 'USD net liquidity (FRED WALCL), Dollar Index (DXY), 10Y-2Y Spread, VIX and OKX Funding Rate — global risk liquidity backdrop.',
   },
 ];
 
 const INDICATORS = [
-  { cat: 'fundament', pl: 'Dni od ATH', en: 'Days since ATH', plD: 'Mierzy, ile czasu minęło od ostatniego maksimum cyklu. Daje kontekst cierpliwości, nie samodzielny sygnał wejścia.', enD: 'Measures how much time has passed since the last cycle high. It frames patience, not a standalone entry call.', sample: [94, 86, 72, 58, 45, 39, 34, 31] },
-  { cat: 'fundament', pl: 'Drawdown od ATH', en: 'Drawdown from ATH', plD: 'Pokazuje głębokość spadku od szczytu. Im większy drawdown, tym silniejszy kontekst cyklicznego wychłodzenia.', enD: 'Shows how far price has fallen from the high. Deeper drawdowns strengthen the cycle-cooling context.', sample: [18, 24, 36, 49, 57, 63, 59, 54] },
-  { cat: 'core', pl: 'Cena vs LTH Realized', en: 'Price vs LTH Realized', plD: 'Porównuje cenę rynkową z bazą kosztową długoterminowych posiadaczy. Pomaga ocenić, czy rynek schodzi w rejon kapitulacji.', enD: 'Compares market price with the cost basis of long-term holders. It helps identify whether the market is moving toward capitulation.', sample: [82, 76, 66, 55, 44, 39, 43, 50] },
-  { cat: 'core', pl: 'MVRV Z-Score', en: 'MVRV Z-Score', plD: 'Ocenia relację wartości rynkowej do zrealizowanej. Niskie odczyty historycznie pojawiały się w pobliżu stref akumulacji.', enD: 'Evaluates market value against realized value. Low readings have historically appeared near accumulation zones.', sample: [76, 65, 52, 38, 28, 24, 31, 42] },
-  { cat: 'core', pl: 'NUPL', en: 'NUPL', plD: 'Pokazuje niezrealizowany zysk lub stratę inwestorów. W strefach dna rynek często przechodzi od chciwości do rezygnacji.', enD: 'Shows investors’ unrealized profit or loss. Near bottoms, the market often moves from greed into surrender.', sample: [72, 60, 44, 30, 21, 19, 27, 38] },
-  { cat: 'core', pl: 'Cena do 200WMA', en: 'Price to 200WMA', plD: 'Sprawdza dystans ceny względem 200-tygodniowej średniej. To wolny filtr cykliczny, przydatny do oceny skrajnego wychłodzenia.', enD: 'Checks price distance from the 200-week moving average. It is a slow cycle filter for extreme cooling.', sample: [90, 78, 62, 47, 36, 33, 40, 52] },
-  { cat: 'core', pl: 'Puell Multiple', en: 'Puell Multiple', plD: 'Opisuje presję po stronie przychodów górników. Niskie poziomy mogą wskazywać fazę stresu podażowego.', enD: 'Describes miner-revenue pressure. Low levels can indicate supply-side stress.', sample: [68, 59, 45, 33, 25, 28, 36, 48] },
-  { cat: 'core', pl: 'Reserve Risk', en: 'Reserve Risk', plD: 'Łączy cenę z przekonaniem długoterminowych posiadaczy. Niskie wartości sugerują lepszą relację ryzyka do potencjału.', enD: 'Combines price with long-term holder conviction. Low values suggest a better risk-to-potential profile.', sample: [70, 58, 41, 30, 24, 23, 29, 40] },
-  { cat: 'auxiliary', pl: 'RSI Miesięczny', en: 'Monthly RSI', plD: 'Syntetyzuje momentum w długim interwale. Skrajnie niskie odczyty pomagają odróżnić bessę od zwykłej korekty.', enD: 'Summarizes long-timeframe momentum. Extremely low readings help separate bear-market regimes from ordinary corrections.', sample: [64, 55, 43, 33, 27, 30, 38, 46] },
-  { cat: 'auxiliary', pl: 'Fear & Greed', en: 'Fear & Greed', plD: 'Czyta emocje rynku jako sygnał kontrariański. Silny strach jest kontekstem, ale wymaga potwierdzenia w danych twardych.', enD: 'Reads market emotion as a contrarian signal. Extreme fear is context, but still needs hard-data confirmation.', sample: [52, 39, 26, 18, 12, 16, 24, 36] },
-  { cat: 'auxiliary', pl: 'Bilans ETF', en: 'ETF balance', plD: 'Uwzględnia przepływy kapitału instytucjonalnego w erze spotowych ETF. To nowa warstwa cyklu po 2024 roku.', enD: 'Accounts for institutional capital flows in the spot-ETF era. It is a new cycle layer after 2024.', sample: [32, 36, 41, 38, 44, 51, 57, 62] },
-  { cat: 'auxiliary', pl: 'Momentum ETF', en: 'ETF flow momentum', plD: 'Pokazuje, czy przepływy ETF przyspieszają, słabną albo odwracają kierunek. Wspiera ocenę popytu strukturalnego.', enD: 'Shows whether ETF flows are accelerating, fading or reversing. It supports the read on structural demand.', sample: [28, 35, 46, 42, 39, 50, 61, 70] },
-  { cat: 'confirmation', pl: 'LTH SOPR', en: 'LTH SOPR', plD: 'Bada, czy długoterminowi posiadacze realizują zysk czy stratę. Kapitulacja tej grupy może wzmacniać scenariusz dna.', enD: 'Checks whether long-term holders are realizing profit or loss. Their capitulation can strengthen a bottom scenario.', sample: [66, 54, 43, 34, 28, 26, 33, 45] },
-  { cat: 'confirmation', pl: 'VDD Multiple', en: 'VDD Multiple', plD: 'Łączy aktywność dawnych monet z wartością rynku. Pomaga wykrywać nietypowe fazy realizacji i kapitulacji.', enD: 'Combines old-coin activity with market value. It helps detect unusual realization and capitulation phases.', sample: [58, 52, 44, 36, 30, 33, 41, 49] },
-  { cat: 'confirmation', pl: 'UTXO w stracie', en: 'UTXOs in loss', plD: 'Mierzy, jaka część monet znajduje się poniżej ceny nabycia. Wysoki stres posiadaczy bywa elementem formowania dna.', enD: 'Measures how much of the coin set sits below acquisition price. High holder stress can be part of bottom formation.', sample: [20, 31, 45, 58, 67, 72, 63, 51] },
-  { cat: 'confirmation', pl: 'Hash Ribbons', en: 'Hash Ribbons', plD: 'Obserwuje kondycję górników przez dynamikę hash rate. Jest warstwą potwierdzenia, nie samodzielnym wyzwalaczem.', enD: 'Observes miner health through hash-rate dynamics. It is a confirmation layer, not a standalone trigger.', sample: [48, 42, 36, 31, 29, 35, 43, 55] },
-  { cat: 'confirmation', pl: 'STH MVRV', en: 'STH MVRV', plD: 'Czyta pozycję krótkoterminowych uczestników rynku. Pomaga ocenić, czy świeży kapitał jest już w stresie.', enD: 'Reads the position of short-term market participants. It helps assess whether recent capital is already under stress.', sample: [73, 61, 49, 38, 31, 28, 35, 44] },
-  { cat: 'macro', pl: 'Płynność netto USD', en: 'USD net liquidity', plD: 'Dodaje tło makro: dostępność płynności, która może wspierać albo tłumić apetyt na ryzyko.', enD: 'Adds macro context: available liquidity that can support or suppress risk appetite.', sample: [38, 36, 40, 45, 43, 48, 54, 60] },
-  { cat: 'macro', pl: 'Indeks Dolara', en: 'Dollar Index', plD: 'Silny dolar często działa jak wiatr w twarz dla aktywów ryzykownych. Wskaźnik służy do oceny presji makro.', enD: 'A strong dollar often acts as a headwind for risk assets. This indicator frames macro pressure.', sample: [44, 50, 61, 68, 64, 58, 49, 42] },
-  { cat: 'macro', pl: 'Spread 10Y-2Y', en: '10Y-2Y spread', plD: 'Pokazuje napięcia w krzywej rentowności. Daje kontekst cyklu gospodarczego, nie sygnał transakcyjny.', enD: 'Shows stress in the yield curve. It provides business-cycle context, not a trading signal.', sample: [35, 32, 28, 24, 30, 38, 46, 52] },
-  { cat: 'macro', pl: 'VIX', en: 'VIX', plD: 'Mierzy zmienność i stres na rynku akcji. Pomaga ocenić, czy globalny risk-off wzmacnia presję na BTC.', enD: 'Measures equity-market volatility and stress. It helps assess whether global risk-off pressure is weighing on BTC.', sample: [22, 28, 41, 58, 53, 44, 35, 30] },
+  // Wycena
+  { cat: 'valuation', pl: 'MVRV Z-Score', en: 'MVRV Z-Score', plD: 'Ocenia odchylenie wartości rynkowej od zrealizowanej. Niskie odczyty historycznie wyznaczały dołki cyklu.', enD: 'Evaluates market value deviation from realized value. Low readings historically marked cycle bottoms.', sample: [76, 65, 52, 38, 28, 24, 31, 42] },
+  { cat: 'valuation', pl: 'NUPL (Net Unrealized Profit/Loss)', en: 'NUPL', plD: 'Pokazuje bilans niezrealizowanych zysków i strat. Przejście w strefę kapitulacji (poniżej 0) sygnalizuje ekstremalne schłodzenie.', enD: 'Shows unrealized profit/loss balance. Entering capitulation zone (below 0) signals extreme cooling.', sample: [72, 60, 44, 30, 21, 19, 27, 38] },
+  { cat: 'valuation', pl: 'LTH Realized Price', en: 'LTH Realized Price', plD: 'Cena bazowa długoterminowych posiadaczy. Spadek ceny spot poniżej LTH Realized Price oznacza głęboką kapitulację rynku.', enD: 'Long-term holder cost basis. Spot price falling below LTH Realized Price marks deep market capitulation.', sample: [82, 76, 66, 55, 44, 39, 43, 50] },
+  { cat: 'valuation', pl: 'STH MVRV', en: 'STH MVRV', plD: 'Mierzy pozycję krótkoterminowych inwestorów. Gdy świeży kapitał znajduje się pod presją strat, szansa na zwrot wzrasta.', enD: 'Measures short-term holder position. When recent capital holds steep losses, potential turning points emerge.', sample: [73, 61, 49, 38, 31, 28, 35, 44] },
+
+  // Podaż i Posiadacze
+  { cat: 'holder', pl: 'LTH SOPR', en: 'LTH SOPR', plD: 'Sprawdza, czy długoterminowi posiadacze sprzedają ze stratą. Odczyty < 1.0 to klasyczna flaga wyprzedania.', enD: 'Checks whether long-term holders realize losses. Readings < 1.0 are a classic oversold flag.', sample: [66, 54, 43, 34, 28, 26, 33, 45] },
+  { cat: 'holder', pl: 'UTXOs in Loss %', en: 'UTXOs in Loss %', plD: 'Procent monet przetrzymywanych na minusie. Gdy ponad 50–60% UTXO jest w stracie, rynek znajduje się blisko dna.', enD: 'Percentage of coins held in loss. When over 50–60% of UTXOs sit in loss, the market approaches a floor.', sample: [20, 31, 45, 58, 67, 72, 63, 51] },
+  { cat: 'holder', pl: 'Value Days Destroyed (VDD) Multiple', en: 'VDD Multiple', plD: 'Łączy wiek i wartość przemieszczanych monet. Niski mnożnik potwierdza brak wyprzedaży ze strony starych портfeli.', enD: 'Combines age and volume of moved coins. Low multiple confirms absence of old wallet sell-offs.', sample: [58, 52, 44, 36, 30, 33, 41, 49] },
+  { cat: 'holder', pl: 'Hash Ribbons', en: 'Hash Ribbons', plD: 'Sygnalizuje kapitulację górników i ponowne wyjście hash rate z dołka. Warstwa potwierdzenia struktury sieci.', enD: 'Signals miner capitulation and hash rate recovery. A network structure confirmation layer.', sample: [48, 42, 36, 31, 29, 35, 43, 55] },
+  { cat: 'holder', pl: 'Puell Multiple', en: 'Puell Multiple', plD: 'Mierzy przychody górników w relacji do średniej rocznej. Poziomy < 0.5 oznaczają skrajny stres ekonomiczny wydobycia.', enD: 'Measures miner revenue vs 1-year moving average. Levels < 0.5 mean severe mining economic stress.', sample: [68, 59, 45, 33, 25, 28, 36, 48] },
+  { cat: 'holder', pl: 'Cena do 200WMA', en: 'Price to 200WMA', plD: 'Stosunek ceny spot do 200-tygodniowej średniej kroczącej. Historycznie dno cyklu wypadało na lub poniżej 200WMA.', enD: 'Spot price ratio to the 200-week moving average. Cycle floors historically formed near or below 200WMA.', sample: [90, 78, 62, 47, 36, 33, 40, 52] },
+
+  // Cykl i Sentyment
+  { cat: 'cycle', pl: 'Drawdown z ATH', en: 'Drawdown from ATH', plD: 'Procentowy spadek od szczytu wszech czasów. W erze ETF silnik V2 uwzględnia zarówno głębokie (-75%+), jak i płytkie dołki.', enD: 'Percentage drop from ATH. In the ETF era, V2 engine accounts for both deep (-75%+) and shallow bottoms.', sample: [18, 24, 36, 49, 57, 63, 59, 54] },
+  { cat: 'cycle', pl: 'Dni od ATH', en: 'Days since ATH', plD: 'Mierzy czas trwania fazy spadkowej cyklu. Ramuje oczekiwanie w strefie akumulacji (zazwyczaj 300–400 dni od ATH).', enD: 'Measures duration of cycle downtrend. Frames timing expectations in the accumulation zone.', sample: [94, 86, 72, 58, 45, 39, 34, 31] },
+  { cat: 'cycle', pl: 'Monthly RSI(14)', en: 'Monthly RSI', plD: 'Wskaźnik impetu na interwale miesięcznym. Wykrywa skrajne wyprzedanie w długim horyzoncie czasowym.', enD: 'Long-term momentum indicator on monthly interval. Detects multi-year oversold regimes.', sample: [64, 55, 43, 33, 27, 30, 38, 46] },
+  { cat: 'cycle', pl: 'Bull Run Index (CBBI)', en: 'Bull Run Index', plD: 'Syntetyczny indeks hossy używany odwrotnie do identyfikacji dołków cyklu.', enD: 'Synthetic bull index used in reverse to identify cycle bottoms.', sample: [80, 68, 50, 32, 18, 14, 22, 35] },
+  { cat: 'cycle', pl: 'Fear & Greed Index', en: 'Fear & Greed', plD: 'Indeks strachu i chciwości. Skrajny strach (< 20) służy jako wspierający sygnał kontrariański.', enD: 'Fear & Greed index. Extreme fear (< 20) serves as a supportive contrarian input.', sample: [52, 39, 26, 18, 12, 16, 24, 36] },
+
+  // Era ETF i Popyt
+  { cat: 'etf', pl: 'ETF Flow Momentum (30d)', en: 'ETF Flow Momentum', plD: 'Dynamika przepływów netto w amerykańskich spotowych ETF BTC na podstawie darmowego, otwartego API SoSoValue.', enD: 'Net flow momentum across US BTC spot ETFs built on SoSoValue open API data.', sample: [28, 35, 46, 42, 39, 50, 61, 70] },
+  { cat: 'etf', pl: 'ETF Balance Trend (30d)', en: 'ETF Balance Trend', plD: 'Śledzi całkowitą liczbę BTC przetrzymywaną przez 13 emitentów ETF. Mierzy napływ kapitału instytucjonalnego.', enD: 'Tracks total BTC balance held across 13 ETF issuers. Measures institutional adoption.', sample: [32, 36, 41, 38, 44, 51, 57, 62] },
+  { cat: 'etf', pl: 'Exchange Reserve Trend (30d)', en: 'Exchange Reserve Trend', plD: 'Zmiana rezerw BTC na giełdach w ujęciu 30-dniowym. Spadek rezerw sugeruje akumulację on-chain.', enD: '30-day change in exchange BTC reserves. Declining reserves confirm spot accumulation.', sample: [60, 55, 48, 42, 36, 30, 28, 25] },
+
+  // Makro
+  { cat: 'macro', pl: 'Płynność netto USD (WALCL)', en: 'USD Net Liquidity', plD: 'Tło makro na podstawie rezerw Fed, TGA i RRP (FRED API). Dostępność płynności napędza aktywa ryzykowne.', enD: 'Macro backdrop based on Fed balance sheet, TGA and RRP (FRED API). Liquidity feeds risk assets.', sample: [38, 36, 40, 45, 43, 48, 54, 60] },
+  { cat: 'macro', pl: 'Indeks Dolara (DXY)', en: 'Dollar Index (DXY)', plD: 'Siła dolara amerykańskiego. Szczyt DXY często pokrywał się z lokalnym lub cyklicznym dołkiem na Bitcoinie.', enD: 'US Dollar strength index. DXY peaks often coincide with BTC local or cycle bottoms.', sample: [44, 50, 61, 68, 64, 58, 49, 42] },
+  { cat: 'macro', pl: 'Yield Curve Spread (10Y-2Y)', en: 'Yield Curve Spread', plD: 'Spread rentowności obligacji skarbowych USA. Kontekst cyklu koniunkturalnego i recesji.', enD: 'US Treasury yield curve spread. Provides business cycle and recession context.', sample: [35, 32, 28, 24, 30, 38, 46, 52] },
+  { cat: 'macro', pl: 'Indeks VIX', en: 'VIX Volatility Index', plD: 'Indeks zmienności rynkowej. Wykrywa globalne epizody risk-off i płynnościowej kapitulacji.', enD: 'Equity market volatility index. Detects global risk-off & liquidity capitulation events.', sample: [22, 28, 41, 58, 53, 44, 35, 30] },
+  { cat: 'macro', pl: 'OKX Funding Rate (8h)', en: 'OKX Funding Rate', plD: 'Stopa finansowania pozycji wieczystych (perpetual futures). Ujemny funding potwierdza dominację pozycji krótkich.', enD: 'Perpetual futures funding rate. Negative funding confirms short-side dominance.', sample: [50, 45, 35, 20, 10, 15, 30, 45] },
 ];
 
 const STEPS = [
   {
     n: '01',
-    plT: 'Konfluencja, nie pojedynczy sygnał',
-    enT: 'Confluence, not a single signal',
-    plD: '24 wskaźniki on-chain, cykliczne, sentymentu i makro — odświeżane trzy razy dziennie z kontrolą jakości danych.',
-    enD: '24 on-chain, cycle, sentiment and macro indicators — refreshed three times a day with data-quality checks.',
+    plT: 'Konfluencja 4 Rodzin V2 Engine',
+    enT: '4-Family Confluence V2 Engine',
+    plD: '26 wskaźników podzielonych na Wycenę (30%), Podaż (30%), Cykl (20%) i Popyt ETF (20%) + makro. Kara dyspersji c_agree weryfikuje spójność sygnałów.',
+    enD: '26 indicators across Valuation (30%), Supply (30%), Cycle (20%) & ETF Demand (20%) + macro. Dispersion penalty c_agree verifies signal agreement.',
   },
   {
     n: '02',
-    plT: 'Jeden Bottom Score 0–100',
-    enT: 'One Bottom Score 0–100',
-    plD: 'Silnik waży wskaźniki, weryfikuje kompletność danych i confidence, po czym sprowadza wszystko do jednej liczby.',
-    enD: 'The engine weights indicators, checks data completeness and confidence, then collapses it to a single number.',
+    plT: 'Bottom Score 0–100 & Generacyjne Dno',
+    enT: 'Bottom Score 0–100 & Generational Floor',
+    plD: 'Silnik scoringowy V2 Era-Aware (v2.3.0) sprowadza dane do jednej liczby i wykrywa flagę Generacyjnego Dna przy równoczesnym dołku ≥4 bloków.',
+    enD: 'V2 Era-Aware scoring engine (v2.3.0) collapses data to one number and flags Generational Bottom when ≥4 core blocks reach extremes.',
   },
   {
     n: '03',
-    plT: 'Werdykt i Okno Akumulacji',
-    enT: 'Verdict and Accumulation Window',
-    plD: 'Pięć werdyktów w ramach okna DCA — od „za wcześnie" po „agresywną akumulację". Decyzja, nie wykres.',
-    enD: 'Five verdicts inside the DCA window — from "too early" to "aggressive accumulation". A decision, not a chart.',
+    plT: 'Werdykt, Okno DCA i Alerty Telegram',
+    enT: 'Verdict, DCA Window & Telegram Alerts',
+    plD: '5-pasmowy werdykt z histerezą chroniącą przed drganiem progów. Odświeżanie 3× dziennie z nadzorem świeżości data-watchdog oraz alertami Telegram.',
+    enD: '5-band verdict with threshold hysteresis. 3x daily refreshes with freshness watchdog monitoring and instant Telegram alerts.',
   },
 ];
 
 const BANDS = [
-  { tone: 'slate' as const, range: '0–29', pl: 'Za wcześnie / Obserwuj', en: 'Too early / Observe', plD: 'Okno zamknięte. Cierpliwie czekaj.', enD: 'Window closed. Wait patiently.' },
-  { tone: 'amber' as const, range: '30–54', pl: 'Obserwuj', en: 'Observe', plD: 'Akumulacja się zbliża. Przygotuj plan.', enD: 'Accumulation nears. Prepare the plan.' },
-  { tone: 'emerald' as const, range: '55–77', pl: 'Strefa akumulacji', en: 'Accumulation zone', plD: 'Okno otwarte. Regularne zakupy DCA.', enD: 'Window open. Regular DCA buys.' },
-  { tone: 'ice' as const, range: '78–100', pl: 'Agresywna akumulacja', en: 'Aggressive accumulation', plD: 'Najchłodniejszy odczyt. Przyspiesz DCA.', enD: 'Coldest read. Accelerate DCA.' },
+  { tone: 'slate' as const, range: '0–29', pl: 'Za wcześnie / Obserwuj', en: 'Too early / Observe', plD: 'Okno akumulacji zamknięte. Cierpliwie czekaj na wychłodzenie.', enD: 'Accumulation window closed. Wait patiently for cycle cooling.' },
+  { tone: 'amber' as const, range: '30–54', pl: 'Obserwuj / DCA', en: 'Observe / Prepare DCA', plD: 'Akumulacja się zbliża. Przygotuj plan i środki na zakupy.', enD: 'Accumulation nears. Prepare buying tranche plan and capital.' },
+  { tone: 'emerald' as const, range: '55–77', pl: 'Strefa akumulacji', en: 'Accumulation zone', plD: 'Okno otwarte. Regularne zakupy DCA z uśrednianiem ceny.', enD: 'Window open. Regular DCA buying with dollar-cost averaging.' },
+  { tone: 'ice' as const, range: '78–100', pl: 'Agresywna akumulacja', en: 'Aggressive accumulation', plD: 'Najchłodniejszy odczyt cyklu. Przyspiesz tempo transz DCA.', enD: 'Coldest cycle reading. Accelerate DCA tranche speed.' },
 ];
 
 const PLANS = [
@@ -176,17 +174,17 @@ const PLANS = [
     accent: 'ice',
     plPer: 'wybrana waluta · subskrypcja',
     enPer: 'selected currency · subscription',
-    plDesc: 'Inteligentne śledzenie dna BTC. Widzisz status strategii i zagregowane sygnały — bez wglądu w metodologię.',
-    enDesc: 'Smart tracking of the BTC bottom. You see the strategy status and aggregated signals — without seeing the methodology.',
+    plDesc: 'Inteligentne śledzenie dna BTC. Status strategii V2, Bottom Score na żywo, wskaźniki sentymentu i przepływy ETF — z ochroną poufnej metodologii.',
+    enDesc: 'Smart tracking of BTC bottom. Live V2 strategy status, Bottom Score, sentiment & ETF flows — with protected methodology.',
     features: [
-      { pl: 'Bottom Score na żywo i 5-pasmowy werdykt', en: 'Live Bottom Score & 5-band verdict', on: true },
-      { pl: '„Gdzie jesteśmy" w oknie akumulacji', en: '"Where we are" in the accumulation window', on: true },
-      { pl: 'Meta strategii: 24 wskaźniki w 7 rodzinach danych', en: 'Strategy meta: 24 indicators across 7 data families', on: true },
-      { pl: 'Zagregowany indeks sentymentu i momentum', en: 'Aggregated sentiment & momentum index', on: true },
-      { pl: 'Wieloryby i ETF — tylko kierunek', en: 'Whales & ETF — direction only', on: true },
-      { pl: 'Pełna siatka 24 wskaźników, wagi i wkłady', en: 'Full 24-indicator grid, weights & contributions', on: false },
-      { pl: 'Planer transz DCA i progi wejścia', en: 'DCA tranche planner & entry thresholds', on: false },
-      { pl: 'Replay historii, cykle i alerty Telegram', en: 'History replay, cycles & Telegram alerts', on: false },
+      { pl: 'Bottom Score na żywo z API i 5-pasmowy werdykt', en: 'Live API Bottom Score & 5-band verdict', on: true },
+      { pl: 'Status okna akumulacji i dystans od ATH', en: 'Accumulation window status & ATH distance', on: true },
+      { pl: 'Meta strategii V2 Engine: 26 wskaźników w 4 rodzinach', en: 'V2 Engine strategy meta: 26 indicators in 4 families', on: true },
+      { pl: 'Zagregowane wskaźniki Fear & Greed i ETF Flows', en: 'Aggregated Fear & Greed & ETF flows', on: true },
+      { pl: 'Bezpieczny widok publiczny z server-side redaction', en: 'Safe public view with server-side redaction', on: true },
+      { pl: 'Pełna siatka 24 wskaźników w siatce ze sparklines', en: 'Full 24-indicator grid with sparklines', on: false },
+      { pl: 'Wagi, wkłady, progi normalizacji, mnożnik c_agree', en: 'Weights, contributions, thresholds, c_agree multiplier', on: false },
+      { pl: 'Planer transz DCA, flaga Generacyjne Dno i alerty', en: 'DCA tranche planner, Generational Bottom flag & alerts', on: false },
     ],
   },
   {
@@ -197,52 +195,51 @@ const PLANS = [
     accent: 'gold',
     plPer: 'wybrana waluta · pakiet 6-miesięczny',
     enPer: 'selected currency · 6-month package',
-    plDesc: 'Cały terminal: konfluencja on-chain, wagi, wkłady, plan DCA i alerty. Poważny wybór dla zaangażowanego inwestora BTC.',
-    enDesc: 'The whole terminal: on-chain confluence, weights, contributions, DCA plan and alerts. The serious choice for the committed BTC investor.',
+    plDesc: 'Pełny terminal analityczny: konfluencja V2 on-chain, wagi, wkłady, flaga Generacyjne Dno, planer DCA i alerty Telegram 3x dziennie.',
+    enDesc: 'Full analytical terminal: V2 on-chain confluence, weights, contributions, Generational Bottom flag, DCA planner & 3x daily Telegram alerts.',
     features: [
       { pl: 'Wszystko z planu Smart', en: 'Everything in Smart', on: true },
-      { pl: 'Pełna siatka 24 wskaźników ze sparklines', en: 'Full 24-indicator grid with sparklines', on: true },
-      { pl: 'Wagi, wkłady, progi normalizacji, mnożnik G', en: 'Weights, contributions, thresholds, G-multiplier', on: true },
-      { pl: 'Planer transz DCA i strefy wejścia', en: 'DCA tranche planner & entry zones', on: true },
-      { pl: 'Pełna oś zdarzeń wielorybów i ETF', en: 'Full whale & ETF event timeline', on: true },
-      { pl: 'Historia scoringu od roku i replay snapshotów', en: 'One-year scoring history and snapshot replay', on: true },
-      { pl: 'Alerty Telegram do 3 razy dziennie', en: 'Telegram alerts up to 3 times daily', on: true },
-      { pl: 'Flaga Generacyjne Dno', en: 'Generational Bottom flag', on: true },
-      { pl: 'Pełny dostęp do strategii na kolejne cykle', en: 'Full strategy access for future cycles', on: true },
+      { pl: 'Pełna siatka 24 wskaźników z historycznymi wykresami sparklines', en: 'Full 24-indicator grid with historical sparkline charts', on: true },
+      { pl: 'Wagi rodzin, wkłady, progi normalizacji i mnożnik c_agree', en: 'Family weights, contributions, thresholds & c_agree multiplier', on: true },
+      { pl: 'Flaga Generacyjne Dno (≥4 ortogonalne bloki na dnie)', en: 'Generational Bottom flag (≥4 orthogonal blocks at bottom)', on: true },
+      { pl: 'Planer transz DCA i wyliczanie ciągłego pobytu w strefie', en: 'DCA tranche planner & continuous zone duration math', on: true },
+      { pl: 'Pełna historia snapshotów, 400-dniowy replay i audyt V1', en: 'Full snapshot history, 400-day replay & V1 audit trail', on: true },
+      { pl: 'Alerty Telegram wyzwalane automatycznie 3× na dobę', en: 'Automated Telegram alerts triggered 3x daily', on: true },
+      { pl: 'Pełny dostęp do wsparcia i kalibracji na kolejne cykle', en: 'Full access to future cycle support & calibration', on: true },
     ],
   },
 ];
 
 const FAQ = [
   {
-    pl: 'Dlaczego dostęp tylko na zaproszenie?',
-    en: 'Why is access invite-only?',
-    plA: 'BTC Smart Investor Terminal to zamknięty portal — nie ma darmowej rejestracji. Nowi użytkownicy dołączają wyłącznie na zaproszenie aktywnego członka lub administratora. Utrzymujemy mały, świadomy krąg i chronimy metodologię strategii.',
-    enA: 'BTC Smart Investor Terminal is a closed portal — there is no free signup. New users join only on an invite from an active member or admin. We keep a small, deliberate circle and protect the strategy methodology.',
+    pl: 'Czym jest Silnik Scoringowy V2 Era-Aware (v2.3.0)?',
+    en: 'What is the V2 Era-Aware Scoring Engine (v2.3.0)?',
+    plA: 'To najnowsza wersja algorytmu scoringowego, stworzona po debiucie amerykańskich spotowych ETF-ów. Podzieliła wskaźniki na 4 główne rodziny konfluencji: Wycenę (30%), Podaż i Posiadaczy (30%), Cykl i Sentyment (20%) oraz Popyt ETF (20%). Dodatkowo wprowadzono mnożnik spójności c_agree karzący sprzeczność sygnałów oraz flagę Generacyjne Dno.',
+    enA: 'It is the latest scoring algorithm version built following the launch of US spot BTC ETFs. It structures indicators into 4 main confluence families: Valuation (30%), Supply & Holders (30%), Cycle & Sentiment (20%), and ETF Demand (20%). It also introduces a dispersion penalty c_agree and Generational Bottom detection.',
   },
   {
-    pl: 'Czym różni się Smart od Investor?',
+    pl: 'Dlaczego dostęp do terminala jest tylko na zaproszenie (Invite-Only)?',
+    en: 'Why is terminal access invite-only?',
+    plA: 'BTC Smart Investor Terminal to zamknięte środowisko dla świadomych inwestorów długoterminowych. Aby chronić metodologię strategii oraz zapewnić najwyższą wydajność infrastruktury (bramki API z limitem zapytań i rotacją), konta zakładane są wyłącznie poprzez zaproszenia administratorów lub aktywnych członków.',
+    enA: 'BTC Smart Investor Terminal is a closed environment for deliberate long-term investors. To protect protected strategy methodology and maintain system performance (rate-limited API gateways), accounts are activated strictly via admin or member invites.',
+  },
+  {
+    pl: 'Jak często aktualizowane są dane rynkowe?',
+    en: 'How often are market data updated?',
+    plA: 'System aktualizuje dane 3 razy na dobę: slot AM o 06:00 UTC (GitHub Actions), slot PM o 12:00 UTC (Vercel Cron) oraz o 18:00 UTC. Ponadto wbudowany watchdog świeżości (Freshness Watchdog) wysyła alert na Telegram, jeśli dane byłyby starsze niż 18 godzin.',
+    enA: 'The system updates data 3 times daily: AM slot at 06:00 UTC (GitHub Actions), PM slot at 12:00 UTC (Vercel Cron), and 18:00 UTC. A built-in Freshness Watchdog sends Telegram alerts if readings exceed 18 hours.',
+  },
+  {
+    pl: 'Czym różni się plan Smart od Investor?',
     en: 'How does Smart differ from Investor?',
-    plA: 'Smart śledzi wyłącznie dno BTC: pokazuje Bottom Score, werdykt i zagregowane sygnały oraz meta-informacje o strategii (ile wskaźników, jakie rodziny danych) — bez metodologii. Investor odblokowuje cały terminal: pełną siatkę wskaźników, wagi, wkłady, plan DCA, oś zdarzeń i alerty.',
-    enA: 'Smart tracks the BTC bottom only: it shows the Bottom Score, the verdict, aggregated signals and meta-information about the strategy (how many indicators, which data families) — without the methodology. Investor unlocks the whole terminal: the full indicator grid, weights, contributions, the DCA plan, the event timeline and alerts.',
+    plA: 'Plan Smart daje dostęp do bezpiecznego statusu strategii na żywo (Bottom Score, werdykt, status okna akumulacji, Fear & Greed i ETF flows) bez dostępu do chronionej metodologii. Plan Investor odblokowuje pełny terminal: 24 wskaźniki w siatce ze sparklines, wagi, wkłady, flagę Generacyjne Dno, planer DCA oraz alerty Telegram.',
+    enA: 'Smart grants access to safe live strategy status (Bottom Score, verdict, window status, Fear & Greed & ETF flows) without exposing protected methodology. Investor unlocks the whole terminal: 24 indicators with sparklines, weights, contributions, Generational Bottom flag, DCA planner & Telegram alerts.',
   },
   {
     pl: 'Czy to porada inwestycyjna?',
     en: 'Is this financial advice?',
-    plA: 'Nie. BTC Smart Investor Terminal to narzędzie dyscypliny, nie wyrocznia. Wskaźniki i algorytmy mają charakter edukacyjny i informacyjny — decyzje podejmujesz na podstawie własnej analizy i oceny ryzyka.',
-    enA: 'No. BTC Smart Investor Terminal is a discipline tool, not an oracle. The indicators and algorithms are educational and informational — you decide based on your own analysis and risk assessment.',
-  },
-  {
-    pl: 'Skąd pochodzą dane?',
-    en: 'Where does the data come from?',
-    plA: 'Model korzysta z kontrolowanych źródeł rynkowych, on-chain, sentymentu, przepływów i makro. Publiczny landing pokazuje tylko bezpieczny kontekst, bez listy dostawców i bez szczegółów metodologii.',
-    enA: 'The model uses controlled market, on-chain, sentiment, flow and macro inputs. The public landing only shows safe context, without vendor lists or methodology details.',
-  },
-  {
-    pl: 'Jak często aktualizują się dane?',
-    en: 'How often does data update?',
-    plA: 'Bieżące odczyty są dostępne w zamkniętym dashboardzie i odświeżane według harmonogramu strategii. Publiczny landing pokazuje tylko historyczny przykład działania skali.',
-    enA: 'Current readings are available inside the closed dashboard and refreshed on the strategy schedule. The public landing page shows only a historical example of the scale.',
+    plA: 'Nie. BTC Smart Investor Terminal to narzędzie analityczne wspierające dyscyplinę inwestycyjną, nie wyrocznia ani rekomendacja. Wszystkie algorytmy mają charakter edukacyjny i informacyjny — decyzje podejmujesz samodzielnie na podstawie własnej oceny ryzyka.',
+    enA: 'No. BTC Smart Investor Terminal is an analytical discipline tool, not an oracle or recommendation. All algorithms are educational and informational — investment decisions remain solely your responsibility.',
   },
 ];
 
@@ -255,6 +252,7 @@ const icon = {
   chevron: <ChevronDown size={18} />,
   shield: <Shield size={15} />,
   bolt: <Zap size={16} />,
+  refresh: <RefreshCw size={14} />,
 };
 
 const ROUTES: Record<RouteKey, { path: string; pl: string; en: string; titlePl: string; titleEn: string; descPl: string; descEn: string }> = {
@@ -262,28 +260,28 @@ const ROUTES: Record<RouteKey, { path: string; pl: string; en: string; titlePl: 
     path: '/',
     pl: 'Start',
     en: 'Home',
-    titlePl: 'BTC Smart Investor Terminal | Analiza dołka cyklu Bitcoina',
-    titleEn: 'BTC Smart Investor Terminal | Bitcoin cycle-bottom analytics',
-    descPl: 'Invite-only terminal dla inwestora BTC: Bottom Score, konfluencja 24 wskaźników i dyscyplina akumulacji w jednym produkcie.',
-    descEn: 'Invite-only BTC investor terminal: Bottom Score, 24-indicator confluence and accumulation discipline in one product.',
+    titlePl: 'BTC Smart Investor Terminal | Analiza dołka cyklu Bitcoina (v28.4 V2 Engine)',
+    titleEn: 'BTC Smart Investor Terminal | Bitcoin cycle-bottom analytics (v28.4 V2 Engine)',
+    descPl: 'Invite-only terminal dla inwestora BTC: Bottom Score na żywo, konfluencja 26 wskaźników w 4 rodzinach V2 Engine i dyscyplina akumulacji.',
+    descEn: 'Invite-only BTC investor terminal: Live Bottom Score, 26-indicator V2 Engine confluence across 4 families and accumulation discipline.',
   },
   glossary: {
     path: '/slownik-wskaznikow',
     pl: 'Słownik wskaźników',
     en: 'Indicator glossary',
-    titlePl: 'Słownik wskaźników BTC Smart Investor Terminal',
-    titleEn: 'BTC Smart Investor Terminal indicator glossary',
-    descPl: 'Publiczny opis 24 wskaźników używanych do oceny stref akumulacji BTC, bez wag, progów i chronionej metodologii.',
-    descEn: 'A public explanation of the 24 indicators used to evaluate BTC accumulation zones, without weights, thresholds or protected methodology.',
+    titlePl: 'Słownik 26 wskaźników V2 Engine | BTC Smart Investor Terminal',
+    titleEn: 'V2 Engine 26 Indicator Glossary | BTC Smart Investor Terminal',
+    descPl: 'Publiczny słownik 26 wskaźników on-chain, cyklu, sentymentu, ery ETF (SoSoValue) i makro (FRED) używanych w silniku V2.',
+    descEn: 'Public glossary of 26 on-chain, cycle, sentiment, ETF era (SoSoValue) and macro (FRED) indicators used in the V2 engine.',
   },
   telegram: {
     path: '/telegram',
     pl: 'Telegram',
     en: 'Telegram',
-    titlePl: 'Instrukcja alertów Telegram | BTC Smart Investor Terminal',
-    titleEn: 'Telegram alert setup | BTC Smart Investor Terminal',
-    descPl: 'Instrukcja konfiguracji alertów Telegram dla planu Investor: bot, chat ID, test i higiena powiadomień.',
-    descEn: 'Telegram alert setup for the Investor plan: bot, chat ID, test message and notification hygiene.',
+    titlePl: 'Instrukcja alertów Telegram 3x/dobę | BTC Smart Investor Terminal',
+    titleEn: '3x Daily Telegram Alert Setup | BTC Smart Investor Terminal',
+    descPl: 'Instrukcja konfiguracji alertów Telegram w planie Investor: automatyczny digest 07:00 UTC, zmiana reżimu i watchdog świeżości.',
+    descEn: 'Telegram alert setup for Investor tier: automated 07:00 UTC digest, regime changes and freshness watchdog alerts.',
   },
   disclaimer: {
     path: '/zastrzezenia',
@@ -300,8 +298,8 @@ const ROUTES: Record<RouteKey, { path: string; pl: string; en: string; titlePl: 
     en: 'Privacy & GDPR',
     titlePl: 'Prywatność i RODO | BTC Smart Investor Terminal',
     titleEn: 'Privacy and GDPR | BTC Smart Investor Terminal',
-    descPl: 'Informacje o administratorze danych, zakresie przetwarzania, Stripe i prawach użytkownika zgodnie z RODO.',
-    descEn: 'Information about the data controller, processing scope, Stripe and user rights under GDPR.',
+    descPl: 'Informacje o administratorze danych (ITCS sp. z o.o.), zakresie przetwarzania, Stripe i prawach użytkownika zgodnie z RODO.',
+    descEn: 'Information about the data controller (ITCS sp. z o.o.), processing scope, Stripe and user rights under GDPR.',
   },
   terms: {
     path: '/regulamin',
@@ -325,29 +323,29 @@ const TELEGRAM_STEPS = [
     icon: Bot,
     plT: 'Utwórz albo wybierz bota',
     enT: 'Create or choose a bot',
-    plD: 'W Telegramie otwórz BotFather, utwórz bota komendą /newbot i zapisz token. Token traktuj jak hasło administracyjne.',
-    enD: 'Open BotFather in Telegram, create a bot with /newbot and store the token. Treat the token like an admin password.',
+    plD: 'W Telegramie otwórz BotFather, utwórz bota komendą /newbot i zapisz token. Token traktuj jak klucz dostępowy.',
+    enD: 'Open BotFather in Telegram, create a bot with /newbot and store the token. Treat the token like an access key.',
   },
   {
     icon: KeyRound,
     plT: 'Dodaj chat ID',
     enT: 'Add the chat ID',
-    plD: 'Wyślij wiadomość do bota albo dodaj go do prywatnego kanału. W panelu Investor wklej chat ID w ustawieniach alertów.',
+    plD: 'Wyślij wiadomość do bota lub dodaj go do prywatnego kanału. W panelu Investor wklej chat ID w ustawieniach alertów.',
     enD: 'Send a message to the bot or add it to a private channel. Paste the chat ID into Investor alert settings.',
   },
   {
     icon: Bell,
-    plT: 'Wybierz tryb alertów',
-    enT: 'Choose alert mode',
-    plD: 'Ustaw, które zdarzenia mają generować powiadomienia. Alerty są projektowane jako sygnały wysokiej wartości, maksymalnie do 3 razy dziennie.',
-    enD: 'Choose which events should trigger notifications. Alerts are designed as high-signal messages, up to 3 times daily.',
+    plT: 'Wybierz tryb alertów i digestu',
+    enT: 'Choose alert & digest mode',
+    plD: 'Ustaw, które zdarzenia (zmiana strefy, Generacyjne Dno, poranny digest 07:00 UTC) mają generować powiadomienia na żywo.',
+    enD: 'Select events (zone changes, Generational Bottom, morning 07:00 UTC digest) that trigger live notifications.',
   },
   {
     icon: Check,
     plT: 'Wyślij wiadomość testową',
     enT: 'Send a test message',
-    plD: 'Po zapisaniu ustawień wykonaj test. Jeśli wiadomość nie dotrze, sprawdź token, chat ID, uprawnienia bota i blokady prywatności kanału.',
-    enD: 'After saving settings, run a test. If it fails, check the token, chat ID, bot permissions and channel privacy restrictions.',
+    plD: 'Po zapisaniu ustawień zrealizuj wysyłkę testową z panelu w celu weryfikacji dostarczalności.',
+    enD: 'After saving settings, execute a test send from the panel to verify deliverability.',
   },
 ];
 
@@ -356,38 +354,38 @@ const LEGAL_SECTIONS = {
     {
       plT: 'Charakter edukacyjny i informacyjny',
       enT: 'Educational and informational nature',
-      plD: 'BTC Smart Investor Terminal, Bottom Score, opisy wskaźników, alerty, wykresy, materiały tekstowe i wszystkie komunikaty w aplikacji mają charakter edukacyjny, informacyjny i analityczny. Nie stanowią rekomendacji inwestycyjnej, porady finansowej, doradztwa inwestycyjnego, doradztwa podatkowego ani zachęty do kupna, sprzedaży lub utrzymywania jakiegokolwiek aktywa.',
-      enD: 'BTC Smart Investor Terminal, Bottom Score, indicator descriptions, alerts, charts, written materials and all in-app communications are educational, informational and analytical. They are not investment recommendations, financial advice, investment advice, tax advice or a solicitation to buy, sell or hold any asset.',
+      plD: 'BTC Smart Investor Terminal, Bottom Score, silnik scoringowy V2, opisy wskaźników, alerty, wykresy i komunikaty w aplikacji mają charakter wyłącznie edukacyjny, informacyjny i analityczny. Nie stanowią rekomendacji inwestycyjnej ani doradztwa finansowego.',
+      enD: 'BTC Smart Investor Terminal, Bottom Score, V2 scoring engine, indicator descriptions, alerts, charts and communications are strictly educational, informational and analytical. They do not constitute investment recommendations or financial advice.',
     },
     {
       plT: 'Brak relacji doradczej',
       enT: 'No advisory relationship',
-      plD: 'Korzystanie z terminala nie tworzy relacji doradcy inwestycyjnego, maklera, zarządzającego portfelem ani indywidualnego doradcy finansowego. System nie zna Twojej sytuacji finansowej, horyzontu inwestycyjnego, tolerancji ryzyka, zobowiązań ani celów osobistych.',
-      enD: 'Using the terminal does not create an investment adviser, broker, portfolio manager or personal financial adviser relationship. The system does not know your financial situation, investment horizon, risk tolerance, liabilities or personal objectives.',
+      plD: 'Korzystanie z terminala nie tworzy relacji doradcy inwestycyjnego, maklera ani zarządzającego portfelem. System nie zna Twojej sytuacji finansowej, tolerancji ryzyka ani horyzontu inwestycyjnego.',
+      enD: 'Using the terminal does not create an investment adviser or broker relationship. The system does not know your personal financial situation, risk tolerance or investment horizon.',
     },
     {
       plT: 'Ryzyko rynku kryptoaktywów',
       enT: 'Crypto-asset market risk',
-      plD: 'Bitcoin i inne kryptoaktywa są zmienne, ryzykowne i mogą generować znaczące straty, włącznie z utratą całości zainwestowanego kapitału. Dane historyczne, kalibracja cykli i przykłady nie gwarantują przyszłych wyników.',
-      enD: 'Bitcoin and other crypto-assets are volatile, risky and may cause significant losses, including the loss of all invested capital. Historical data, cycle calibration and examples do not guarantee future results.',
+      plD: 'Bitcoin jest aktywem zmiennym i cechuje się wysokim ryzykiem straty zainwestowanego kapitału. Dane historyczne (dołki z 2018 i 2022 roku) oraz wyliczenia silnika V2 nie stanowią gwarancji przyszłych wyników.',
+      enD: 'Bitcoin is a volatile asset carrying a high risk of capital loss. Historical data (2018 and 2022 cycle bottoms) and V2 engine calculations do not guarantee future results.',
     },
     {
       plT: 'Decyzja i odpowiedzialność użytkownika',
       enT: 'User decision and responsibility',
-      plD: 'Każda decyzja inwestycyjna należy wyłącznie do użytkownika. Przed podjęciem decyzji należy wykonać własną analizę, ocenić ryzyko i w razie potrzeby skonsultować się z licencjonowanym doradcą właściwym dla danej jurysdykcji.',
-      enD: 'Every investment decision belongs solely to the user. Before acting, users should perform their own analysis, assess risk and, where appropriate, consult a licensed adviser in their jurisdiction.',
+      plD: 'Każda decyzja inwestycyjna i transakcyjna należy wyłącznie do użytkownika. Przed podjęciem decyzji wykonaj własną analizę (DYOR) i w razie potrzeby skonsultuj się z licencjonowanym doradcą.',
+      enD: 'Every investment decision belongs solely to the user. Always perform your own research (DYOR) and consult a licensed adviser if needed.',
     },
     {
-      plT: 'Ograniczenia danych i dostępności',
-      enT: 'Data and availability limitations',
-      plD: 'Dane mogą być opóźnione, niepełne, błędne, czasowo niedostępne albo podlegać korektom. Terminal może korzystać z cache, mechanizmów fallback i harmonogramów odświeżania. Żaden odczyt nie powinien być traktowany jako gwarancja ceny, płynności lub momentu rynkowego.',
-      enD: 'Data may be delayed, incomplete, incorrect, temporarily unavailable or subject to revision. The terminal may use cache, fallback mechanisms and refresh schedules. No reading should be treated as a guarantee of price, liquidity or market timing.',
+      plT: 'Ograniczenia danych i dostawców',
+      enT: 'Data and vendor limitations',
+      plD: 'Dane pochodzące od zewnętrznych dostawców (BGeometrics, SoSoValue, FRED, alternative.me) mogą ulegać opóźnieniom lub korektom. Terminal wykorzystuje architekturę bramek API i buforowania dla zapewnienia ciągłości działania.',
+      enD: 'Data from third-party vendors (BGeometrics, SoSoValue, FRED, alternative.me) may experience delays or revisions. The terminal employs API gateway architecture and caching to maintain uptime.',
     },
     {
-      plT: 'Brak gwarancji wyniku',
-      enT: 'No performance guarantee',
-      plD: 'Nie gwarantujemy, że Bottom Score, alert, werdykt lub jakikolwiek wskaźnik poprawnie wskaże dołek, szczyt, punkt zwrotny albo przyszły wynik inwestycji. Narzędzie ma wspierać dyscyplinę analizy, a nie zastępować ocenę inwestora.',
-      enD: 'We do not guarantee that Bottom Score, an alert, a verdict or any indicator will correctly identify a bottom, top, turning point or future investment result. The tool supports analytical discipline; it does not replace investor judgment.',
+      plT: 'Brak gwarancji trafności dna',
+      enT: 'No bottom-timing guarantee',
+      plD: 'Nie gwarantujemy, że Bottom Score, alert lub werdykt bezbłędnie wskaże dokładny dzień lub cenę dna cyklu. Narzędzie służy do identyfikacji reżimu strefy akumulacji i wspomagania dyscypliny DCA.',
+      enD: 'We do not guarantee that Bottom Score, alerts or verdicts will pinpoint the exact bottom day or price. The tool identifies accumulation zone regimes to support DCA discipline.',
     },
   ],
   privacy: [
@@ -395,75 +393,75 @@ const LEGAL_SECTIONS = {
       plT: 'Administrator danych',
       enT: 'Data controller',
       plD: `Administratorem danych osobowych jest ${DATA_CONTROLLER.name}, ${DATA_CONTROLLER.address}. Kontakt w sprawach prywatności i RODO: ${DATA_CONTROLLER.email}.`,
-      enD: `The personal data controller is ${DATA_CONTROLLER.name}, ${DATA_CONTROLLER.address}. Privacy and GDPR contact: ${DATA_CONTROLLER.email}.`,
+      enD: `The personal data controller is ${DATA_CONTROLLER.name}, ${DATA_CONTROLLER.address}. Privacy contact: ${DATA_CONTROLLER.email}.`,
     },
     {
       plT: 'Zakres danych',
       enT: 'Data scope',
-      plD: 'Przetwarzamy minimalny zakres danych potrzebny do obsługi dostępu invite-only: adres e-mail, imię lub nazwę podaną dobrowolnie, informacje techniczne konta, status planu oraz podstawowe logi bezpieczeństwa. Formularz landing page nie wymaga danych płatniczych.',
-      enD: 'We process the minimum data needed to operate invite-only access: email address, voluntarily provided name or company name, account technical information, plan status and basic security logs. The landing page form does not require payment data.',
+      plD: 'Przetwarzamy minimalny zakres danych potrzebny do obsługi dostępu invite-only: adres e-mail, nazwa konta, status planu i logi autoryzacji. Płatności realizowane są przez zewnętrzny procesor Stripe.',
+      enD: 'We process the minimum data required for invite-only access: email address, account name, plan status and auth logs. Payments are processed by Stripe.',
     },
     {
       plT: 'Płatności Stripe',
       enT: 'Stripe payments',
-      plD: 'Dane kart płatniczych i proces płatności będą obsługiwane przez Stripe jako zewnętrznego operatora płatności. Nie przechowujemy pełnych numerów kart, kodów CVV ani danych uwierzytelniających płatność na landing page.',
-      enD: 'Card data and payment processing will be handled by Stripe as an external payment provider. We do not store full card numbers, CVV codes or payment authentication data on the landing page.',
+      plD: 'Dane kart płatniczych przetwarzane są bezpośrednio przez Stripe w oparciu o certyfikat PCI-DSS. Landing page nie przechowuje numerów kart ani kodów CVV.',
+      enD: 'Card data are processed directly by Stripe under PCI-DSS compliance. The landing page does not store card numbers or CVV codes.',
     },
     {
       plT: 'Podstawy przetwarzania',
       enT: 'Legal bases for processing',
-      plD: 'Dane mogą być przetwarzane w celu wykonania umowy lub działań przed jej zawarciem, obsługi zaproszeń i konta, spełnienia obowiązków prawnych, zabezpieczenia systemu oraz realizacji prawnie uzasadnionego interesu administratora polegającego na ochronie produktu i komunikacji z użytkownikami.',
-      enD: 'Data may be processed to perform a contract or pre-contractual steps, manage invites and accounts, meet legal obligations, secure the system and pursue the controller’s legitimate interest in protecting the product and communicating with users.',
+      plD: 'Dane przetwarzane są w celu wykonania umowy lub obsługi wniosku o zaproszenie (art. 6 ust. 1 lit. b RODO) oraz realizacji prawnie uzasadnionego interesu ochrony serwisu (art. 6 ust. 1 lit. f RODO).',
+      enD: 'Data are processed to perform contracts or invite requests (Art. 6(1)(b) GDPR) and legitimate security interests (Art. 6(1)(f) GDPR).',
     },
     {
       plT: 'Prawa użytkownika',
       enT: 'User rights',
-      plD: 'Użytkownik może żądać dostępu do danych, sprostowania, usunięcia, ograniczenia przetwarzania, przeniesienia danych, wniesienia sprzeciwu oraz złożenia skargi do właściwego organu nadzorczego. Wnioski można kierować na adres administratora danych.',
-      enD: 'Users may request access, rectification, erasure, restriction of processing, data portability, objection and may lodge a complaint with the competent supervisory authority. Requests can be sent to the data controller address.',
+      plD: 'Przysługuje Ci prawo dostępu do danych, sprostowania, usunięcia, ograniczenia przetwarzania oraz przenoszenia danych. Wnioski można zgłaszać na adres e-mail administratora.',
+      enD: 'You have the right to access, rectify, erase, restrict processing and port data. Direct requests to the controller email.',
     },
     {
-      plT: 'Retencja i bezpieczeństwo',
-      enT: 'Retention and security',
-      plD: 'Dane przechowujemy tylko tak długo, jak jest to potrzebne do obsługi dostępu, rozliczeń, bezpieczeństwa i obowiązków prawnych. Stosujemy zasadę minimalizacji, ograniczenia dostępu i rozdzielenia danych płatniczych od danych konta.',
-      enD: 'We retain data only as long as needed for access management, billing, security and legal obligations. We apply minimization, access limitation and separation of payment data from account data.',
+      plT: 'Retencja danych',
+      enT: 'Data retention',
+      plD: 'Dane konta przechowywane są przez okres aktywności subskrypcji oraz do czasu wygaśnięcia obowiązków podatkowo-księgowych.',
+      enD: 'Account data are retained for the duration of subscription activity and applicable statutory tax periods.',
     },
   ],
   terms: [
     {
-      plT: 'Dostęp invite-only',
-      enT: 'Invite-only access',
-      plD: 'Terminal jest usługą zamkniętą. Konto może zostać utworzone wyłącznie po zaproszeniu, aktywacji lub decyzji administratora. Samo wysłanie formularza nie gwarantuje otrzymania dostępu.',
-      enD: 'The terminal is a closed service. An account may be created only after an invite, activation or administrator decision. Submitting the form does not guarantee access.',
+      plT: 'Dostęp invite-only i aktywacja konta',
+      enT: 'Invite-only access & account activation',
+      plD: 'BTC Smart Investor Terminal jest usługą zamkniętą. Rejestracja wymaga zaproszenia wysłanego przez administratora lub aktywacji po opłaceniu wybranego pakietu.',
+      enD: 'BTC Smart Investor Terminal is a closed service. Registration requires an admin invite or plan checkout activation.',
     },
     {
-      plT: 'Plany Smart i Investor',
-      enT: 'Smart and Investor plans',
-      plD: 'Plan Smart pokazuje bezpieczny status strategii i zagregowane sygnały. Plan Investor odblokowuje głębsze panele operacyjne, historię scoringu, alerty oraz warstwy metodologiczne dostępne po zalogowaniu.',
-      enD: 'Smart shows the safe strategy status and aggregated signals. Investor unlocks deeper operating panels, scoring history, alerts and methodology layers available after sign-in.',
+      plT: 'Zasady planów Smart i Investor',
+      enT: 'Smart & Investor plan terms',
+      plD: 'Plan Smart oferuje widok statusu strategii V2 na żywo z server-side redaction. Plan Investor daje pełny dostęp do siatki 24 wskaźników ze sparklines, wag, flagi Generacyjne Dno i alertów Telegram.',
+      enD: 'Smart grants live V2 strategy status with server-side redaction. Investor provides full 24-indicator grid access with sparklines, weights, Generational Bottom flag & Telegram alerts.',
     },
     {
-      plT: 'Dozwolone korzystanie',
-      enT: 'Permitted use',
-      plD: 'Użytkownik zobowiązuje się korzystać z terminala zgodnie z prawem, nie udostępniać dostępu osobom trzecim, nie kopiować chronionej metodologii i nie podejmować prób obejścia zabezpieczeń lub limitów usługi.',
-      enD: 'Users agree to use the terminal lawfully, not share access with third parties, not copy protected methodology and not attempt to bypass security controls or service limits.',
+      plT: 'Dozwolony użytek i zakaz redystrybucji',
+      enT: 'Permitted use & anti-redistribution',
+      plD: 'Zabronione jest kopiowanie, udostępnianie danych osobom trzecim, odsprzedaż sygnałów oraz próby inżynierii wstecznej silnika V2 i chronionych wag strategii.',
+      enD: 'Copying, sharing data with third parties, reselling signals or reverse-engineering V2 engine weights is strictly prohibited.',
     },
     {
       plT: 'Treści i własność intelektualna',
-      enT: 'Content and intellectual property',
-      plD: 'Interfejs, opisy, układ, logika prezentacji, metodologia, nazwy handlowe i materiały są chronione. Publiczne fragmenty można cytować wyłącznie z podaniem źródła i bez sugerowania rekomendacji inwestycyjnej.',
-      enD: 'The interface, descriptions, layout, presentation logic, methodology, trade names and materials are protected. Public excerpts may be quoted only with source attribution and without implying investment advice.',
+      enT: 'Content & intellectual property',
+      plD: 'Prawa do algorytmu scoringowego V2, Nadir Design System, znaków towarowych i treści należą do ITCS sp. z o.o.',
+      enD: 'Rights to V2 scoring algorithm, Nadir Design System, trademarks and content belong to ITCS sp. z o.o.',
     },
     {
-      plT: 'Zmiany usługi',
-      enT: 'Service changes',
-      plD: 'Możemy zmieniać zakres funkcji, ceny, harmonogramy odświeżania, limity alertów i sposób prezentacji danych, jeśli wymaga tego jakość produktu, bezpieczeństwo, dostępność danych lub wymagania prawne.',
-      enD: 'We may change features, pricing, refresh schedules, alert limits and data presentation where product quality, security, data availability or legal requirements make it necessary.',
+      plT: 'Zmiany i aktualizacje algorytmu',
+      enT: 'Algorithm updates',
+      plD: 'Zastrzegamy sobie prawo do kalibracji progów, wag i adapterów danych w celu utrzymania najwyższej jakości predykcyjnej w nowo powstających erach rynkowych (np. Era ETF).',
+      enD: 'We reserve the right to calibrate thresholds, weights and data adapters to maintain analytical quality across market eras.',
     },
     {
       plT: 'Ograniczenie odpowiedzialności',
       enT: 'Limitation of liability',
-      plD: 'W najszerszym zakresie dopuszczalnym przez prawo nie odpowiadamy za decyzje inwestycyjne użytkownika, utracone korzyści, straty rynkowe, przerwy w dostępie, opóźnienia danych ani skutki wykorzystania materiałów niezgodnie z ich edukacyjnym charakterem.',
-      enD: 'To the fullest extent permitted by law, we are not liable for users’ investment decisions, lost profits, market losses, service interruptions, data delays or consequences of using materials contrary to their educational nature.',
+      plD: 'W najszerszym dopuszczalnym zakresie nie odpowiadamy za decyzje inwestycyjne użytkownika, straty rynkowe ani opóźnienia w transmisji danych zewnętrznych.',
+      enD: 'To the fullest extent permitted, we are not liable for user investment decisions, market losses or third-party data transmission delays.',
     },
   ],
 };
@@ -527,7 +525,7 @@ function BrandLockup() {
       <img src="/assets/logo.svg" alt="" />
       <span>
         <strong>BTC Smart Investor</strong>
-        <em>Terminal</em>
+        <em>Terminal · V2 Engine</em>
       </span>
     </a>
   );
@@ -670,7 +668,7 @@ function Nav({ lang, setLang }: { lang: Lang; setLang: (lang: Lang) => void }) {
   const links = [
     { href: '/#how', pl: 'Jak działa', en: 'How it works' },
     { href: '/#signals', pl: 'Sygnały', en: 'Signals' },
-    { href: '/#method', pl: 'Metodologia', en: 'Methodology' },
+    { href: '/#method', pl: 'Metodologia V2', en: 'V2 Methodology' },
     { href: '/#pricing', pl: 'Plany', en: 'Plans' },
     { href: ROUTES.glossary.path, pl: 'Słownik', en: 'Glossary' },
   ];
@@ -705,10 +703,30 @@ function Nav({ lang, setLang }: { lang: Lang; setLang: (lang: Lang) => void }) {
 }
 
 function Hero({ lang }: { lang: Lang }) {
-  const score = 86;
-  const verdictLabel = L(lang, 'Dno cyklu 2022', '2022 cycle-bottom zone');
-  const price = '$15,760';
-  const drawdown = '~77%';
+  const [snapshot, setSnapshot] = React.useState<PublicSnapshotData | null>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [viewMode, setViewMode] = React.useState<'live' | '2022'>('live');
+
+  React.useEffect(() => {
+    let isMounted = true;
+    fetchPublicSnapshot().then((data) => {
+      if (isMounted) {
+        setSnapshot(data);
+        setLoading(false);
+      }
+    });
+    return () => { isMounted = false; };
+  }, []);
+
+  const isLive = viewMode === 'live' && snapshot;
+  const score = isLive ? snapshot.bottomScore : 86;
+  const verdictLabel = isLive ? snapshot.verdictLabel : L(lang, 'Dno cyklu 2022 (Historia)', '2022 cycle-bottom (Historical)');
+  const priceDisplay = isLive
+    ? (snapshot.currentPrice ? `$${snapshot.currentPrice.toLocaleString('en-US', { maximumFractionDigits: 0 })}` : 'B.D.')
+    : '$15,760';
+  const drawdownDisplay = isLive
+    ? (snapshot.drawdownPct !== null ? `${snapshot.drawdownPct > 0 ? '-' : ''}${Math.abs(snapshot.drawdownPct)}%` : 'B.D.')
+    : '-77%';
 
   return (
     <section id="top" className="ds-hero">
@@ -716,17 +734,17 @@ function Hero({ lang }: { lang: Lang }) {
       <div className="nadir-container hero-grid">
         <div className="hero-copy">
           <Eyebrow>
-            {icon.lock} {L(lang, 'Dostęp na zaproszenie · portal zamknięty', 'Invite-only · closed terminal')}
+            {icon.lock} {L(lang, 'Dostęp na zaproszenie · Silnik V2.3 Era-Aware', 'Invite-only · V2.3 Era-Aware Engine')}
           </Eyebrow>
           <h1>
-            {L(lang, 'Znajdź', 'Find the')} <span>{L(lang, 'dołek', 'floor')}</span>.<br />
-            {L(lang, 'Z przewagą analityczną.', 'With an analytical edge.')}
+            {L(lang, 'Znajdź', 'Find the')} <span>{L(lang, 'dołek cyklu', 'cycle floor')}</span>.<br />
+            {L(lang, 'Z konfluencją V2 Engine.', 'With V2 Engine confluence.')}
           </h1>
           <p>
             {L(
               lang,
-              'Terminal, który łączy 24 wskaźniki cyklu, rynku, sentymentu i makro w jeden Bottom Score — żeby szybciej rozpoznać, czy BTC zbliża się do strefy akumulacji.',
-              'A terminal that turns 24 cycle, market, sentiment and macro indicators into one Bottom Score — so you can recognize when BTC is moving toward an accumulation zone.',
+              'Zamknięty terminal analityczny łączący 26 wskaźników on-chain, podaży, sentymentu, przepływów spot ETF (SoSoValue) i makro w jeden precyzyjny Bottom Score.',
+              'A closed analytics terminal joining 26 indicators across on-chain, supply, sentiment, spot ETF flows (SoSoValue) and macro into one precise Bottom Score.',
             )}
           </p>
           <div className="hero-actions">
@@ -734,14 +752,14 @@ function Hero({ lang }: { lang: Lang }) {
               {L(lang, 'Poproś o zaproszenie', 'Request invite')}
             </Button>
             <Button variant="secondary" size="lg" href="/#method">
-              {L(lang, 'Zobacz metodologię', 'See methodology')}
+              {L(lang, 'Zobacz silnik V2', 'Explore V2 engine')}
             </Button>
           </div>
           <div className="hero-stats">
             {[
-              { v: '24', pl: 'wskaźników w konfluencji', en: 'indicators in confluence' },
-              { v: '2018 · 2022', pl: 'cykle backtestowane', en: 'cycles backtested' },
-              { v: '3×', pl: 'aktualizacja / dobę', en: 'updates / day' },
+              { v: '26', pl: 'wskaźników w 4 rodzinach', en: 'indicators in 4 families' },
+              { v: '2018 · 2022', pl: 'kalibracja cykli + ETF era', en: 'calibrated cycles + ETF era' },
+              { v: '3× / dobę', pl: 'odświeżanie danych (AM/PM)', en: 'data refresh (AM/PM slots)' },
             ].map((stat, index) => (
               <div key={stat.v} className={index < 2 ? 'with-border' : ''}>
                 <strong>{stat.v}</strong>
@@ -752,27 +770,44 @@ function Hero({ lang }: { lang: Lang }) {
         </div>
 
         <div className="hero-visual">
-            <div className="orb-card">
-              <img src="/assets/orb.png" alt="" />
-              <div aria-hidden="true" />
-              <div className="orb-live">
-              <Badge tone="gold">
-                {L(lang, 'Przykład historyczny · 2022', 'Historical example · 2022')}
-              </Badge>
-              </div>
-            </div>
-            <div className="orb-score-panel">
-              <ScoreRing score={score} size={104} stroke={8} label={null} />
-              <div>
-                <span>{L(lang, 'Werdykt', 'Verdict')}</span>
-                <strong>{verdictLabel}</strong>
-                <p>
-                  BTC {price} · <em>{drawdown}</em> {L(lang, 'od ATH · dane poglądowe', 'from ATH · illustrative data')}
-                </p>
+          <div className="orb-card">
+            <img src="/assets/orb.png" alt="" />
+            <div aria-hidden="true" />
+            <div className="orb-live">
+              <div className="flex items-center gap-2">
+                <Badge tone={isLive ? (snapshot?.isLive ? 'live' : 'amber') : 'gold'}>
+                  {isLive
+                    ? (snapshot?.isLive ? L(lang, 'Bieżący rynek na żywo (API)', 'Live market reading (API)') : L(lang, 'Tryb awaryjny (Cache)', 'Fallback Cache'))
+                    : L(lang, 'Przykład historyczny · Dno 2022', 'Historical example · 2022 bottom')}
+                </Badge>
+
+                <button
+                  type="button"
+                  onClick={() => setViewMode(viewMode === 'live' ? '2022' : 'live')}
+                  className="text-xs px-2 py-1 rounded bg-slate-800/80 hover:bg-slate-700 text-slate-300 transition-colors flex items-center gap-1 border border-slate-700"
+                  title={L(lang, 'Przełącz tryb danych', 'Toggle data mode')}
+                >
+                  {icon.refresh}
+                  <span>{viewMode === 'live' ? '2022' : 'LIVE'}</span>
+                </button>
               </div>
             </div>
           </div>
+          <div className="orb-score-panel">
+            <ScoreRing score={score} size={104} stroke={8} label={null} />
+            <div>
+              <span>{L(lang, 'Werdykt strategii V2', 'V2 Strategy verdict')}</span>
+              <strong>{verdictLabel}</strong>
+              <p>
+                BTC {priceDisplay} · <em>{drawdownDisplay}</em> {L(lang, 'od ATH', 'from ATH')}
+                {isLive && snapshot?.confidence && (
+                  <> · Confidence: <em>{snapshot.confidence}%</em></>
+                )}
+              </p>
+            </div>
+          </div>
         </div>
+      </div>
     </section>
   );
 }
@@ -782,12 +817,12 @@ function HowItWorks({ lang }: { lang: Lang }) {
     <section id="how" className="ds-section">
       <div className="nadir-container">
         <SectionHead
-          eyebrow={L(lang, 'Jak to działa', 'How it works')}
-          title={L(lang, 'Od chaosu danych do jednej decyzji.', 'From data chaos to one decision.')}
+          eyebrow={L(lang, 'Jak działa Silnik V2', 'How V2 Engine Works')}
+          title={L(lang, 'Od szumu rynkowego do rygoru jednej decyzji.', 'From market noise to single-decision rigor.')}
           sub={L(
             lang,
-            'Nie kolejny dashboard z setką wykresów. BTC Smart Investor Terminal sprowadza cykl do trzech kroków.',
-            'Not another dashboard with a hundred charts. BTC Smart Investor Terminal reduces the cycle to three steps.',
+            'Zamiast analizowania dziesiątek osobnych wykresów, BTC Smart Investor Terminal sprowadza cykl Bitcoina do konfluencji 4 głównych bloki danych.',
+            'Instead of analyzing dozens of disjointed charts, BTC Smart Investor Terminal collapses the Bitcoin cycle into 4 core data blocks.',
           )}
         />
         <div className="steps-grid">
@@ -804,14 +839,14 @@ function HowItWorks({ lang }: { lang: Lang }) {
           <div className="score-explainer-panel">
             <div className="score-explainer-head">
               <div>
-                <Eyebrow>{L(lang, 'Bottom Score · 0–100', 'Bottom Score · 0–100')}</Eyebrow>
-                <h3>{L(lang, 'Kontrariański termometr cyklu', 'A contrarian cycle thermometer')}</h3>
+                <Eyebrow>{L(lang, 'Bottom Score V2 · 0–100', 'Bottom Score V2 · 0–100')}</Eyebrow>
+                <h3>{L(lang, 'Kontrariański wskaźnik głębokości dna', 'Contrarian cycle floor gauge')}</h3>
               </div>
               <p>
                 {L(
                   lang,
-                  'Zimny odczyt = głębszy dołek = większa okazja. Im chłodniej, tym bliżej dna cyklu.',
-                  'A cold read = a deeper bottom = a bigger opportunity. The colder it gets, the closer the cycle floor.',
+                  'Im wyższy odczyt, tym chłodniejszy rynek i większa szansa na historyczną okazję akumulacyjną w oknie DCA.',
+                  'Higher readings indicate a cooler market and a stronger accumulation opportunity inside the DCA window.',
                 )}
               </p>
             </div>
@@ -838,12 +873,12 @@ function Families({ lang }: { lang: Lang }) {
       <div className="nadir-container">
         <SectionHead
           align="center"
-          eyebrow={L(lang, 'Sygnały i konfluencja', 'Signals & confluence')}
-          title={L(lang, 'Siedem obszarów sygnału. Jedna decyzja.', 'Seven signal areas. One decision.')}
+          eyebrow={L(lang, '4 Rodziny Konfluencji V2', '4 V2 Confluence Families')}
+          title={L(lang, 'Cztery filary sygnału. Jeden wyważony werdykt.', 'Four signal pillars. One weighted verdict.')}
           sub={L(
             lang,
-            'Strategia czyta cykl, skalę spadku, ryzyko, bieżący rynek, sentyment oraz przepływy ETF. Smart pokazuje bezpieczny zakres modelu, Investor odblokowuje szczegóły po zalogowaniu.',
-            'The strategy reads cycle context, drawdown depth, risk, live market structure, sentiment and ETF flows. Smart shows the safe model scope; Investor unlocks deeper detail after sign-in.',
+            'Silnik V2 Era-Aware waży wycenę on-chain (30%), stres podażowy posiadaczy (30%), timing cyklu i sentyment (20%) oraz popyt instytucjonalny Ery ETF (20%) z uwzględnieniem otoczenia makro.',
+            'The V2 Era-Aware engine weights on-chain valuation (30%), holder supply stress (30%), cycle timing & sentiment (20%), and ETF Era institutional demand (20%) alongside macro context.',
           )}
         />
         <div className="families-grid">
@@ -855,7 +890,7 @@ function Families({ lang }: { lang: Lang }) {
                   <span style={{ color: family.tone, borderColor: `${family.tone}40`, boxShadow: `0 0 16px ${family.tone}22` }}>
                     <Icon size={19} />
                   </span>
-                  <em>{String(family.count).padStart(2, '0')} {L(lang, 'sygn.', 'sig.')}</em>
+                  <em>{family.weight} · {String(family.count).padStart(2, '0')} {L(lang, 'sygn.', 'sig.')}</em>
                 </div>
                 <h3>{L(lang, family.pl, family.en)}</h3>
                 <p>{L(lang, family.plD, family.enD)}</p>
@@ -863,12 +898,12 @@ function Families({ lang }: { lang: Lang }) {
             );
           })}
           <div className="family-summary">
-            <StatusChip tone="ice" size="sm">{L(lang, 'Konfluencja', 'Confluence')}</StatusChip>
+            <StatusChip tone="ice" size="sm">{L(lang, 'V2 Confluence', 'V2 Confluence')}</StatusChip>
             <div>
-              <strong>24</strong>
-              <span>{L(lang, 'wskaźników w modelu', 'model indicators')}</span>
+              <strong>26</strong>
+              <span>{L(lang, 'wskaźników w modelu (24 w siatce)', 'model indicators (24 in grid)')}</span>
             </div>
-            <p>{L(lang, 'Ważone, znormalizowane i sprowadzone do jednego Bottom Score. Bez wzorów po stronie przeglądarki.', 'Weighted, normalized and collapsed into one Bottom Score. No formulas in the browser.')}</p>
+            <p>{L(lang, 'Znormalizowane, przefiltrowane przez mnożnik c_agree i zabezpieczone śladem audytowym V1 po stronie serwera.', 'Normalized, filtered through c_agree multiplier and backed by a server-side V1 audit trail.')}</p>
           </div>
         </div>
       </div>
@@ -897,9 +932,9 @@ function Spark({ points, color }: { points: number[]; color: string }) {
 
 function ProductPreview({ lang }: { lang: Lang }) {
   const series = [
-    { catColor: 'var(--category-core)', plL: 'MVRV Z-Score', enL: 'MVRV Z-Score', val: '-0.12', pts: [9, 8, 7, 6, 5, 4, 3, 3.4, 3, 2.6] },
-    { catColor: 'var(--category-confirmation)', plL: 'LTH SOPR', enL: 'LTH SOPR', val: '0.97', pts: [3, 4, 5, 4.4, 5.6, 7, 6.4, 7.6, 8.4, 9] },
-    { catColor: 'var(--category-core)', plL: 'NUPL', enL: 'NUPL', val: '-0.08', pts: [9, 8.4, 7, 6.4, 5, 4.4, 4, 3.6, 3.2, 3] },
+    { catColor: 'var(--category-core)', plL: 'MVRV Z-Score (Wycena)', enL: 'MVRV Z-Score (Valuation)', val: '-0.12', pts: [9, 8, 7, 6, 5, 4, 3, 3.4, 3, 2.6] },
+    { catColor: 'var(--category-fundament)', plL: 'LTH SOPR (Podaż)', enL: 'LTH SOPR (Supply)', val: '0.94', pts: [3, 4, 5, 4.4, 5.6, 7, 6.4, 7.6, 8.4, 9] },
+    { catColor: 'var(--category-confirmation)', plL: 'ETF Flow Momentum (SoSoValue)', enL: 'ETF Flow Momentum (SoSoValue)', val: '+$142M', pts: [2, 3, 4, 5, 6, 6.8, 7.5, 8.2, 9] },
   ];
 
   return (
@@ -907,9 +942,9 @@ function ProductPreview({ lang }: { lang: Lang }) {
       <div className="nadir-container">
         <SectionHead
           align="center"
-          eyebrow={L(lang, 'Wewnątrz terminala', 'Inside the terminal')}
-          title={L(lang, 'Jeden ekran. Cała strategia.', 'One screen. The whole strategy.')}
-          sub={L(lang, 'Werdykt, konfluencja i plan DCA — bez przełączania kart. To zobaczysz po zalogowaniu.', 'Verdict, confluence and DCA plan — without switching tabs. This is what you see after sign-in.')}
+          eyebrow={L(lang, 'Interfejs Terminala', 'Terminal Interface')}
+          title={L(lang, 'Jeden cockpit analityczny. Pełny rynek.', 'One analytical cockpit. The full market.')}
+          sub={L(lang, 'Werdykt, dwupoziomowy dostęp (Smart vs Investor), wykresy sparklines i flaga Generacyjne Dno w jednym miejscu.', 'Verdict, dual-tier access (Smart vs Investor), sparklines and Generational Bottom flag in one place.')}
         />
         <div className="preview-frame">
           <div className="preview-urlbar">
@@ -922,25 +957,25 @@ function ProductPreview({ lang }: { lang: Lang }) {
                 <img src="/assets/logo.svg" alt="" />
                 <span>
                   <strong>BTC Smart Investor Terminal</strong>
-                  <em>{L(lang, 'Research cockpit · konfluencja sygnałów', 'Research cockpit · signal confluence')}</em>
+                  <em>{L(lang, 'V2.3.0 Era-Aware Engine · Supabase DB', 'V2.3.0 Era-Aware Engine · Supabase DB')}</em>
                 </span>
               </div>
               <div>
-                <Badge tone="live">{L(lang, 'System świeży', 'System fresh')}</Badge>
-                <StatusChip tone="ice" size="sm">{L(lang, 'Strefa DCA', 'DCA zone')}</StatusChip>
+                <Badge tone="live">{L(lang, 'Dane odświeżane 3×/dobę', 'Data refreshed 3x/day')}</Badge>
+                <StatusChip tone="ice" size="sm">{L(lang, 'Strefa DCA Otwarta', 'DCA Zone Open')}</StatusChip>
               </div>
             </div>
             <div className="preview-hero">
               <div className="preview-verdict">
-                <ScoreRing score={72} size={150} label={L(lang, 'Bottom Score', 'Bottom Score')} />
+                <ScoreRing score={72} size={150} label={L(lang, 'Bottom Score V2', 'Bottom Score V2')} />
                 <div>
                   <Eyebrow>{L(lang, 'Werdykt strategii', 'Strategy verdict')}</Eyebrow>
-                  <h3>{L(lang, 'Strefa akumulacji', 'Accumulation zone')}</h3>
+                  <h3>{L(lang, 'Strefa Akumulacji', 'Accumulation Zone')}</h3>
                   <VerdictScale score={72} showLabels={false} />
                   <div className="preview-kpis">
-                    <KpiStat label={L(lang, 'BTC spot', 'BTC spot')} value={L(lang, 'po logowaniu', 'after sign-in')} />
-                    <KpiStat label={L(lang, 'Drawdown', 'Drawdown')} value={L(lang, 'po logowaniu', 'after sign-in')} accent="var(--signal-aggressive)" />
-                    <KpiStat label="Confidence" value="0.86" accent="var(--ice-400)" />
+                    <KpiStat label={L(lang, 'Silnik Scoringu', 'Scoring Engine')} value="V2 Era-Aware" accent="var(--ice-400)" />
+                    <KpiStat label={L(lang, 'Flaga Dna', 'Floor Flag')} value="Generacyjne" accent="var(--signal-aggressive)" />
+                    <KpiStat label="Spójność (c_agree)" value="0.88" accent="var(--emerald-400)" />
                   </div>
                 </div>
               </div>
@@ -965,15 +1000,19 @@ function ProductPreview({ lang }: { lang: Lang }) {
 }
 
 function Methodology({ lang }: { lang: Lang }) {
-  const order = ['fundament', 'core', 'auxiliary', 'confirmation', 'macro'] as const;
+  const order = ['valuation', 'holder', 'cycle', 'etf', 'macro'] as const;
   return (
     <section id="method" className="ds-section">
       <div className="nadir-container">
         <div className="method-top">
           <SectionHead
-            eyebrow={L(lang, 'Metodologia', 'Methodology')}
-            title={L(lang, '24 wskaźniki. Siedem rodzin. Jeden werdykt.', '24 indicators. Seven families. One verdict.')}
-            sub={L(lang, 'Każdy wskaźnik jest znormalizowany, zważony i sprawdzony pod kątem kompletności. Progi kalibrowano na dołkach z 2018 i 2022 roku oraz dostosowano do obecnej ery ETF.', 'Every indicator is normalized, weighted and checked for completeness. Thresholds were calibrated on the 2018 and 2022 cycle bottoms and adapted for the current ETF era.')}
+            eyebrow={L(lang, 'Architektura V2', 'V2 Architecture')}
+            title={L(lang, '26 wskaźników. 4 rodziny konfluencji. 1 sprawdzony silnik.', '26 indicators. 4 confluence families. 1 verified engine.')}
+            sub={L(
+              lang,
+              'Każdy odczyt jest normalizowany, waży i filtrowany przez bramkę kompletności danych. Kalibracja została oparta o historyczne dołki 2018 i 2022 oraz zaktualizowana pod kątem napływów spot ETF USA (SoSoValue API).',
+              'Every reading is normalized, weighted and filtered through data-completeness gates. Calibration is based on 2018 and 2022 historical floors and updated for US spot ETF flows (SoSoValue API).',
+            )}
           />
           <div className="method-legend">
             {order.map((key) => (
@@ -1007,8 +1046,8 @@ function Methodology({ lang }: { lang: Lang }) {
         <p className="method-note">
           {L(
             lang,
-            '* Publiczna wersja pokazuje zakres modelu bez listy dostawców danych, wag i progów. Model służy jako wskaźnik reżimu strefy, nie precyzyjny timer dna.',
-            '* The public version shows model scope without data vendor lists, weights or thresholds. The model is a regime-zone indicator, not a precise bottom timer.',
+            '* Wersja publiczna pokazuje architekturę modelu bez ujawniania chronionych progów normalizacji i wag poszczególnych wskaźników.',
+            '* Public version presents model architecture without exposing protected normalization thresholds and indicator weights.',
           )}
         </p>
       </div>
@@ -1086,9 +1125,9 @@ function Pricing({ lang }: { lang: Lang }) {
       <div className="nadir-container">
         <SectionHead
           align="center"
-          eyebrow={L(lang, 'Plany', 'Plans')}
-          title={L(lang, 'Wybierz swój plan i zacznij korzystać.', 'Choose your tier and start tracking.')}
-          sub={L(lang, 'Smart pokazuje status dna i zagregowane sygnały. Investor odkrywa cały terminal. Płatności realizowane bezpiecznie przez Stripe.', 'Smart shows the bottom status and aggregated signals. Investor reveals the whole terminal. Payments handled securely via Stripe.')}
+          eyebrow={L(lang, 'Plany Subskrypcyjne', 'Subscription Tiers')}
+          title={L(lang, 'Wybierz poziom dostępu i dołącz do terminala.', 'Choose your tier and join the terminal.')}
+          sub={L(lang, 'Plan Smart prezentuje stan strategii na żywo z bezpiecznym server-side redaction. Plan Investor odblokowuje pełny terminal analityczny. Bezpieczne płatności przez Stripe.', 'Smart shows live strategy status with server-side redaction. Investor unlocks full terminal analytics. Payments processed via Stripe.')}
         />
         <div className="flex flex-col items-center gap-4 mb-8">
           <div className="currency-switch" aria-label={L(lang, 'Wybór waluty', 'Currency selector')}>
@@ -1150,29 +1189,29 @@ function Pricing({ lang }: { lang: Lang }) {
 
 function Trust({ lang }: { lang: Lang }) {
   const stats = [
-    { v: '2018', plL: 'kalibracja dna cyklu', enL: 'cycle-bottom calibration', tone: 'var(--signal-accumulate)' },
-    { v: '2022', plL: 'kalibracja dna cyklu', enL: 'cycle-bottom calibration', tone: 'var(--signal-accumulate)' },
-    { v: 'ETF', plL: 'uwzględniona nowa era rynku', enL: 'new market era included', tone: 'var(--gold-300)' },
-    { v: '3×', plL: 'odświeżanie / dobę', enL: 'refresh / day', tone: 'var(--ice-400)' },
+    { v: '2018 · 2022', plL: 'kalibracja cykli historycznych', enL: 'historical cycle calibration', tone: 'var(--signal-accumulate)' },
+    { v: 'SoSoValue', plL: 'otwarte dane przepływów ETF', enL: 'open ETF flow data', tone: 'var(--gold-300)' },
+    { v: '3× / dobę', plL: 'odświeżanie AM/PM + Watchdog', enL: 'AM/PM refresh + Watchdog', tone: 'var(--ice-400)' },
+    { v: 'V1 Audit', plL: 'podwójny ślad audytowy bazy', enL: 'dual DB audit trail', tone: 'var(--emerald-400)' },
   ];
   const pillars = [
     {
-      titlePl: 'Kalibracja bez obietnic',
-      titleEn: 'Calibration without promises',
-      copyPl: 'Progi służą do rozpoznania reżimu strefy akumulacji. Landing nie sprzedaje pewności ani dokładnego dnia dołka.',
-      copyEn: 'Thresholds are used to identify an accumulation-zone regime. The landing does not sell certainty or an exact bottom day.',
+      titlePl: 'Kalibracja i rygor historyczny',
+      titleEn: 'Calibration and historical rigor',
+      copyPl: 'Progi silnika V2 oparto na dołkach z lat 2018 i 2022, z wyliczaniem spójności c_agree i ochroną przed rynkowym szumem.',
+      copyEn: 'V2 engine thresholds are calibrated on 2018 and 2022 cycle bottoms with c_agree dispersion protection against noise.',
     },
     {
-      titlePl: 'Dane kontrolowane w terminalu',
-      titleEn: 'Controlled data inside the terminal',
-      copyPl: 'Szczegółowe zasilanie, wagi, wkłady i logika kontroli pozostają po stronie zamkniętej aplikacji.',
-      copyEn: 'Detailed data feeds, weights, contributions and control logic remain inside the closed application.',
+      titlePl: 'Odporność potoku danych (v25 Gateway)',
+      titleEn: 'Pipeline resilience (v25 Gateway)',
+      copyPl: 'Infrastruktura wykorzystuje rotację kluczy BGeometrics z limitem współbieżności, darmowe dane SoSoValue ETF oraz buforowanie 24h.',
+      copyEn: 'Infrastructure uses BGeometrics key rotation with concurrency limits, SoSoValue open ETF data, and 24h caching.',
     },
     {
-      titlePl: 'Rygor zamiast marketingu',
-      titleEn: 'Rigor over marketing',
-      copyPl: 'System wspiera dyscyplinę decyzji: obserwować, akumulować lub czekać. Nie zastępuje własnej analizy ryzyka.',
-      copyEn: 'The system supports decision discipline: observe, accumulate or wait. It does not replace personal risk analysis.',
+      titlePl: 'Dyscyplina i nadzór świeżości',
+      titleEn: 'Discipline and freshness monitoring',
+      copyPl: 'Automatyczny Freshness Watchdog oraz natychmiastowe alerty Telegram dbają o to, by inwestor zawsze bazował na aktualnych odczytach.',
+      copyEn: 'Automated Freshness Watchdog and instant Telegram alerts ensure investors always act on up-to-date data.',
     },
   ];
 
@@ -1180,9 +1219,9 @@ function Trust({ lang }: { lang: Lang }) {
     <section id="trust" className="ds-section">
       <div className="nadir-container">
         <SectionHead
-          eyebrow={L(lang, 'Zaufanie i autorytet', 'Trust & authority')}
-          title={L(lang, 'Kalibracja cykli z uwzględnieniem ery ETF.', 'Cycle calibration with the ETF era included.')}
-          sub={L(lang, 'Model opiera się na historycznych dołkach z 2018 i 2022 roku, ale nie ignoruje strukturalnej zmiany rynku po wejściu spotowych ETF. Publicznie pokazujemy rygor, nie pełną recepturę.', 'The model uses the 2018 and 2022 historical bottoms, but does not ignore the structural market change after spot ETFs. Publicly, we show rigor, not the full recipe.')}
+          eyebrow={L(lang, 'Zaufanie i Odporność', 'Trust & Resilience')}
+          title={L(lang, 'Dojrzała analityka dla rycerzy dyscypliny.', 'Mature analytics built for long-term discipline.')}
+          sub={L(lang, 'BTC Smart Investor Terminal jest wynikiem miesięcy testów i produkcyjnych szlifów silnika scoringowego V2.', 'BTC Smart Investor Terminal reflects months of production refinement and testing of the V2 scoring engine.')}
         />
         <div className="trust-stats">
           {stats.map((stat) => (
@@ -1211,7 +1250,7 @@ function Faq({ lang }: { lang: Lang }) {
     <section id="faq" className="ds-section">
       <div className="nadir-container faq-layout">
         <div className="faq-head">
-          <SectionHead eyebrow={L(lang, 'Pytania', 'Questions')} title={L(lang, 'Zanim poprosisz o zaproszenie.', 'Before you request an invite.')} />
+          <SectionHead eyebrow={L(lang, 'Częste Pytania', 'FAQ')} title={L(lang, 'Co warto wiedzieć przed dołączeniem.', 'What to know before joining.')} />
         </div>
         <div className="faq-list">
           {FAQ.map((item, index) => {
@@ -1244,29 +1283,29 @@ function RequestInvite({ lang }: { lang: Lang }) {
           <div className="invite-grid">
             <div>
               <Eyebrow>{L(lang, 'Dostęp na zaproszenie', 'Invite-only access')}</Eyebrow>
-              <h2>{L(lang, 'Dołącz do zamkniętego kręgu.', 'Join the closed circle.')}</h2>
-              <p>{L(lang, 'Zostaw e-mail, a gdy zwolni się miejsce, wyślemy Ci zaproszenie. Bez spamu — tylko link do rejestracji.', 'Leave your email and we will send an invite when a seat opens. No spam — just a registration link.')}</p>
+              <h2>{L(lang, 'Dołącz do zamkniętego kręgu inwestorów.', 'Join the closed investor circle.')}</h2>
+              <p>{L(lang, 'Zostaw e-mail, a gdy zwolni się miejsce w puli dostępowym, przekażemy Ci indywidualny link aktywacyjny.', 'Leave your email and we will send an individual activation link when an access slot opens up.')}</p>
               <div>
-                <span>{icon.shield} {L(lang, 'Dane redagowane po stronie serwera', 'Server-side redacted data')}</span>
-                <span>{icon.bolt} {L(lang, 'Alerty Telegram w planie Investor', 'Telegram alerts on Investor')}</span>
+                <span>{icon.shield} {L(lang, 'Silnik V2 Era-Aware i server-side redaction', 'V2 Era-Aware engine with server-side redaction')}</span>
+                <span>{icon.bolt} {L(lang, 'Alerty Telegram 3x/dobę w planie Investor', '3x daily Telegram alerts on Investor tier')}</span>
               </div>
             </div>
             <div className="invite-form-card">
               {sent ? (
                 <div className="sent-card">
                   <span>{icon.check}</span>
-                  <h3>{L(lang, 'Jesteś na liście.', "You're on the list.")}</h3>
-                  <p>{L(lang, 'Damy znać, gdy zwolni się miejsce. Sprawdź skrzynkę — czasem zaproszenia trafiają do spamu.', 'We will reach out when a seat opens. Check your inbox — invites sometimes land in spam.')}</p>
+                  <h3>{L(lang, 'Jesteś na liście oczekujących.', "You're on the waitlist.")}</h3>
+                  <p>{L(lang, 'Przekażemy informację, gdy zwolni się miejsce. Sprawdź skrzynkę e-mail.', 'We will notify you when a seat opens up. Check your email inbox.')}</p>
                 </div>
               ) : (
                 <form onSubmit={(event) => { event.preventDefault(); if (email.trim()) setSent(true); }}>
-                  <Input label={L(lang, 'E-mail', 'Email')} type="email" placeholder={L(lang, 'ty@fundusz.pl', 'you@fund.com')} iconLeft={icon.mail} value={email} onChange={(event) => setEmail(event.target.value)} required />
+                  <Input label={L(lang, 'E-mail', 'Email')} type="email" placeholder={L(lang, 'ty@inwestor.pl', 'you@investor.com')} iconLeft={icon.mail} value={email} onChange={(event) => setEmail(event.target.value)} required />
                   <Input label={L(lang, 'Imię (opcjonalnie)', 'Name (optional)')} type="text" placeholder={L(lang, 'Jak się do Ciebie zwracać', 'How to address you')} />
-                  <Input label={L(lang, 'Kod polecającego (opcjonalnie)', 'Referral code (optional)')} type="text" placeholder="BTC-XXXX" />
+                  <Input label={L(lang, 'Kod polecającego (opcjonalnie)', 'Referral code (optional)')} type="text" placeholder="BTC-V2-XXXX" />
                   <Button variant="primary" size="lg" fullWidth type="submit" iconRight={icon.arrow}>
-                    {L(lang, 'Wyślij prośbę', 'Send request')}
+                    {L(lang, 'Wyślij prośbę o dostęp', 'Submit access request')}
                   </Button>
-                  <p>{L(lang, 'Zapisując się, akceptujesz że BTC Smart Investor Terminal to narzędzie edukacyjne, nie porada inwestycyjna.', 'By joining you accept that BTC Smart Investor Terminal is an educational tool, not financial advice.')}</p>
+                  <p>{L(lang, 'Zapisując się, akceptujesz że BTC Smart Investor Terminal to narzędzie analityczne, nie porada finansowa.', 'By signing up, you acknowledge BTC Smart Investor Terminal is an analytical tool, not financial advice.')}</p>
                 </form>
               )}
             </div>
@@ -1303,15 +1342,15 @@ function PageShell({
 }
 
 function GlossaryPage({ lang }: { lang: Lang }) {
-  const order = ['fundament', 'core', 'auxiliary', 'confirmation', 'macro'] as const;
+  const order = ['valuation', 'holder', 'cycle', 'etf', 'macro'] as const;
   return (
     <PageShell
-      eyebrow={L(lang, 'Słownik wskaźników', 'Indicator glossary')}
-      title={L(lang, '24 sygnały opisane prostym językiem.', '24 signals, explained clearly.')}
+      eyebrow={L(lang, 'Słownik Wskaźników V2', 'V2 Indicator Glossary')}
+      title={L(lang, '26 wskaźników opisanych czytelnym językiem.', '26 indicators explained clearly.')}
       copy={L(
         lang,
-        'To publiczny opis logiki modelu: co mierzy dana grupa i dlaczego ma znaczenie. Wagi, progi, wkłady i pełna normalizacja pozostają w terminalu Investor.',
-        'This is the public explanation of the model: what each signal group measures and why it matters. Weights, thresholds, contributions and full normalization remain inside Investor.',
+        'Publiczny opis logiki poszczególnych wskaźników silnika V2: co mierzy dana grupa i dlaczego ma znaczenie dla rozpoznania strefy akumulacji BTC. Poufne wagi i progi pozostają w zamkniętej części terminala.',
+        'Public explanation of V2 engine indicators: what each group measures and why it matters for BTC accumulation zone identification. Protected weights remain inside the terminal.',
       )}
     >
       <section className="page-section">
@@ -1346,12 +1385,12 @@ function GlossaryPage({ lang }: { lang: Lang }) {
 function TelegramPage({ lang }: { lang: Lang }) {
   return (
     <PageShell
-      eyebrow={L(lang, 'Alerty Telegram', 'Telegram alerts')}
-      title={L(lang, 'Ustaw alerty tak, żeby pomagały w decyzji, a nie robiły hałas.', 'Set alerts to support decisions, not create noise.')}
+      eyebrow={L(lang, 'Alerty Telegram', 'Telegram Alerts')}
+      title={L(lang, 'Sygnały dostarczane dokładnie w momencie zmiany strefy.', 'Signals delivered exactly when zone status changes.')}
       copy={L(
         lang,
-        'Alerty w planie Investor są projektowane jako rzadkie, konkretne komunikaty o zmianie reżimu, świeżości danych i istotnych zdarzeniach strategii.',
-        'Investor alerts are designed as rare, specific messages about regime changes, data freshness and material strategy events.',
+        'Alerty w planie Investor to selektywne powiadomienia o najwyższej wartości: automatyczny poranny digest 07:00 UTC, wykrycie flagi Generacyjnego Dna oraz nadzór świeżości Freshness Watchdog.',
+        'Investor alerts are high-signal notifications: automated 07:00 UTC digest, Generational Bottom flags, and Freshness Watchdog monitoring.',
       )}
     >
       <section className="page-section">
@@ -1376,12 +1415,12 @@ function TelegramPage({ lang }: { lang: Lang }) {
           <div className="notice-panel">
             <Bell size={22} />
             <div>
-              <h2>{L(lang, 'Dobre praktyki alertów', 'Alert best practices')}</h2>
+              <h2>{L(lang, 'Higiena powiadomień', 'Notification hygiene')}</h2>
               <p>
                 {L(
                   lang,
-                  'Nie traktuj alertu jako polecenia zakupu. Alert ma zwrócić uwagę na zmianę warunków i zachęcić do sprawdzenia pełnego panelu, planu DCA oraz własnego ryzyka.',
-                  'Do not treat an alert as a buy instruction. It is meant to draw attention to a change in conditions and prompt a review of the full panel, DCA plan and your own risk.',
+                  'Alerty są projektowane tak, by nie spamować użytkownika. Maksymalnie 3 komunikaty na dobę z zachowaniem wysokiej wartości sygnałowej.',
+                  'Alerts are designed to avoid noise. Maximum 3 high-signal messages per day.',
                 )}
               </p>
             </div>
@@ -1411,7 +1450,7 @@ function LegalPage({ lang, kind }: { lang: Lang; kind: 'disclaimer' | 'privacy' 
               {L(
                 lang,
                 'Ten dokument porządkuje zasady publicznie na landing page. Przed publikacją produkcyjną warto zatwierdzić go formalnie z prawnikiem.',
-                'This document structures the public landing-page terms. Before production publication, it should be formally reviewed by legal counsel.',
+                'This document structures the public landing-page terms.',
               )}
             </p>
             <p>
@@ -1437,8 +1476,8 @@ function Footer({ lang }: { lang: Lang }) {
     {
       h: L(lang, 'Produkt', 'Product'),
       links: [
-        { label: L(lang, 'Jak działa', 'How it works'), href: '/#how' },
-        { label: L(lang, 'Metodologia', 'Methodology'), href: '/#method' },
+        { label: L(lang, 'Jak działa V2', 'How V2 Works'), href: '/#how' },
+        { label: L(lang, 'Metodologia V2', 'V2 Methodology'), href: '/#method' },
         { label: L(lang, 'Cennik', 'Pricing'), href: '/#pricing' },
         { label: L(lang, 'Poproś o dostęp', 'Request access'), href: '/#invite' },
       ],
@@ -1466,8 +1505,8 @@ function Footer({ lang }: { lang: Lang }) {
         <div className="footer-grid">
           <div>
             <BrandLockup />
-            <p>{L(lang, 'Terminal analityczny do prognozowania dołka cyklu Bitcoina. Czytaj cykl, chroń sygnał.', 'An analytical terminal for forecasting the Bitcoin cycle bottom. Read the cycle, protect the signal.')}</p>
-            <span><i /> {L(lang, 'Wszystkie systemy operacyjne', 'All systems operational')}</span>
+            <p>{L(lang, 'Terminal analityczny do prognozowania dołka cyklu Bitcoina z silnikiem V2. Czytaj cykl, chroń sygnał.', 'Analytical terminal for forecasting Bitcoin cycle bottoms with V2 engine. Read the cycle, protect the signal.')}</p>
+            <span><i /> {L(lang, 'Silnik V2.3.0 · Wszystkie systemy sprawne', 'V2.3.0 Engine · All systems operational')}</span>
           </div>
           <div className="footer-cols">
             {cols.map((col) => (
