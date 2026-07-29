@@ -183,9 +183,7 @@ const PLANS = [
       { pl: 'Bottom Score na żywo w zamkniętym terminalu i 5-pasmowy werdykt', en: 'Live Bottom Score inside closed terminal & 5-band verdict', on: true },
       { pl: 'Status okna akumulacji i dystans od ATH', en: 'Accumulation window status & ATH distance', on: true },
       { pl: 'Meta strategii V2 Engine: 28 wskaźników w 4 rodzinach', en: 'V2 Engine strategy meta: 28 indicators in 4 families', on: true },
-      { pl: 'Zagregowane wskaźniki Fear & Greed i ETF Flows', en: 'Aggregated Fear & Greed & ETF flows', on: true },
-      { pl: 'Bezpieczny widok z server-side redaction', en: 'Safe view with server-side redaction', on: true },
-      { pl: 'Pełna siatka 24 wskaźników w siatce ze sparklines', en: 'Full 24-indicator grid with sparklines', on: false },
+      { pl: 'Pełna siatka 28 wskaźników w siatce ze sparklines', en: 'Full 28-indicator grid with sparklines', on: false },
       { pl: 'Wagi, wkłady, progi normalizacji, mnożnik c_agree', en: 'Weights, contributions, thresholds, c_agree multiplier', on: false },
       { pl: 'Planer transz DCA, flaga Generacyjne Dno i alerty', en: 'DCA tranche planner, Generational Bottom flag & alerts', on: false },
     ],
@@ -199,10 +197,10 @@ const PLANS = [
     plPer: 'wybrana waluta · pakiet 6-miesięczny',
     enPer: 'selected currency · 6-month package',
     plDesc: 'Pełny terminal analityczny: konfluencja V2 on-chain, wagi, wkłady, flaga Generacyjne Dno, planer DCA i alerty Telegram 3x dziennie.',
-    enDesc: 'Full analytical terminal: V2 on-chain confluence, weights, contributions, Generational Bottom flag, DCA planner & 3x daily Telegram alerts.',
+    enDesc: 'Full analytical terminal: V2 on-chain confluence, weights, contributions, Generational Bottom flag & 3x daily Telegram alerts.',
     features: [
       { pl: 'Wszystko z planu Smart', en: 'Everything in Smart', on: true },
-      { pl: 'Pełna siatka 24 wskaźników z historycznymi wykresami sparklines', en: 'Full 24-indicator grid with historical sparkline charts', on: true },
+      { pl: 'Pełna siatka 28 wskaźników z historycznymi wykresami sparklines', en: 'Full 28-indicator grid with historical sparkline charts', on: true },
       { pl: 'Wagi rodzin, wkłady, progi normalizacji i mnożnik c_agree', en: 'Family weights, contributions, thresholds & c_agree multiplier', on: true },
       { pl: 'Flaga Generacyjne Dno (≥4 ortogonalne bloki na dnie)', en: 'Generational Bottom flag (≥4 orthogonal blocks at bottom)', on: true },
       { pl: 'Planer transz DCA i wyliczanie ciągłego pobytu w strefie', en: 'DCA tranche planner & continuous zone duration math', on: true },
@@ -241,8 +239,8 @@ const FAQ = [
   {
     pl: 'Czym różni się plan Smart od Investor?',
     en: 'How does Smart differ from Investor?',
-    plA: 'Plan Smart daje dostęp do bezpiecznego statusu strategii na żywo w terminalu (Bottom Score, werdykt, status okna akumulacji, Fear & Greed i ETF flows) z server-side redaction. Plan Investor odblokowuje pełny terminal: 24 wskaźniki w siatce ze sparklines, wagi, wkłady, flagę Generacyjne Dno, planer DCA oraz alerty Telegram.',
-    enA: 'Smart grants access to safe live strategy status inside the terminal (Bottom Score, verdict, window status, Fear & Greed & ETF flows) with server-side redaction. Investor unlocks the whole terminal: 24 indicators with sparklines, weights, contributions, Generational Bottom flag, DCA planner & Telegram alerts.',
+    plA: 'Plan Smart daje dostęp do bezpiecznego statusu strategii na żywo w terminalu (Bottom Score, werdykt, status okna akumulacji, Fear & Greed i ETF flows) z server-side redaction. Plan Investor odblokowuje pełny terminal: 28 wskaźników w siatce ze sparklines, wagi, wkłady, flagę Generacyjne Dno, planer DCA oraz alerty Telegram.',
+    enA: 'Smart grants access to safe live strategy status inside the terminal (Bottom Score, verdict, window status, Fear & Greed & ETF flows) with server-side redaction. Investor unlocks the whole terminal: 28 indicators with sparklines, weights, contributions, Generational Bottom flag, DCA planner & Telegram alerts.',
   },
   {
     pl: 'Czy to porada inwestycyjna?',
@@ -444,8 +442,8 @@ const LEGAL_SECTIONS = {
     {
       plT: 'Zasady planów Smart i Investor',
       enT: 'Smart & Investor plan terms',
-      plD: 'Plan Smart oferuje widok statusu strategii V2 na żywo po zalogowaniu z server-side redaction. Plan Investor daje pełny dostęp do siatki 24 wskaźników ze sparklines, wag, flagi Generacyjne Dno i alertów Telegram.',
-      enD: 'Smart grants live V2 strategy status inside the terminal with server-side redaction. Investor provides full 24-indicator grid access with sparklines, weights, Generational Bottom flag & Telegram alerts.',
+      plD: 'Plan Smart oferuje widok statusu strategii V2 na żywo po zalogowaniu z server-side redaction. Plan Investor daje pełny dostęp do siatki 28 wskaźników ze sparklines, wag, flagi Generacyjne Dno i alertów Telegram.',
+      enD: 'Smart grants live V2 strategy status inside the terminal with server-side redaction. Investor provides full 28-indicator grid access with sparklines, weights, Generational Bottom flag & Telegram alerts.',
     },
     {
       plT: 'Dozwolony użytek i zakaz redystrybucji',
@@ -872,7 +870,7 @@ function Families({ lang }: { lang: Lang }) {
             <StatusChip tone="ice" size="sm">{L(lang, 'V2 Confluence', 'V2 Confluence')}</StatusChip>
             <div>
               <strong>28</strong>
-              <span>{L(lang, 'wskaźników w słowniku (24 w siatce)', 'indicators in glossary (24 in grid)')}</span>
+              <span>{L(lang, 'wskaźników w słowniku i silniku V2', 'indicators in glossary & V2 engine')}</span>
             </div>
             <p>{L(lang, 'Znormalizowane, przefiltrowane przez mnożnik c_agree i zabezpieczone śladem audytowym V1 po stronie serwera.', 'Normalized, filtered through c_agree multiplier and backed by a server-side V1 audit trail.')}</p>
           </div>

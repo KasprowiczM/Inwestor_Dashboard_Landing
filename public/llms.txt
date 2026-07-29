@@ -1,6 +1,6 @@
 # BTC Smart Investor Terminal
 
-BTC Smart Investor Terminal is an invite-only analytical terminal for long-term Bitcoin investors. It converts 21 cycle, market, sentiment and macro indicators into a single Bottom Score that helps users evaluate whether BTC is approaching an accumulation-zone regime.
+BTC Smart Investor Terminal is an invite-only analytical terminal for long-term Bitcoin investors. It converts 28 cycle, market, sentiment, ETF and macro indicators across 4 V2 Engine confluence families into a single Bottom Score that helps users evaluate whether BTC is approaching an accumulation-zone regime.
 
 Primary language: Polish. Secondary language: English.
 
@@ -16,7 +16,7 @@ Important limitations:
 
 Key public pages:
 - / - product overview, plans and invite request
-- /slownik-wskaznikow - public glossary of 21 indicators without weights or thresholds
+- /slownik-wskaznikow - public glossary of 28 indicators without weights or thresholds
 - /telegram - Telegram alert setup for Investor users
 - /zastrzezenia - investment disclaimer
 - /prywatnosc - privacy and GDPR information

@@ -118,7 +118,7 @@ const dictionary: Dictionary = {
   'plans.smart.f4': { pl: 'Rodziny sygnałów i zakres modelu', en: 'Signal families and model scope' },
   'plans.smart.lock1': { pl: 'Bez wag, progów i wkładów wskaźników', en: 'No weights, thresholds or indicator contributions' },
   'plans.smart.lock2': { pl: 'Bez planu DCA i alertów Telegram', en: 'No DCA plan or Telegram alerts' },
-  'plans.investor.f1': { pl: 'Pełna tabela konfluencji 24 wskaźników', en: 'Full 24-indicator confluence table' },
+  'plans.investor.f1': { pl: 'Pełna tabela konfluencji 28 wskaźników', en: 'Full 28-indicator confluence table' },
   'plans.investor.f2': { pl: 'Historia cykli i replay snapshotów', en: 'Cycle history and snapshot replay' },
   'plans.investor.f3': { pl: 'Wieloryby, ETF i log zdarzeń', en: 'Whales, ETF and event log' },
   'plans.investor.f4': { pl: 'DCA, alerty Telegram i ustawienia konta', en: 'DCA, Telegram alerts and account settings' },
