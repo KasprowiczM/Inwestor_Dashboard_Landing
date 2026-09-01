@@ -13,7 +13,7 @@ Główny portal **BTC Bottom Dashboard** to zaawansowany terminal analityczny dl
 1. **Edukacja i Prezentacja:** Wyjaśnienie założeń Strategii Inwestora Długoterminowego BTC w erze spotowych ETF oraz przedstawienie korzyści z korzystania z panelu.
 2. **Dwupoziomowy Model:** Wyjaśnienie różnicy między planem **Smart** (widok statusu na żywo z server-side redaction) i **Investor** (pełny terminal analityczny, wagi, progi, flaga Generacyjne Dno, alerty).
 3. **Podgląd Historyczny:** Hero i sekcje pokazują wyłącznie sprawdzony przykładowy odczyt historyczny z kalibracji dna poprzednich cykli (np. dołek 2022). Bieżące odczyty na żywo chronią wartość produktu i są dostępne wyłącznie po zalogowaniu do zamkniętego terminala.
-4. **Płatności Stripe & Zaproszenia:** Zbieranie zapisów na listę oczekujących (Waitlist) oraz wyzwalanie auto-checkoutu Stripe dla wybranych walut (PLN, EUR, USD).
+4. **Płatności Stripe & Zaproszenia:** Zbieranie zapisów na listę oczekujących (Waitlist) oraz wyzwalanie auto-checkoutu Stripe. Kwoty EUR/USD są orientacyjne — obciążenie zawsze w PLN.
 5. **Słownik 28 Wskaźników V2:** Publiczny opis 28 wskaźników on-chain, podaży, sentymentu, ery ETF i makroekonomii bez ujawniania nazw zewnętrznych dostawców danych.
 6. **Pełna Dwujęzyczność (PL/EN) & Dopracowany UI:** Czytelne etykiety `Dziennie` (PL) / `Daily` (EN) w kafekach statystyk oraz dopasowany układ kart KPI.
 
@@ -32,11 +32,8 @@ Główny portal **BTC Bottom Dashboard** to zaawansowany terminal analityczny dl
 
 Landing prezentuje dwa plany w modelu invite-only z wyzwalaniem Stripe checkout:
 
-* **Smart:**
-  * Miesięcznie: 179 PLN / 39 EUR / $45
-  * 6 Miesięcy: 859 PLN / 199 EUR / $225
-* **Investor:**
-  * 6 Miesięcy: 2849 PLN / 649 EUR / $719
+* **Smart:** 299 PLN / 79 EUR / $89 netto miesięcznie (płatność zawsze w PLN, VAT doliczany na checkoutcie)
+* **Investor:** 999 PLN / 239 EUR / $269 netto miesięcznie (płatność zawsze w PLN, VAT doliczany na checkoutcie)
 
 ---
 

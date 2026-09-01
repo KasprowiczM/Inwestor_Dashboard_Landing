@@ -194,8 +194,8 @@ const PLANS = [
     tag: 'Pełny terminal',
     tagEn: 'Full terminal',
     accent: 'gold',
-    plPer: 'wybrana waluta · pakiet 6-miesięczny',
-    enPer: 'selected currency · 6-month package',
+    plPer: 'wybrana waluta · subskrypcja miesięczna',
+    enPer: 'selected currency · monthly subscription',
     plDesc: 'Pełny terminal analityczny: konfluencja V2 on-chain, wagi, wkłady, flaga Generacyjne Dno, planer DCA i alerty Telegram 3x dziennie.',
     enDesc: 'Full analytical terminal: V2 on-chain confluence, weights, contributions, Generational Bottom flag & 3x daily Telegram alerts.',
     features: [
@@ -1026,41 +1026,13 @@ function Methodology({ lang }: { lang: Lang }) {
 }
 
 const PRICES = {
-  pln: {
-    symbol: 'zł',
-    smart: {
-      monthly: 179,
-      '6m': 859,
-    },
-    investor: {
-      '6m': 2849,
-    }
-  },
-  eur: {
-    symbol: '€',
-    smart: {
-      monthly: 39,
-      '6m': 199,
-    },
-    investor: {
-      '6m': 649,
-    }
-  },
-  usd: {
-    symbol: '$',
-    smart: {
-      monthly: 45,
-      '6m': 225,
-    },
-    investor: {
-      '6m': 719,
-    }
-  }
+  pln: { smart: 299, investor: 999 },
+  eur: { smart: 79, investor: 239 },
+  usd: { smart: 89, investor: 269 },
 } as const;
 
 function Pricing({ lang }: { lang: Lang }) {
   const [currency, setCurrency] = React.useState<Currency>('pln');
-  const [smartTerm, setSmartTerm] = React.useState<'monthly' | '6m'>('6m');
 
   const formatPrice = React.useCallback((amount: number, curr: string) => {
     return new Intl.NumberFormat(lang === 'pl' ? 'pl-PL' : 'en-US', {
@@ -1071,24 +1043,13 @@ function Pricing({ lang }: { lang: Lang }) {
   }, [lang]);
 
   const getPriceText = React.useCallback((planKey: string) => {
-    if (planKey === 'smart') {
-      const price = PRICES[currency].smart[smartTerm];
-      return formatPrice(price, currency);
-    } else {
-      const price = PRICES[currency].investor['6m'];
-      return formatPrice(price, currency);
-    }
-  }, [currency, smartTerm, formatPrice]);
+    const price = planKey === 'smart' ? PRICES[currency].smart : PRICES[currency].investor;
+    return formatPrice(price, currency);
+  }, [currency, formatPrice]);
 
-  const getPerText = React.useCallback((planKey: string) => {
-    if (planKey === 'smart') {
-      return smartTerm === 'monthly'
-        ? L(lang, 'miesięcznie', 'monthly')
-        : L(lang, 'za 6 miesięcy', 'for 6 months');
-    } else {
-      return L(lang, 'za 6 miesięcy', 'for 6 months');
-    }
-  }, [smartTerm, lang]);
+  const getPerText = React.useCallback(() => {
+    return L(lang, 'netto / miesiąc', 'net / month');
+  }, [lang]);
 
   return (
     <section id="pricing" className="ds-section">
@@ -1107,14 +1068,10 @@ function Pricing({ lang }: { lang: Lang }) {
               </button>
             ))}
           </div>
+          <p className="text-xs opacity-70 text-center max-w-xl">
+            {L(lang, 'Kwoty netto. VAT doliczany przy płatności. Obciążenie zawsze w PLN — EUR i USD są orientacyjne.', 'Net prices. VAT is added at checkout. You are always charged in PLN — EUR and USD are indicative.')}
+          </p>
 
-          <div className="currency-switch scale-90" aria-label={L(lang, 'Okres Smart', 'Smart term')}>
-            {(['monthly', '6m'] as const).map((option) => (
-              <button key={option} type="button" className={smartTerm === option ? 'is-active' : ''} onClick={() => setSmartTerm(option)}>
-                {option === 'monthly' ? L(lang, 'Miesięcznie', 'Monthly') : L(lang, '6 miesięcy', '6 months')}
-              </button>
-            ))}
-          </div>
         </div>
         <div className="pricing-grid">
           {PLANS.map((plan) => {
@@ -1127,7 +1084,7 @@ function Pricing({ lang }: { lang: Lang }) {
                 </div>
                 <div className="pricing-price">
                   <strong>{getPriceText(plan.key)}</strong>
-                  <span>· {getPerText(plan.key)}</span>
+                  <span>· {getPerText()}</span>
                 </div>
                 <p>{L(lang, plan.plDesc, plan.enDesc)}</p>
                 <i />
@@ -1143,7 +1100,7 @@ function Pricing({ lang }: { lang: Lang }) {
                   variant={gold ? 'gold' : 'primary'} 
                   size="lg" 
                   fullWidth 
-                  href={`${DASHBOARD_URL}/?trigger_checkout=true&plan=${plan.key}&term=${plan.key === 'investor' ? '6m' : smartTerm}&currency=${currency}`} 
+                  href={`${DASHBOARD_URL}/?trigger_checkout=true&plan=${plan.key}`} 
                   iconRight={icon.arrow}
                 >
                   {gold ? L(lang, 'Wybierz Investor', 'Select Investor') : L(lang, 'Wybierz Smart', 'Select Smart')}
@@ -1592,9 +1549,8 @@ function updateSeo(lang: Lang, routeKey: RouteKey) {
         operatingSystem: 'Web',
         description,
         offers: [
-          { '@type': 'Offer', name: 'Smart Monthly', price: '39', priceCurrency: 'EUR', availability: 'https://schema.org/LimitedAvailability' },
-          { '@type': 'Offer', name: 'Smart 6 Months', price: '199', priceCurrency: 'EUR', availability: 'https://schema.org/LimitedAvailability' },
-          { '@type': 'Offer', name: 'Investor 6 Months', price: '649', priceCurrency: 'EUR', availability: 'https://schema.org/LimitedAvailability' },
+          { '@type': 'Offer', name: 'Smart Monthly', price: '299', priceCurrency: 'PLN', availability: 'https://schema.org/LimitedAvailability' },
+          { '@type': 'Offer', name: 'Investor Monthly', price: '999', priceCurrency: 'PLN', availability: 'https://schema.org/LimitedAvailability' },
         ],
       },
       {
