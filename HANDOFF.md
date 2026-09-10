@@ -1,28 +1,32 @@
-# Landing Page Handoff — v28.4 Sync
+# Landing Page Handoff — v2.4.0 (Ultra Review V5 Sync)
+
+Data: 2026-09-10
 
 ## Scope
 
-Zaktualizowano landing page **BTC Smart Investor Terminal** (`Inwestor_Dashboard_Landing`) do pełnej spójności z główną aplikacją produkcyjną **BTC Bottom Dashboard (v28.4)** oraz dostosowano etykietę statystyk do formatu `Dziennie` (PL) / `Daily` (EN).
+Zaktualizowano landing page **BTC Smart Investor Terminal** (`Inwestor_Dashboard_Landing`) do pełnej spójności z architekturą i silnikiem produkcyjnym **BTC Bottom Dashboard (v2.4.0 / Ultra Review V5)** po domknięciu etapów A–H przeglądu Ultra Review.
 
-## Key Upgrades & UI Decisions (v28.4)
+## Key Upgrades & UI Decisions (v2.4.0 / Ultra Review V5)
 
-- **Etykieta Statystyki Odświeżania (`Dziennie` / `Daily`):** Zaktualizowano kafelki statystyk w Hero i Trust z wersji `3× / dobę` / `3x Daily` na czystą postać `Dziennie` (PL) oraz `Daily` (EN) bez zbędnych cyfr i ukośników.
-- **Naprawa Wykraczania Tekstu w Kartach KPI (`Generational`):** Skorygowano style CSS dla `.ds-kpi strong` i `.preview-kpis` (`minmax(130px, 1fr)`, `clamp(0.8rem, 1.1vw, 1.25rem)`, `white-space: nowrap`, `overflow: hidden`, `text-overflow: ellipsis`), eliminując problem wychodzenia napisów poza krawędź obramowania karty.
-- **Trwała Persystencja Języka (`localStorage` + `URL` + SPA Router):** Wybór języka `PL` / `EN` jest zapamiętywany w `localStorage`. Nawigacja między podstronami wykorzystuje nawigację SPA (`window.history.pushState`).
-- **Pełne Tłumaczenia 100% EN:** Przeaudytowano wszystkie tytuły, nagłówki, etykiety, modale, karty mockupu terminala, statusy i legalne podstrony.
-- **Ujednolicenie Liczby Wskaźników:** Zastąpiono wszystkie stare wzmianki (np. 21 czy 24) spójną liczbą **28 wskaźników** w 4 rodzinach konfluencji V2 + makro.
-- **Usunięcie Widoku LIVE ze Strony Publicznej:** Landing page prezentuje wyłącznie historyczny przykład kalibracyjny z dołka 2022 r. Odczyty na żywo są zarezerwowane dla zalogowanych użytkowników terminala.
-- **Anonimizacja Dostawców Danych:** Usunięto nazwy konkretnych dostawców (BGeometrics, SoSoValue, FRED, alternative.me itp.).
+- **Podniesienie Wersji Silnika (V2.4.0 Era-Aware Engine):** Zsynchronizowano oznaczenia w sekcjach Hero, Mockupie Terminala, Krokach Metodologii, FAQ i Stopce do wersji V2.4.0 z wyróżnikiem architektury Ultra Review V5.
+- **Rygor Kalendarza Sesji USA (NYSE 2024–2028):** Wprowadzono do opisów metodologii i FAQ informację o module kalendarza sesji NYSE (`us-market-calendar.ts`), ujednoliconej regule świeżości T+1 (03:00 ET) oraz rozdzieleniu oceny `flows` i `holdings` (eliminacja fałszywych alarmów w święta i weekendy).
+- **Dwufazowa Bariera Transportowa (DeliveryReceipt):** Opisano gwarancję zero duplikatów dla alertów Telegram dzięki dwufazowemu zatwierdzaniu (`begin_send_v5` -> HTTP -> `complete_send_v5`), tokenom dzierżawy (`lease_token`, `fence_token`) oraz kryptograficznej sumie SHA-256 (`contentHash`).
+- **Atomowe Plany Publikacji (Publication Plans):** Odnotowano transakcyjne procedury bazy danych weryfikujące 100% dostarczenia zadań publikacji przed sfinalizowaniem statusu decyzji.
+- **1487-dniowy Golden Freeze i Replay Manifest:** Zaktualizowano sekcję Zaufania (Trust) i plan Investor, eksponując matematyczną i kryptograficzną odtwarzalność historii cykli co do bajta (38/38 wymagań zweryfikowanych dowodowo).
+- **Niezmienny Ledger Audytowy SQL:** Odnotowano ochronę bazy danych (triggery SQL blokujące `DELETE` i `TRUNCATE` na tabelach ledgeru transakcyjnego oraz odebranie uprawnień EXECUTE rolom publicznym).
+- **Harmonogram Odświeżania:** Ujednolicono komunikację slotów odświeżania na **06:00, 14:00, 22:00 UTC** z automatyczną prezentacją w strefie czasowej przeglądarki użytkownika oraz porannym digestem o **07:00 UTC**.
+- **CHANGELOG.md:** Utworzono oficjalny plik `CHANGELOG.md` w standardzie Keep a Changelog.
 
 ## Guardrails & Security
 
-- Nie ujawniać dokładnych dostawców, wag, progów normalizacji ani wkładów na landing page.
-- Wszystkie odczyty na żywo pozostają chronione wewnątrz zautoryzowanego portalu.
+- Nie ujawniać dokładnych dostawców, wag, progów normalizacji ani wkładów na publicznym landing page.
+- Wszystkie odczyty na żywo pozostają chronione wewnątrz zautoryzowanego portalu; landing page prezentuje wyłącznie historyczny przykład kalibracyjny z dołka 2022 r.
 
 ## Verification Checklist
 
 - [x] Run `npm run typecheck` — 0 błędów typowania TS.
-- [x] Run `npm run build` — produkcyjny build zbudowany w dist/.
-- [x] Test etykiety `Dziennie` / `Daily` w Hero i Trust.
-- [x] Test braku wykraczania napisu `Generational` w kartach KPI.
-- [x] Git merge/commit na gałęzi `main`.
+- [x] Run `npm run build` — produkcyjny build pomyślnie zbudowany w dist/.
+- [x] Weryfikacja spójności dwujęzycznej (PL / EN).
+- [x] Utworzenie CHANGELOG.md i aktualizacja README.md.
+- [x] Synchronizacja pamięci projektu w AI Agentic OS.
+- [x] Git commit i push do gałęzi main.

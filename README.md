@@ -8,14 +8,15 @@ Strona produkcyjna głównego panelu: [https://btc-dash.64bit.site](https://btc-
 
 ## 🎯 Cel Projektu
 
-Główny portal **BTC Bottom Dashboard** to zaawansowany terminal analityczny dla inwestorów kryptowalutowych, oceniający rynek w oparciu o 28 wskaźników w ramach silnika **V2 Era-Aware (v2.3.0)** podzielonych na 4 rodziny konfluencji (Wycena 30%, Podaż 30%, Cykl 20%, Popyt ETF 20%) oraz otoczenie makro (obliczając *Bottom Score* w skali 0–100). Ponieważ dostęp do terminala oraz rejestracja są ograniczone do systemu zaproszeń (**Invite-Only**), ten **landing page** realizuje kluczowe zadania:
+Główny portal **BTC Bottom Dashboard** to zaawansowany terminal analityczny dla inwestorów kryptowalutowych, oceniający rynek w oparciu o 28 wskaźników w ramach silnika **V2 Era-Aware (v2.4.0)** z architekturą **Ultra Review V5**, podzielonych na 4 rodziny konfluencji (Wycena 30%, Podaż 30%, Cykl 20%, Popyt ETF 20%) oraz otoczenie makro (obliczając *Bottom Score* w skali 0–100). Ponieważ dostęp do terminala oraz rejestracja są ograniczone do systemu zaproszeń (**Invite-Only**), ten **landing page** realizuje kluczowe zadania:
 
 1. **Edukacja i Prezentacja:** Wyjaśnienie założeń Strategii Inwestora Długoterminowego BTC w erze spotowych ETF oraz przedstawienie korzyści z korzystania z panelu.
-2. **Dwupoziomowy Model:** Wyjaśnienie różnicy między planem **Smart** (widok statusu na żywo z server-side redaction) i **Investor** (pełny terminal analityczny, wagi, progi, flaga Generacyjne Dno, alerty).
-3. **Podgląd Historyczny:** Hero i sekcje pokazują wyłącznie sprawdzony przykładowy odczyt historyczny z kalibracji dna poprzednich cykli (np. dołek 2022). Bieżące odczyty na żywo chronią wartość produktu i są dostępne wyłącznie po zalogowaniu do zamkniętego terminala.
+2. **Dwupoziomowy Model:** Wyjaśnienie różnicy między planem **Smart** (widok statusu na żywo z server-side redaction) i **Investor** (pełny terminal analityczny, wagi, progi, flaga Generacyjne Dno, planer DCA, alerty).
+3. **Podgląd Historyczny & Golden Freeze:** Hero i sekcje pokazują sprawdzony odczyt historyczny z kalibracji dna 2022 roku, powiązany z 1487-dniowym golden freeze i deterministycznym manifestem odtwarzalności (replay manifest). Bieżące odczyty na żywo chronią wartość produktu i są dostępne wyłącznie po zalogowaniu do zamkniętego terminala.
 4. **Płatności Stripe & Zaproszenia:** Zbieranie zapisów na listę oczekujących (Waitlist) oraz wyzwalanie auto-checkoutu Stripe. Kwoty EUR/USD są orientacyjne — obciążenie zawsze w PLN.
 5. **Słownik 28 Wskaźników V2:** Publiczny opis 28 wskaźników on-chain, podaży, sentymentu, ery ETF i makroekonomii bez ujawniania nazw zewnętrznych dostawców danych.
-6. **Pełna Dwujęzyczność (PL/EN) & Dopracowany UI:** Czytelne etykiety `Dziennie` (PL) / `Daily` (EN) w kafekach statystyk oraz dopasowany układ kart KPI.
+6. **Architektura Odporności Ultra Review V5:** Moduł kalendarza sesji rynkowych USA (NYSE 2024–2028, reguła T+1), dwufazowa bariera transportowa powiadomień `DeliveryReceipt` (zero duplikatów) oraz atomowe plany publikacji (`publication_plans`).
+7. **Pełna Dwujęzyczność (PL/EN) & Dopracowany UI:** Czytelne etykiety `Dziennie` (PL) / `Daily` (EN) w kafekach statystyk (sloty odświeżania 06:00, 14:00, 22:00 UTC w strefie lokalnej) oraz dopasowany układ kart KPI.
 
 ---
 
@@ -23,7 +24,7 @@ Główny portal **BTC Bottom Dashboard** to zaawansowany terminal analityczny dl
 
 * **Framework:** React + Vite.
 * **Stylizacja:** Vanilla CSS + Nadir Design System v2 (glassmorphism, dark mode, neon-gold/ice accents).
-* **Agregacja Danych:** Model korzysta z wielu niezależnych i zweryfikowanych źródeł rynkowych, giełdowych, on-chain i makro równocześnie.
+* **Agregacja Danych:** Model korzysta z wielu niezależnych i zweryfikowanych źródeł rynkowych, giełdowych, on-chain i makro równocześnie z nadzorem kalendarza NYSE.
 * **Płatności:** Integracja dynamicznych linków Stripe Checkout (`?trigger_checkout=true`).
 
 ---
@@ -37,7 +38,7 @@ Landing prezentuje dwa plany w modelu invite-only z wyzwalaniem Stripe checkout:
 
 ---
 
-## 🧭 Dokumentacja i Zasady Ochrony Treści (v28.4)
+## 🧭 Dokumentacja i Zasady Ochrony Treści (v2.4.0)
 
 * **Hero Section:** Prezentacja odczytu historycznego z kalibracji dna 2022 z etykietami `Dziennie` (PL) oraz `Daily` (EN).
 * **Karty KPI i Layout:** Wartości kart KPI (np. `Generational`) posiadają zabezpieczenia przed wychodzeniem poza ramki (`white-space: nowrap`, `overflow: hidden`, `text-overflow: ellipsis`, responsywny `clamp()`).

@@ -149,15 +149,15 @@ const STEPS = [
     n: '02',
     plT: 'Bottom Score 0–100 & Generacyjne Dno',
     enT: 'Bottom Score 0–100 & Generational Floor',
-    plD: 'Silnik scoringowy V2 Era-Aware (v2.3.0) sprowadza dane do jednej liczby i wykrywa flagę Generacyjnego Dna przy równoczesnym dołku ≥4 bloków.',
-    enD: 'V2 Era-Aware scoring engine (v2.3.0) collapses data to one number and flags Generational Bottom when ≥4 core blocks reach extremes.',
+    plD: 'Silnik scoringowy V2 Era-Aware (v2.4.0) sprowadza dane do jednej liczby i wykrywa flagę Generacyjnego Dna przy równoczesnym dołku ≥4 bloków ortogonalnych.',
+    enD: 'V2 Era-Aware scoring engine (v2.4.0) collapses data to one number and flags Generational Bottom when ≥4 orthogonal blocks reach extremes.',
   },
   {
     n: '03',
-    plT: 'Werdykt, Okno DCA i Alerty Telegram',
-    enT: 'Verdict, DCA Window & Telegram Alerts',
-    plD: '5-pasmowy werdykt z histerezą chroniącą przed drganiem progów. Odświeżanie 3× dziennie z nadzorem świeżości data-watchdog oraz alertami Telegram.',
-    enD: '5-band verdict with threshold hysteresis. 3x daily refreshes with freshness watchdog monitoring and instant Telegram alerts.',
+    plT: 'Werdykt, Okno DCA i Alerty z DeliveryReceipt',
+    enT: 'Verdict, DCA Window & DeliveryReceipt Alerts',
+    plD: '5-pasmowy werdykt z histerezą. Odświeżanie danych 3× dziennie (06:00, 14:00, 22:00 UTC w strefie lokalnej) z nadzorem sesji NYSE i barierą DeliveryReceipt.',
+    enD: '5-band verdict with threshold hysteresis. 3x daily refreshes (06:00, 14:00, 22:00 UTC in local time) with NYSE session monitoring and DeliveryReceipt barrier.',
   },
 ];
 
@@ -204,19 +204,19 @@ const PLANS = [
       { pl: 'Wagi rodzin, wkłady, progi normalizacji i mnożnik c_agree', en: 'Family weights, contributions, thresholds & c_agree multiplier', on: true },
       { pl: 'Flaga Generacyjne Dno (≥4 ortogonalne bloki na dnie)', en: 'Generational Bottom flag (≥4 orthogonal blocks at bottom)', on: true },
       { pl: 'Planer transz DCA i wyliczanie ciągłego pobytu w strefie', en: 'DCA tranche planner & continuous zone duration math', on: true },
-      { pl: 'Pełna historia snapshotów, 400-dniowy replay i audyt V1', en: 'Full snapshot history, 400-day replay & V1 audit trail', on: true },
-      { pl: 'Alerty Telegram wyzwalane automatycznie 3× na dobę', en: 'Automated Telegram alerts triggered 3x daily', on: true },
-      { pl: 'Pełny dostęp do wsparcia i kalibracji na kolejne cykle', en: 'Full access to future cycle support & calibration', on: true },
+      { pl: '1487-dniowy golden freeze i deterministyczny replay manifest (V5)', en: '1487-day golden freeze & deterministic replay manifest (V5)', on: true },
+      { pl: 'Alerty Telegram 3× dziennie z barierą DeliveryReceipt (zero duplikatów)', en: 'Telegram alerts 3x daily with DeliveryReceipt barrier (zero duplicates)', on: true },
+      { pl: 'Niezmienny ledger audytowy SQL i harmonogram w strefie lokalnej', en: 'Immutable SQL audit ledger & local-timezone schedule', on: true },
     ],
   },
 ];
 
 const FAQ = [
   {
-    pl: 'Czym jest Silnik Scoringowy V2 Era-Aware (v2.3.0)?',
-    en: 'What is the V2 Era-Aware Scoring Engine (v2.3.0)?',
-    plA: 'To najnowsza wersja algorytmu scoringowego, stworzona po debiucie amerykańskich spotowych ETF-ów. Podzieliła wskaźniki na 4 główne rodziny konfluencji: Wycenę (30%), Podaż i Posiadaczy (30%), Cykl i Sentyment (20%) oraz Popyt ETF (20%). Dodatkowo wprowadzono mnożnik spójności c_agree karzący sprzeczność sygnałów oraz flagę Generacyjne Dno.',
-    enA: 'It is the latest scoring algorithm version built following the launch of US spot BTC ETFs. It structures indicators into 4 main confluence families: Valuation (30%), Supply & Holders (30%), Cycle & Sentiment (20%), and ETF Demand (20%). It also introduces a dispersion penalty c_agree and Generational Bottom detection.',
+    pl: 'Czym jest Silnik Scoringowy V2 Era-Aware (v2.4.0)?',
+    en: 'What is the V2 Era-Aware Scoring Engine (v2.4.0)?',
+    plA: 'To zaawansowany algorytm analityczny skalibrowany na erę spotowych funduszy ETF, z architekturą Ultra Review V5. Dzieli 28 wskaźników na 4 rodziny konfluencji: Wycenę (30%), Podaż i Posiadaczy (30%), Cykl i Sentyment (20%) oraz Popyt ETF (20%) z tłem makroekonomicznym. Wykorzystuje karę dyspersji c_agree, flagę Generacyjnego Dna, moduł kalendarza sesji giełdowych NYSE (reguła T+1) oraz dwufazowe alerty z kryptograficznym potwierdzeniem DeliveryReceipt.',
+    enA: 'It is the advanced analytical algorithm calibrated for the spot ETF era, backed by Ultra Review V5 architecture. It structures 28 indicators into 4 confluence families: Valuation (30%), Supply & Holders (30%), Cycle & Sentiment (20%), and ETF Demand (20%) with macro backdrop. Features include dispersion penalty c_agree, Generational Bottom flag, NYSE market calendar tracking (T+1 rule) and two-phase DeliveryReceipt alerts.',
   },
   {
     pl: 'Dlaczego na stronie publicznej prezentowany jest tylko widok historyczny?',
@@ -233,8 +233,8 @@ const FAQ = [
   {
     pl: 'Jak często aktualizowane są dane rynkowe wewnątrz terminala?',
     en: 'How often are market data updated inside the terminal?',
-    plA: 'Wewnątrz zautoryzowanego terminala system aktualizuje dane 3 razy na dobę: slot AM o 06:00 UTC, slot PM o 12:00 UTC oraz o 18:00 UTC. Ponadto wbudowany watchdog świeżości (Freshness Watchdog) wysyła alert na Telegram, jeśli dane byłyby starsze niż 18 godzin.',
-    enA: 'Inside the authorized terminal, the system updates data 3 times daily: AM slot at 06:00 UTC, PM slot at 12:00 UTC, and 18:00 UTC. A built-in Freshness Watchdog sends Telegram alerts if readings exceed 18 hours.',
+    plA: 'Wewnątrz zautoryzowanego terminala system aktualizuje dane w trzech precyzyjnych slotach: 06:00, 14:00 oraz 22:00 UTC, automatycznie przeliczanych i wyświetlanych w strefie czasowej przeglądarki użytkownika. Dodatkowo o 07:00 UTC generowany jest poranny digest. Nadzór nad świeżością sprawuje Freshness Watchdog zintegrowany z kalendarzem sesji giełdowych USA (NYSE 2024–2028).',
+    enA: 'Inside the authorized terminal, data refreshes across three scheduled slots: 06:00, 14:00, and 22:00 UTC, automatically displayed in the user’s local browser timezone. A morning digest is generated at 07:00 UTC. Data freshness is maintained by the Freshness Watchdog integrated with the US market calendar (NYSE 2024–2028).',
   },
   {
     pl: 'Czym różni się plan Smart od Investor?',
@@ -266,10 +266,10 @@ const ROUTES: Record<RouteKey, { path: string; pl: string; en: string; titlePl: 
     path: '/',
     pl: 'Start',
     en: 'Home',
-    titlePl: 'BTC Smart Investor Terminal | Analiza dołka cyklu Bitcoina (v28.4 V2 Engine)',
-    titleEn: 'BTC Smart Investor Terminal | Bitcoin cycle-bottom analytics (v28.4 V2 Engine)',
-    descPl: 'Invite-only terminal dla inwestora BTC: Konfluencja 28 wskaźników w 4 rodzinach V2 Engine, kalibracja cykli i dyscyplina akumulacji.',
-    descEn: 'Invite-only BTC investor terminal: 28-indicator V2 Engine confluence across 4 families, cycle calibration and accumulation discipline.',
+    titlePl: 'BTC Smart Investor Terminal | Analiza dołka cyklu Bitcoina (Silnik V2.4.0 · Ultra Review V5)',
+    titleEn: 'BTC Smart Investor Terminal | Bitcoin cycle-bottom analytics (V2.4.0 Engine · Ultra Review V5)',
+    descPl: 'Invite-only terminal dla inwestora BTC: Konfluencja 28 wskaźników w 4 rodzinach V2 Engine, kalendarz sesji NYSE, DeliveryReceipt i dyscyplina akumulacji.',
+    descEn: 'Invite-only BTC investor terminal: 28-indicator V2 Engine confluence across 4 families, NYSE session calendar, DeliveryReceipt and accumulation discipline.',
   },
   glossary: {
     path: '/slownik-wskaznikow',
@@ -343,8 +343,8 @@ const TELEGRAM_STEPS = [
     icon: Bell,
     plT: 'Wybierz tryb alertów i digestu',
     enT: 'Choose alert & digest mode',
-    plD: 'Ustaw, które zdarzenia (zmiana strefy, Generacyjne Dno, poranny digest 07:00 UTC) mają generować powiadomienia na żywo.',
-    enD: 'Select events (zone changes, Generational Bottom, morning 07:00 UTC digest) that trigger live notifications.',
+    plD: 'Ustaw, które zdarzenia (zmiana strefy, Generacyjne Dno, poranny digest 07:00 UTC) mają generować powiadomienia na żywo chronione pokwitowaniem DeliveryReceipt.',
+    enD: 'Select events (zone changes, Generational Bottom, morning 07:00 UTC digest) that trigger live notifications backed by DeliveryReceipt.',
   },
   {
     icon: Check,
@@ -927,11 +927,11 @@ function ProductPreview({ lang }: { lang: Lang }) {
                 <img src="/assets/logo.svg" alt="" />
                 <span>
                   <strong>BTC Smart Investor Terminal</strong>
-                  <em>{L(lang, 'V2.3.0 Era-Aware Engine · Supabase DB', 'V2.3.0 Era-Aware Engine · Supabase DB')}</em>
+                  <em>{L(lang, 'Silnik V2.4.0 Era-Aware · Supabase DB (Ultra Review V5)', 'V2.4.0 Era-Aware Engine · Supabase DB (Ultra Review V5)')}</em>
                 </span>
               </div>
               <div>
-                <Badge tone="live">{L(lang, 'Kalibracja Cykli · V2 Engine', 'Cycle Calibration · V2 Engine')}</Badge>
+                <Badge tone="live">{L(lang, 'Kalibracja Cykli · Silnik V2.4.0', 'Cycle Calibration · V2.4.0 Engine')}</Badge>
                 <StatusChip tone="ice" size="sm">{L(lang, 'Strefa DCA Otwarta', 'DCA Zone Open')}</StatusChip>
               </div>
             </div>
@@ -943,7 +943,7 @@ function ProductPreview({ lang }: { lang: Lang }) {
                   <h3>{L(lang, 'Strefa Akumulacji', 'Accumulation Zone')}</h3>
                   <VerdictScale score={72} showLabels={false} />
                   <div className="preview-kpis">
-                    <KpiStat label={L(lang, 'Silnik Scoringu', 'Scoring Engine')} value="V2 Era-Aware" accent="var(--ice-400)" />
+                    <KpiStat label={L(lang, 'Silnik Scoringu', 'Scoring Engine')} value="V2.4.0 Era-Aware" accent="var(--ice-400)" />
                     <KpiStat label={L(lang, 'Flaga Dna', 'Floor Flag')} value={L(lang, 'Generacyjne', 'Generational')} accent="var(--signal-aggressive)" />
                     <KpiStat label={L(lang, 'Spójność (c_agree)', 'Agreement (c_agree)')} value="0.88" accent="var(--emerald-400)" />
                   </div>
@@ -1116,29 +1116,29 @@ function Pricing({ lang }: { lang: Lang }) {
 
 function Trust({ lang }: { lang: Lang }) {
   const stats = [
-    { v: '2018 · 2022', plL: 'kalibracja cykli historycznych', enL: 'historical cycle calibration', tone: 'var(--signal-accumulate)' },
-    { v: 'Multi-Source', plL: 'niezależne źródła danych', enL: 'independent data sources', tone: 'var(--gold-300)' },
-    { v: L(lang, 'Dziennie', 'Daily'), plL: 'odświeżanie danych w terminalu', enL: 'terminal data refreshes', tone: 'var(--ice-400)' },
-    { v: 'V1 Audit', plL: 'podwójny ślad audytowy bazy', enL: 'dual DB audit trail', tone: 'var(--emerald-400)' },
+    { v: '1487 Dni', plL: 'golden freeze i replay manifest', enL: 'golden freeze & replay manifest', tone: 'var(--signal-accumulate)' },
+    { v: 'Multi-Source', plL: 'niezależne źródła rynkowe i on-chain', enL: 'independent market & on-chain sources', tone: 'var(--gold-300)' },
+    { v: L(lang, 'Dziennie', 'Daily'), plL: 'sloty 06/14/22 UTC w strefie lokalnej', enL: '06/14/22 UTC slots in local time', tone: 'var(--ice-400)' },
+    { v: 'Ultra Review V5', plL: 'niezmienny ledger audytowy SQL', enL: 'immutable SQL audit ledger', tone: 'var(--emerald-400)' },
   ];
   const pillars = [
     {
       titlePl: 'Kalibracja i rygor historyczny',
       titleEn: 'Calibration and historical rigor',
-      copyPl: 'Progi silnika V2 oparto na dołkach z lat 2018 i 2022, z wyliczaniem spójności c_agree i ochroną przed rynkowym szumem.',
-      copyEn: 'V2 engine thresholds are calibrated on 2018 and 2022 cycle bottoms with c_agree dispersion protection against noise.',
+      copyPl: 'Progi silnika V2 oparto na dołkach z lat 2018 i 2022 oraz 1487-dniowym golden freeze zweryfikowanym co do bajta, z wyliczaniem spójności c_agree i odpornością na szum.',
+      copyEn: 'V2 engine thresholds are calibrated on 2018/2022 cycle bottoms and 1487-day byte-verified golden freeze with c_agree dispersion protection against noise.',
     },
     {
-      titlePl: 'Agregacja danych z wielu źródeł',
-      titleEn: 'Multi-source data aggregation',
-      copyPl: 'Infrastruktura wykorzystuje równoległą agregację danych z wielu niezależnych źródeł rynkowych z limitem współbieżności i buforowaniem.',
-      copyEn: 'Infrastructure uses parallel data aggregation across multiple independent market sources with concurrency limits and caching.',
+      titlePl: 'Kalendarz rynkowy i wieloźródłowa agregacja',
+      titleEn: 'Market calendar and multi-source aggregation',
+      copyPl: 'Infrastruktura wykorzystuje moduł sesji NYSE (2024–2028, reguła T+1) z osobnym nadzorem flows i holdings oraz równoległą agregację wielu niezależnych źródeł.',
+      copyEn: 'Infrastructure uses a NYSE session calendar (2024–2028, T+1 rule) with dedicated flows/holdings monitoring and parallel aggregation across independent sources.',
     },
     {
-      titlePl: 'Dyscyplina i nadzór świeżości',
-      titleEn: 'Discipline and freshness monitoring',
-      copyPl: 'Automatyczny Freshness Watchdog oraz natychmiastowe alerty Telegram dbają o to, by inwestor wewnątrz terminala zawsze bazował na aktualnych odczytach.',
-      copyEn: 'Automated Freshness Watchdog and instant Telegram alerts ensure investors inside the terminal always act on up-to-date data.',
+      titlePl: 'Niezmienność i DeliveryReceipt',
+      titleEn: 'Immutability and DeliveryReceipt barrier',
+      copyPl: 'Transakcyjne plany publikacji (Publication Plans), dwufazowa bariera DeliveryReceipt z SHA-256 (zero duplikatów alertów) oraz blokada DELETE/TRUNCATE w ledgerze bazy.',
+      copyEn: 'Transactional publication plans, two-phase DeliveryReceipt barrier with SHA-256 (zero duplicate alerts) and SQL triggers blocking DELETE/TRUNCATE in audit ledger.',
     },
   ];
 
@@ -1316,8 +1316,8 @@ function TelegramPage({ lang }: { lang: Lang }) {
       title={L(lang, 'Sygnały dostarczane dokładnie w momencie zmiany strefy.', 'Signals delivered exactly when zone status changes.')}
       copy={L(
         lang,
-        'Alerty w planie Investor to selektywne powiadomienia o najwyższej wartości: automatyczny poranny digest 07:00 UTC, wykrycie flagi Generacyjnego Dna oraz nadzór świeżości Freshness Watchdog.',
-        'Investor alerts are high-signal notifications: automated 07:00 UTC digest, Generational Bottom flags, and Freshness Watchdog monitoring.',
+        'Alerty w planie Investor to selektywne powiadomienia o najwyższej wartości z barierą DeliveryReceipt (zero duplikatów): poranny digest 07:00 UTC, wykrycie flagi Generacyjnego Dna oraz nadzór świeżości z kalendarzem sesji NYSE.',
+        'Investor alerts are high-signal notifications with DeliveryReceipt barrier (zero duplicates): 07:00 UTC morning digest, Generational Bottom flags, and NYSE calendar freshness monitoring.',
       )}
     >
       <section className="page-section">
@@ -1433,7 +1433,7 @@ function Footer({ lang, onNavigate }: { lang: Lang; onNavigate: (path: string, e
           <div>
             <BrandLockup onNavigate={onNavigate} />
             <p>{L(lang, 'Terminal analityczny do prognozowania dołka cyklu Bitcoina z silnikiem V2. Czytaj cykl, chroń sygnał.', 'Analytical terminal for forecasting Bitcoin cycle bottoms with V2 engine. Read the cycle, protect the signal.')}</p>
-            <span><i /> {L(lang, 'Silnik V2.3.0 · Wszystkie systemy sprawne', 'V2.3.0 Engine · All systems operational')}</span>
+            <span><i /> {L(lang, 'Silnik V2.4.0 · Ultra Review V5 · Systemy sprawne', 'V2.4.0 Engine · Ultra Review V5 · Systems operational')}</span>
           </div>
           <div className="footer-cols">
             {cols.map((col) => (
